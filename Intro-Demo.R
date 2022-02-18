@@ -6,8 +6,8 @@
 library(data.table)
 library(NSNSDAcoustics)
 
-# Look at helpfile for SongMeter_To_NVSPL, which uses PAMGuide
-?SongMeter_To_NVSPL
+# Look at helpfile for Wave_To_NVSPL, which uses PAMGuide
+?Wave_To_NVSPL
 
 # Create an input directory for this example
 dir.create('example-input-directory')
@@ -20,13 +20,13 @@ tuneR::writeWave(object = exampleAudio,
                  filename = 'example-input-directory/GLBABART_20200528_104200.wav')
 
 # Write the same example wave file twice, but give it a fake different name
-# this time (SongMeter_To_NVSPL expects to process multiple files, so we're
+# this time (Wave_To_NVSPL expects to process multiple files, so we're
 # generating a second "fake" wave file here to demonstrate the function example)
 tuneR::writeWave(object = exampleAudio,
                  filename = 'example-input-directory/GLBABART_20200528_114157.wav')
 
-# Perform SongMeter_To_NVSPL in test mode (test.file = TRUE)
-SongMeter_To_NVSPL(
+# Perform Wave_To_NVSPL in test mode (test.file = TRUE)
+Wave_To_NVSPL(
   input.directory = 'example-input-directory',
   data.directory = FALSE,
   test.file = TRUE,
@@ -37,8 +37,8 @@ SongMeter_To_NVSPL(
 # see line 1684 + 1729 for example of CB question
 # another question - doc w/ metadata for each column in the output file?
 
-# Perform SongMeter_To_NVSPL in batch mode (test.file = FALSE)
-SongMeter_To_NVSPL(
+# Perform Wave_To_NVSPL in batch mode (test.file = FALSE)
+Wave_To_NVSPL(
   input.directory = 'example-input-directory',
   data.directory = FALSE,
   test.file = FALSE,

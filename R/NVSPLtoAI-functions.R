@@ -94,7 +94,7 @@ normdBA <- function (x) { (x-(-10)) / (80 - (-10)) }
 #' \item{\strong{AR}: Acoustic richness - i'm assuming that's what AR stands for? }
 #' }
 #'
-#' @seealso  \code{\link{SongMeter_To_NVSPL}}
+#' @seealso  \code{\link{Wave_To_NVSPL}}
 #' @import ineq moments NbClust svDialogs vegan
 #' @export
 #' @examples
