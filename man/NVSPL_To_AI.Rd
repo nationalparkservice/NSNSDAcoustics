@@ -182,5 +182,5 @@ unlink(x = 'example-output-directory', recursive = TRUE)
 
 }
 \seealso{
-\code{\link{SongMeter_To_NVSPL}}
+\code{\link{Wave_To_NVSPL}}
 }
