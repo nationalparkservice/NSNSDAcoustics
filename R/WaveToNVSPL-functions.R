@@ -49,7 +49,7 @@ Meta <- function(...,atype='TOL',plottype='Both',envi='Air',
                  calib=0,stype = 'MF',Si=-159,Mh=-36,G=0,vADC=1.414,r=50,
                  N=Fs,winname='Hann',lcut=Fs/N,hcut=Fs/2,timestring="",outwrite=1,
                  welch="",chunksize="",linlog = "Log",
-                 filenms = filenms) # cb - had to add this in to get it to work
+                 filenms = filenms) # cb - had to add filenms arg in to get it to work
 {
   #define Meta function
   # source('PAMGuide_Meta.R')	#load PAMGuide_Meta function
@@ -103,6 +103,19 @@ Meta <- function(...,atype='TOL',plottype='Both',envi='Air',
                        chunksize=chunksize,linlog=linlog)
     #execute PAMGuide_Meta
 
+  #  browser()
+
+    # (CB) convert to data.frame so that we can retain filename...
+    # Nevermind this si likely to cause too many problems downstream. Wait for Damon meeting.
+   #  A <- data.frame(A)
+   # A$recordingID <- basename(nowfile)
+
+    # QUESTION FOR DAMON -- WHAT ARE THESE COLUMNS?
+    # Wonder if worth turning A into a data.frame now, and data.frames all downstream instead of matrices
+    # since the ultimate downstream item is not a matrix
+    # Might help with downstream column naming too, but maybe not worth it bc intermediate outputs
+    # get deleted and only the NVSPL file is retained
+
     if (i == 1 && conkcomp == 1){conc <- A}
     #initialise concatenated array on first iteration
     else if (i > 1 && length(A[1,]) == length(conc[1,]))
@@ -130,7 +143,6 @@ Meta <- function(...,atype='TOL',plottype='Both',envi='Air',
   # PLOT OUTPUT
   #Viewer(fullfile=conc,ifile=basename(ofile),linlog=linlog)
   # ^^ CB: why is this commented out? Is Viewer function meant to never be used?
-
 
   # WRITE OUTPUT FILE FOR CONCATENATED ARRAY
 
@@ -1548,12 +1560,12 @@ Wave_To_NVSPL <- function(input.directory,
     filename2 = paste(site, filext, sep="")
 
     # run the calibration
-    message('\n Check all outputs. Make sure there isn\'t an NA in "Time stamp start time\n".')
+    message('\n Check all outputs. Make sure there isn\'t an NA in "Time stamp start time".\n')
     PAMGuide(chunksize = 500, atype = 'TOL', timestring = filename2,
              r=0, outwrite=1, plottype = "None",
              calib=1, envi=enviset, ctype="TS", Mh=mhset, G=Gset, vADC=vADCset,
              WAVFiles = WAVFiles)
-    message('Reminder: Check all outputs. Make sure there isn\'t an NA in "Time stamp start time".')
+    message('Reminder: Check all outputs. Make sure there isn\'t an NA in "Time stamp start time".\n')
     # In the outputs here, make sure there isn't an NA in your start time
 
     # Evaluate the file created
@@ -1640,12 +1652,15 @@ Wave_To_NVSPL <- function(input.directory,
 
         # read in 1st PAM file
         conk <- as.matrix( read.csv(PAMfiles[1], colClasses="numeric",header=FALSE) )
+        # conk <- read.csv(PAMfiles[1], header = FALSE)
 
         # remove the folder with files for each WAV file
         unlink(PAMfiles2)
         unlink(PAMdirFiles, recursive = TRUE)
 
         ## (4) EXTRACT PARAMS--------------------------------------------------------------
+        # CB this is another place I would prefer data.frame style extractions with named columns
+        # rather than just pulling based on a column number and trusting that it's what we actually want
         aid <- conk[1,1]
         tstampid <- substr(aid,1,1)		#extract time stamp identifier
         enviid <- substr(aid,2,2)			#extract in-air/underwater identifier
@@ -1682,6 +1697,7 @@ Wave_To_NVSPL <- function(input.directory,
                       "dbA","dbC","dbF","Voltage","WindSpeed","WindDir","TempIns","TempOut","Humidity",
                       "INVID","INSID","GChar1","GChar2","GChar3", "AdjustmentsApplied","CalibrationAdjustment","GPSTimeAdjustment","GainAdjustment","Status")
         # NOTE TO CATHLEEN - add a PAMguide version column here? why isn't there one? Why is vers currently being put in GChar2 column?
+        # Also want to add a filename column here so that filenames get carried through the workflow
 
         # check to see of more 1/3 OCB than 33, if so truncate data
         if(dim(a)[2] > 30) a <- a[,1:30]
@@ -1722,6 +1738,8 @@ Wave_To_NVSPL <- function(input.directory,
         unqHrs <- substr(tString,1,13)
 
         ## create matrix with all the data combined and add headers
+        # CB - I don't love this, seems too easy to make mistakes.
+        #      More robust is to set this up as a data.frame or data.table and directly name the columns
         tempOutput <- cbind(site, tString, 0, 0, 0, round(a, 1),
                             matrix(rep(0,dim(a)[1] * nBlankCols),
                                    nrow=dim(a)[1], ncol=nBlankCols))
@@ -1732,9 +1750,12 @@ Wave_To_NVSPL <- function(input.directory,
         tempOutput[,36] = dBA     # CB: we need to revisit this calculation
         tempOutput[,37] = dBAsum  # CB: we need to revisit this calculation
         tempOutput[,48] = vers
-        tempOutput[,52] = timezone
+        tempOutput[,52] = timezone # CB: so apparently GPSTimeAdjustment column header is the timezone?
 
         colnames(tempOutput) <- NVSPLhead
+        # CB: again, would much prefer to reaarrange this as a data.frame so
+        # that contents can be assigned by column name rather than column number
+        # I think this would be more robust/easier to avoid mistakes in future changes
 
         ## separate tempOutput by unique day hours
         tempOutput <- cbind(unqHrs, tempOutput) #add a column to sort by
