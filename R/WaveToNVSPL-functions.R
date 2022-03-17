@@ -1,11 +1,11 @@
-# SongMeterToNVSPL_functions
+# WaveToNVSPL_functions
 
 # These functions are using V12_noChunk version of PAMGuide available under NSNSD Teams
 
 # There are 5 functions in this document:
 # 4 are internal:
 #   META
-#   PAMGuide_Meta
+#   PAMGuide_Meta   ==> could rename to batch
 #   Viewer
 #   PAMGuide
 
@@ -93,28 +93,15 @@ Meta <- function(...,atype='TOL',plottype='Both',envi='Air',
     tana = proc.time()			#start analysis timer for current file
     nowfile <- files[i]			#current file name
 
+    # set PAMGuide to display parameters for first iteration only
     if (i == 1){disppar <- 1} else {disppar <- 1}
-    #set PAMGuide to display parameters for first iteration only
 
+    # execute PAMGuide_Meta
     A <- PAMGuide_Meta(nowfile,atype=atype,plottype='None',envi=envi,calib=calib,
                        stype=stype,Si=Si,Mh=Mh,G=G,vADC=vADC,r=r,N=N,winname=winname,
                        lcut=lcut,hcut=hcut,timestring=timestring,outdir=newpath,
                        outwrite=outwrite,disppar=disppar,welch=welch,
                        chunksize=chunksize,linlog=linlog)
-    #execute PAMGuide_Meta
-
-  #  browser()
-
-    # (CB) convert to data.frame so that we can retain filename...
-    # Nevermind this si likely to cause too many problems downstream. Wait for Damon meeting.
-   #  A <- data.frame(A)
-   # A$recordingID <- basename(nowfile)
-
-    # QUESTION FOR DAMON -- WHAT ARE THESE COLUMNS?
-    # Wonder if worth turning A into a data.frame now, and data.frames all downstream instead of matrices
-    # since the ultimate downstream item is not a matrix
-    # Might help with downstream column naming too, but maybe not worth it bc intermediate outputs
-    # get deleted and only the NVSPL file is retained
 
     if (i == 1 && conkcomp == 1){conc <- A}
     #initialise concatenated array on first iteration
@@ -1413,22 +1400,39 @@ PAMGuide <- function(...,atype='PSD',plottype='Both',envi='Air',calib=0,
 #' @name Wave_To_NVSPL
 #' @title Calibrate and convert wave files into NVSPL format
 #' @description This function uses PAMGuide code to convert wave files into NVSPL format. PAMGuide was developed by Nathan D. Merchant et al. 2015 (see \strong{Details}). The suggested workflow for this function is to first set test.file = TRUE to test that your workflow has been accurately parameterized. Next, to batch process NVSPLs, run with test.file = FALSE.
-#' @param input.directory Top-level input directory path to audio files to be processed. e.g. E:/AUDIO. \strong{Audio files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav}
+#' @param input.directory Top-level input directory path to audio files to be processed. e.g. E:/AUDIO. \strong{Audio files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav. Use the filext argument for other file extension patterns (NOT TESTED BY CB).}
 #' @param data.directory Logical flag to specify whether audio files are housed in 'Data' subdirectories
 #' @param test.file Logical flag for whether to test a file. If TRUE, tests a single file and produces plots and diagnostic outputs. If FALSE, processes entire audio dataset indicated by input.directory.
 #' @param project File name for your project (e.g., 'GLBAPhenology2019')
-#' @param PAMvers Version of PAMGuide (e.g., 'PAMGUIDE_V12noChunk')
 #' @param instrum Audio recorder used (e.g., 'SM4')
 #' @param filext File extension pattern (e.g, '_%Y%m%d_%H%M%S.wav'). If using split files, '_0_%Y%m%d_%H%M%S_000.wav'.
-#' @param filpat File pattern
+#' @param filpat File pattern (can more info be given here? Or could we just constrain the expected file pattern so minimize unexpected user behavior?)
 #' @param mhset Microphone sensitivity dBV/Pa (see for more info https://doimspp.sharepoint.com/sites/nsnsdallstaff/Shared%20Documents/Science%20and%20Tech/Software/SongMeterToNVSPL/SongMeter4toNVSPL.mp4)
 #' @param Gset Gain settings
-#' @param vADCset Zero-peak
+#' @param vADCset Zero-peak   (more info? what does this mean)
 #' @param enviset Use 'Air' or 'Wat' to indicate whether audio recordings occurred in a terrestrial or underwater environment, respectively.
-#' @param envir Use 1 or water and 2 for air. \strong{(CB: I am not sure the difference/utility of having this argument vs. the previous one?)}
 #' @param rescWat Use 1 if you want to re-scale underwater values to be able to plot using AMT, 0 if not
 #' @param timezone Specify timezone setting used in the audio recorder (e.g, 'GMT'). If recordings were taken in local time at your study site, specify an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., 'America/Los_Angeles'). This is extremely important to foster clarity in data analysis through the years, as some projects have varied year to year in whether recordings were taken in GMT vs. local time.
 #' @return If test.file = TRUE, returns diagnostics. If test.file = FALSE, returns NVSPL txt files in NVSPL folder generated by the function. \strong{CB: we need to go through and document every column in the output of this --i.e. what does INVID and GChar1 etc etc mean -- where is metadata located for this?}
+#'
+#'
+#'
+#' Output NVSPL txt file contains the following N columns (need to go through and doc these):
+#'
+#' \itemize{
+#' \item{\strong{SiteID}: Site name.}
+#' \item{\strong{STime}: tbd.}
+#' \item{\strong{H12p5}: tbd}
+#' \item{\strong{all H columns}: tbd.}
+#' \item{\strong{H20000}: tbd.}
+#' \item{\strong{dbA}: ....}
+#' \item{\strong{dbC}: ....}
+#' \item{\strong{dbZ}: ...}
+#' \item{\strong{etc}: ...}
+#' \item{\strong{GPSTimeAdjustment}: Indicates the timezone adjustment made. 'GMT' indicates that audio recordings were taking with no timezone adjustment. If recordings were taken in local time at a study site, an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., 'America/Los_Angeles') should have been specified using the 'timezone' input argument to the function. This is extremely important to foster clarity in data analysis through the years, as some projects have varied year to year in whether recordings were taken in GMT vs. local time. setting used in the audio recorder}
+#' }
+#'
+#'
 #' @details
 #'
 #' This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to PAMGuide that would support NSNSD data processing workflows. PAMGuide was published as supplementary material to the following Open Access journal article:
@@ -1490,24 +1494,32 @@ PAMGuide <- function(...,atype='PSD',plottype='Both',envi='Air',calib=0,
 #' }
 #'
 
-# split_path <- function(x) if (dirname(x)==x) x else c(basename(x),split_path(dirname(x)))
-# ^^^ cb it doesn't appear this function is used anywhere?? can we eliminate?
+
+# More ideas:
+#  Instead of test.file, could do a "diagnostics" argument instead, to plot a time continuous, whether time stamp is right etc. (Good idea but a lot more effort
+# since it's essentially eliminating the pamguide function and I'd then have to
+# knit those two functions together to get the same effect. Not a priority for
+# CB at the moment)
+# A way to get rid of the pamguide function?
+#  Better variable names and/or commenting. Highly desirable but CB not knowledgeable
+#  enough to expediently do this and know what variable names / math should be, etc. Not a top priority.
+# Params file (like a run log)- use future params file as an input? Good idea
+# need to overhaul NVSPL file in general, but that's a task more for Damon
+
 
 Wave_To_NVSPL <- function(input.directory,
-                               data.directory = TRUE,
-                               test.file = FALSE,
-                               project,
-                               PAMvers = 'V12_noChunk',
-                               instrum = "SM4",
-                               filext = "_%Y%m%d_%H%M%S.wav",
-                               filpat = ".+\\d{8}_\\d{6}.wav",
-                               mhset = -35,
-                               Gset = 16,
-                               vADCset = 1,
-                               enviset = "Air",
-                               envir = 2,
-                               rescWat = 0,
-                               timezone = "GMT"
+                          data.directory = TRUE,
+                          test.file = FALSE,
+                          project,
+                          instrum = "SM4",
+                          filext = "_%Y%m%d_%H%M%S.wav",
+                          filpat = ".+\\d{8}_\\d{6}.wav",
+                          mhset = -35,
+                          Gset = 16,
+                          vADCset = 1,
+                          enviset = "Air",
+                          rescWat = 0,
+                          timezone = "GMT"
 )
 {
 
@@ -1533,13 +1545,13 @@ Wave_To_NVSPL <- function(input.directory,
   # If data in subdirs:
   if (data.directory == TRUE) {WAVDirs = WAVDirs[grep("Data", WAVDirs)]}
 
-  ## (3) FILE NAMES FORMAT
-  # filext <- "_%Y%m%d_%H%M%S.wav"
-  # filpat <- ".+\\d{8}_\\d{6}.wav"
-  # list.files(WAVDirs[1], pattern = filpat, full.names = TRUE)
+  ## (3) VERSION OF PAMGUIDE, see the most recent code
+  vers <- 'V12noChunk' # CB: to be updated with any future tweaks/releases of this Github code
+  # this way it updates automatically in the function instead of user having to input
 
-  ## (4) VERSION OF PAMGUIDE, see the most recent code
-  vers <- PAMvers
+
+  if(enviset == 'Air') envir <- 2
+  if(enviset == 'Wat') envir <- 1
 
   # Save params for posterity once all necessary objects have been initialized
   params.name <- paste0("paramsFileNVSPL_", project, "_", instrum)
@@ -1611,11 +1623,11 @@ Wave_To_NVSPL <- function(input.directory,
       dys = unique(gsub(".+_(\\d{8})_(.+).wav","\\1",WAVfiles) )
 
       ## NOTE: uncomment and edit next line if code breaks partway through, use this to start loop on next file
-      #dys = dys[74:90]
+      #dys = dys[74:90]  # CB: THIS IS NOT ROBUST. Add a trycatch & warning messaging instead.
 
       ## sets the file names for the directory- new one for each direcory
-      s1 = unlist (strsplit( WAVfiles[1], '_') ) [1]
-      site = unlist (strsplit( s1, '_') )[1]
+      s1 = unlist(strsplit( WAVfiles[1], '_') ) [1]
+      site = unlist(strsplit( s1, '_') )[1]
       filename = paste(site, filext, sep="")
 
       ## create NVSPL OUTPUT directory
@@ -1638,7 +1650,7 @@ Wave_To_NVSPL <- function(input.directory,
         filenms = paste(WAVDirs[ff], "\\", udaylist, sep="")
 
         ## (2) RUN PAMGUIDE-------------------------------------------------------------
-        Meta(type = 'TOL', timestring = filename,
+        Meta(atype = 'TOL', timestring = filename,
              r=0, outwrite=1, plottype = "None", calib=1,
              envi=enviset, ctype="TS", Mh=mhset, G=Gset, vADC=vADCset,
              filenms = filenms)
@@ -1646,7 +1658,7 @@ Wave_To_NVSPL <- function(input.directory,
         ## (3) READ IN file created by PAMGUIDE------------------------------------------
         PAMfiles = list.files(WAVDirs[ff], pattern = "Conk.*.csv",
                               recursive=T, full.names=T)
-        PAMfiles2 = list.files(WAVDirs[ff], pattern = "*.csv",
+        PAMfiles2 = list.files(WAVDirs[ff], pattern = ".csv", # CB: originally this said "*.csv". Had to change to '.csv' to work
                                recursive=T, full.names=T)
         PAMdirFiles = dirname(PAMfiles2[2])
 
@@ -1659,8 +1671,6 @@ Wave_To_NVSPL <- function(input.directory,
         unlink(PAMdirFiles, recursive = TRUE)
 
         ## (4) EXTRACT PARAMS--------------------------------------------------------------
-        # CB this is another place I would prefer data.frame style extractions with named columns
-        # rather than just pulling based on a column number and trusting that it's what we actually want
         aid <- conk[1,1]
         tstampid <- substr(aid,1,1)		#extract time stamp identifier
         enviid <- substr(aid,2,2)			#extract in-air/underwater identifier
@@ -1668,6 +1678,8 @@ Wave_To_NVSPL <- function(input.directory,
         atypeid <- substr(aid,4,4)
 
         # assign PAMGuide variables envi, calib, atype from metadata
+        #CB: IN THEORY THE ATYPE is never going to change since atype = 'TOL'
+        # is a default arg in the meta and pamguide_meta fxn
         if (tstampid == 1){tstamp = 1} else {tstamp = ""}
         if (enviid == 1){
           envi = 'Air'  ; pref <- 20
@@ -1694,18 +1706,18 @@ Wave_To_NVSPL <- function(input.directory,
         # (note: PAMguide starts at 25 Hz, so lower bands (12.5, 15.8, and 20 are always NaNs)
         NVSPLhead = c("SiteID","STime", "H12p5", "H15p8", "H20", "H25", "H31p5","H40","H50","H63","H80","H100","H125","H160","H200","H250","H315","H400","H500",
                       "H630","H800","H1000","H1250","H1600","H2000","H2500","H3150","H4000","H5000","H6300","H8000","H10000","H12500","H16000","H20000",
-                      "dbA","dbC","dbF","Voltage","WindSpeed","WindDir","TempIns","TempOut","Humidity",
-                      "INVID","INSID","GChar1","GChar2","GChar3", "AdjustmentsApplied","CalibrationAdjustment","GPSTimeAdjustment","GainAdjustment","Status")
-        # NOTE TO CATHLEEN - add a PAMguide version column here? why isn't there one? Why is vers currently being put in GChar2 column?
-        # Also want to add a filename column here so that filenames get carried through the workflow
+                      "dbA","dbC","dbZ","Voltage","WindSpeed","WindDir","TempIns","TempOut","Humidity",
+                      "INVID","INSID","GChar1","PAMGuideVersion","GChar3", "AdjustmentsApplied","CalibrationAdjustment","GPSTimeAdjustment","GainAdjustment","Status")
 
         # check to see of more 1/3 OCB than 33, if so truncate data
         if(dim(a)[2] > 30) a <- a[,1:30]
 
         # check to see if less than 33 octave
-        endA = ((33-4)-dim(a)[2])+1
+        endA = ((33-4)-dim(a)[2])+1  # cb: what is the actual check?
+        # CB: add status message that if less than 33 octaves, we do something
 
         # calculate a dBA
+        # CB: ideally data.frame this with named cols
         aweight <- c(-63.4,-56.7,-50.5,-44.7, -39.4, -34.6, -30.2, -26.2, -22.5, - 19.1, -16.1,
                      -13.4, -10.9, -8.6, -6.6, -4.8, -3.2, -1.9, -0.8, 0, 0.6, 1, 1.2,
                      1.3, 1.2, 1.0, 0.5, -0.1, -1.1, -2.5, -4.3, -6.6, -9.3)
@@ -1715,10 +1727,11 @@ Wave_To_NVSPL <- function(input.directory,
         aA = t( t(a) + aweight[4:(33-endA)] )
 
         # convert to pressure
-        press <- rowMeans(10^(aA/10))
-        dBA = 10*log10(press) #hist(dBA)
-        pressS <- rowSums(10^(aA/10))
-        dBAsum = 10*log10(pressS) #hist(dBA)
+        press <- rowMeans(10^(aA/10))   # cb: ie pressure mean
+        dBA = 10*log10(press) #hist(dBA)  # cb: mean of the pressures
+        pressS <- rowSums(10^(aA/10))   # cb: ie pressure sum
+        zweight <- rowSums(10^(a/10))   # cb: if want to do a zweighting fxn
+        dBAsum = 10*log10(pressS) #hist(dBA) #cb: sum of the pressures
         # if underwater, rescales the values to the AMT scale, using a normalization formula
         if (rescWat == 1) {
           if (envir == 1)
@@ -1742,20 +1755,27 @@ Wave_To_NVSPL <- function(input.directory,
         #      More robust is to set this up as a data.frame or data.table and directly name the columns
         tempOutput <- cbind(site, tString, 0, 0, 0, round(a, 1),
                             matrix(rep(0,dim(a)[1] * nBlankCols),
-                                   nrow=dim(a)[1], ncol=nBlankCols))
+                                   nrow = dim(a)[1], ncol = nBlankCols))
+        colnames(tempOutput) <- NVSPLhead
+        tempOutput[,'dbA'] <- dBAsum
+        tempOutput[,'dbZ'] <- zweight
+        tempOutput[,'PAMGuideVersion'] <- vers
+
+        # CB: I'll keep the GPSTimeAdjustment as the timezone since I'm not
+        # sure the purpose/assumptions of that column
+        tempOutput[,'GPSTimeAdjustment'] <- timezone
 
         # CATHLEEN note to self- -
         # want to redo this so that column contents are assigned by name rather
         # than by number. Bc I don't know that these are going in the right place
-        tempOutput[,36] = dBA     # CB: we need to revisit this calculation
-        tempOutput[,37] = dBAsum  # CB: we need to revisit this calculation
-        tempOutput[,48] = vers
-        tempOutput[,52] = timezone # CB: so apparently GPSTimeAdjustment column header is the timezone?
-
-        colnames(tempOutput) <- NVSPLhead
-        # CB: again, would much prefer to reaarrange this as a data.frame so
-        # that contents can be assigned by column name rather than column number
-        # I think this would be more robust/easier to avoid mistakes in future changes
+        # just do colnames(tempout) <- nvspl head and then rename
+        # tempOutput[,36] = dBAsum     # CB: this should be dbaSUM not just dba. But column name will be dbA
+        #tempOutput[,37] = dBAsum  # CB: this is actually the dbC column!! not dbasum. We are not applying cweight. We can elim this colum
+       # tempOutput[,38] =  zweight  # CB: colname is dbF really it should be dbZ is the nomenclature
+        # tempOutput[,48] = vers
+        # tempOutput[,52] = timezone # CB: so apparently GPSTimeAdjustment column header is the timezone?
+        #
+        # colnames(tempOutput) <- NVSPLhead
 
         ## separate tempOutput by unique day hours
         tempOutput <- cbind(unqHrs, tempOutput) #add a column to sort by
