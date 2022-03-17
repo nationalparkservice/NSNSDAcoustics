@@ -13,7 +13,6 @@ normdBA <- function (x) { (x-(-10)) / (80 - (-10)) }
 #' @param input.directory Top-level NVSPL directory from which to ingest data (possibly "NVSPL")
 #' @param output.directory Where to place output files, (possibly "ANALYSIS")
 #' @param project File name for your project (e.g., 'GLBAPhenology2019')
-#' @param PAMvers Version of PAMGuide (e.g., 'PAMGUIDE_V12noChunk') or should this be version of this function, in which case where is that documented?
 #' @param instrum Audio recorder used (e.g., 'SM4')
 #' @param start.at.beginning Logical flag for where computation should start. Default = FALSE. When FALSE, indices are calculated only for data that begins at the top of the chosen timestep.
 #' For example, if your time step is 10 minutes, then each AI calculation will start at 0, 10, 20, 30, 40, 50 for each hour. If the full ten minute sample is not available, the timestep is skipped. This version is ideal if you want to break results easily into hours.
@@ -74,7 +73,7 @@ normdBA <- function (x) { (x-(-10)) / (80 - (-10)) }
 #' \item{\strong{Hm}: stuff. }
 #' \item{\strong{HvPres}: stuff. }
 #' \item{\strong{HvSPL}: stuff. }
-#' \item{\strong{unlist(dif_L10L90)}: stuff. }
+#' \item{\strong{unlist(dif_L10L90)}: stuff. What is this colname?}
 #' \item{\strong{Mamp}:  maybe this is acoustic richness instead, according to the code (though at some point I concluded not based on plots) }
 #' \item{\strong{NumCL}: stuff. }
 #' \item{\strong{SP2}: this might be spectral persistence?? }
@@ -120,7 +119,6 @@ normdBA <- function (x) { (x-(-10)) / (80 - (-10)) }
 #' NVSPL_To_AI(input.directory = 'example-input-directory',
 #'             output.directory = 'example-output-directory',
 #'             project = 'example-project',
-#'             PAMvers = 'PAMGUIDE_V12noChunk',
 #'             start.at.beginning = FALSE)
 #'
 #' # Run NVSPL_To_AI to generate acoustic indices csv for example NVSPL files,
@@ -128,7 +126,6 @@ normdBA <- function (x) { (x-(-10)) / (80 - (-10)) }
 #' NVSPL_To_AI(input.directory = 'example-input-directory',
 #'             output.directory = 'example-output-directory',
 #'             project = 'example-project',
-#'             PAMvers = 'PAMGUIDE_V12noChunk',
 #'             start.at.beginning = TRUE)
 #'
 #' # Read in both files to compare
@@ -153,7 +150,6 @@ normdBA <- function (x) { (x-(-10)) / (80 - (-10)) }
 NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
                          output.directory, # where to put output files
                          project,
-                         PAMvers, # indicate version of pamguide, e.g, 'PAMGUIDE_V12noChunk'
                          instrum = "SM4", # c('SM4', 'SM2' ?) # indicate audio recorder used
                          start.at.beginning = FALSE,
                          fminimum = 'H1600', # lower limit of freq band of interest (NOTE: HXXXX represents the center frequency of the octave band, eg. H1600 = 1413-1778 Hz)
@@ -196,7 +192,7 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
   mySites <- sort(unique(gsub("NVSPL_(.+)_\\d{4}_\\d{2}_\\d{2}_\\d{2}.txt","\\1",basename(nvsplFiles))))
 
   ## (3) VERSION OF PAMGUIDE, see the most recent code
-  vers <- PAMvers
+  PAMGuideVersion <- 'V12noChunk' # CB: to be updated with any future tweaks/releases of this Github code
 
   # Save params for posterity once all necessary objects have been initialized
   params.name <- paste0("paramsFileAcousticIndex_", project, "_", instrum)
@@ -240,8 +236,10 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
 
         myTempMatrix = read.csv(sf)
         timeData = matrix(as.numeric(unlist( strsplit( gsub(":"," ",substr(gsub('-',' ',as.character(myTempMatrix[,2])),0,19)),' ')) ),ncol=6, byrow=T )
+        GPSTimeAdjustment <- unique(myTempMatrix$GPSTimeAdjustment) # CB added. Needs to be carried through since occasionally varies based on who collected the data that year
         myTempMatrix = cbind(timeData, myTempMatrix[,3:45] )
         colnames(myTempMatrix)[1:6] = c("Yr","Mo", "Day", "Hr", "Min", "Sec")
+        myTempMatrix$GPSTimeAdjustment <- GPSTimeAdjustment
         dayMatrix = rbind(dayMatrix, myTempMatrix)
 
         #REVIEW spectrogram of the 1 hr file if desired
@@ -734,13 +732,18 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
             #........................................................................................
 
             #APPEND to a datasheet with first minute of chunk...
-            Output = rbind(Output, cbind(mySites[ss], siteDays[dd],
-                                         workingMatrix[1,1:6], timestep, dim(workingMatrix)[1],
-                                         ACIout, ACIoutI, ACIoutN, BKdB_low, BKdBA_low, BKdB_bird, BKdBA_bird,
-                                         avgAMP, L10AMP, Hf, Ht, EI, BioPh, AthPh, SoundScapeI, Bio_anth,
-                                         AA, AAc, AAdur, AAanth, AAcanth, AAduranth,
-                                         Rough, ADI_step, Eveness_step,
-                                         pk, pkd, pks, Hm, HvPres, HvSPL, unlist(dif_L10L90), Mamp, NumCL, SP2,CLdets, vers) )
+            Output = rbind(Output,
+                           cbind(mySites[ss], siteDays[dd],
+                                 workingMatrix[1,1:6], timestep, dim(workingMatrix)[1],
+                                 ACIout, ACIoutI, ACIoutN, BKdB_low, BKdBA_low,
+                                 BKdB_bird, BKdBA_bird,
+                                 avgAMP, L10AMP, Hf, Ht, EI, BioPh, AthPh,
+                                 SoundScapeI, Bio_anth,
+                                 AA, AAc, AAdur, AAanth, AAcanth, AAduranth,
+                                 Rough, ADI_step, Eveness_step,
+                                 pk, pkd, pks, Hm, HvPres, HvSPL, unlist(dif_L10L90),
+                                 Mamp, NumCL, SP2,CLdets,
+                                 PAMGuideVersion, GPSTimeAdjustment) )
 
             BKADI = rbind(BKADI,BKBirddB) # rbind(BKADI,cbind(workingMatrix[1,1:6],BKBirddB))
 
@@ -756,7 +759,7 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
 
         } # END of minute loop
       }   # END of hour loop
-      }  # end if using generic and not 'start.at.beginning
+      }  # end if using generic and not 'start.at.beginning'
 
 
       # If using start.at.beginning
@@ -851,7 +854,6 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
               if (cutoff == 0) {BK_Towsey[ff] = tmpnam[colmax] } else { BK_Towsey[ff] = tmpnam[colmax] + stploc*0.1 }
             }
 
-
             BK_Towsey_anth<- NULL
             for (ff in 1:length(BKdayMatrixlim) ) { #loop through each frequency band
               #(1) compute a histogram of lowest dB values, with a length equal to 1/8th of total values
@@ -912,7 +914,7 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
             {
               t[,frq] <- abs( diff(dayMatrixlimI[,frq]) )/ sum(dayMatrixlimI[,frq])
             }
-            ACIoutI = sum(t)# ACI results for each time chunck on a given day
+            ACIoutI = sum(t)# ACI results for each time chunk on a given day
             rm(t)
 
             ## (1b) CALCULATE ACI- normalized
@@ -972,6 +974,7 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
             AA = NULL
             AAc = NULL
             s2n <- NULL
+
             for (f in 1:length(dayMatrixlim) ) {
               AA[f] =  length( dayMatrixlim[,f][ dayMatrixlim[,f] > BK_Towsey[f]+3 ] )/ length (dayMatrixlim[,f])
               AAc[f] = length( dayMatrixlim[,f][ dayMatrixlim[,f] > BK_Towsey[f]+3 ] )
@@ -1053,6 +1056,7 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
 
             #........................................................................................
             ## (18) Roughness
+
             Rough = NULL
             for (f in 1:length(dayMatrixlim) ){
               x = dayMatrixlim[,f]
@@ -1168,7 +1172,6 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
               tmpCLdur = (BPrle$lengths[BPrle$values == cls[clls] ] )
 
               Cldur = mean(tmpCLdur,rm.na = T) # mean duration of each cluster
-              #Cldur = mean(tmpCLdur[tmpCLdur>1]) # mean duration of each cluster
               tmpCLpk = table(tmpCL$pkFq)
               CLpk = as.numeric( rownames( as.data.frame(which.max(tmpCLpk))[1] ) ) # peak frequency
               if (is.na( tmpCL[1,1])  == T ){ CLpk = NA}
@@ -1185,13 +1188,21 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
             #........................................................................................
 
             #APPEND to a datasheet with first minute of chunk...
-            Output = rbind(Output, cbind(mySites[ss], siteDays[dd],
-                                         workingMatrix[1,1:6], timestep, dim(workingMatrix)[1],
-                                         ACIout, ACIoutI, ACIoutN, BKdB_low, BKdBA_low, BKdB_bird, BKdBA_bird,
-                                         avgAMP, L10AMP, Hf, Ht, EI, BioPh, AthPh, SoundScapeI, Bio_anth,
-                                         AA, AAc, AAdur, AAanth, AAcanth, AAduranth,
-                                         Rough, ADI_step, Eveness_step,
-                                         pk, pkd, pks, Hm, HvPres, HvSPL, unlist(dif_L10L90), Mamp, NumCL, SP2,CLdets, vers) )
+            Output = rbind(Output,
+                           cbind(mySites[ss], siteDays[dd],
+                                 workingMatrix[1,1:6], timestep, dim(workingMatrix)[1],
+                                 ACIout, ACIoutI, ACIoutN, BKdB_low, BKdBA_low,
+                                 BKdB_bird, BKdBA_bird,
+                                 avgAMP, L10AMP, Hf, Ht, EI, BioPh, AthPh,
+                                 SoundScapeI, Bio_anth,
+                                 AA, AAc, AAdur, AAanth, AAcanth, AAduranth,
+                                 Rough, ADI_step, Eveness_step,
+                                 pk, pkd, pks, Hm, HvPres, HvSPL, unlist(dif_L10L90), Mamp,
+                                 NumCL, SP2,CLdets,
+                                 PAMGuideVersion, GPSTimeAdjustment) )
+
+            # CB - Add timezone
+         #   Output$GPSTimeAdjustment <- GPSTimeAdjustment
 
             BKADI = rbind(BKADI,BKBirddB) # rbind(BKADI,cbind(workingMatrix[1,1:6],BKBirddB))
 
@@ -1214,6 +1225,7 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
 
       #........................................................................................
       ## RUN acoustic indicies on each DAY- NOT PART OF THIS CODE see version 17!
+      #   CB ^oh no. what does this mean?? what is version 17? Is this tracked somewhere?
       #........................................................................................
 
       dayMatrixlim1 =  NULL
