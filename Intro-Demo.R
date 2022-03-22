@@ -14,24 +14,23 @@ library(NbClust)
 library(svDialogs)
 library(vegan)
 
+# Wave_To_NVSPL ================================================================
+
 # Look at helpfile for Wave_To_NVSPL, which uses PAMGuide
 ?Wave_To_NVSPL
 
 # Create an input directory for this example
 dir.create('example-input-directory')
 
-# Read in example wave file
-data(exampleAudio)
+# Read in example wave files
+data(exampleAudio1)
+data(exampleAudio2)
 
-# Write example wave to example input directory
+# Write example waves to example input directory
 tuneR::writeWave(object = exampleAudio,
-                 filename = 'example-input-directory/GLBABART_20200528_104200.wav')
-
-# Write the same example wave file twice, but give it a fake different name
-# this time (Wave_To_NVSPL expects to process multiple files, so we're
-# generating a second "fake" wave file here to demonstrate the function example)
+                 filename = 'example-input-directory/Rivendell_20210715_114502.wav')
 tuneR::writeWave(object = exampleAudio,
-                 filename = 'example-input-directory/GLBABART_20200528_114157.wav')
+                 filename = 'example-input-directory/Rivendell_20210715_115502.wav')
 
 # Perform Wave_To_NVSPL in test mode (test.file = TRUE)
 Wave_To_NVSPL(
@@ -40,10 +39,6 @@ Wave_To_NVSPL(
   test.file = TRUE,
   project = 'testproject',
   timezone = 'GMT')
-
-# PLACES TO CHECK in main Wave_To_NVSPL wrapper function
-# (it's possible the mistakes are in the math of the NPS script, and not in the pamguide code itself?)
-# --> Line 1692 section might be the first place to check?
 
 # Perform Wave_To_NVSPL in batch mode (test.file = FALSE)
 Wave_To_NVSPL(
@@ -64,15 +59,11 @@ data.table(one.nvspl)
 unlink(x = 'example-input-directory', recursive = TRUE)
 
 
-# To step into the function itself and troubleshoot or debug,
-# I prefer placing a browser() call near the problem line in the function
-# Then re-source the function change with that browser() call, and the next time
-# you run the function you'll step into the function environment and be able to debug
-
-
-
 
 # NVSPL_To_AI =================================================================
+
+# Look at helpfile for NVSPL_To_AI
+?NVSPL_To_AI
 
 # Create an input and output directory for this example
 dir.create('example-input-directory')
@@ -103,8 +94,6 @@ NVSPL_To_AI(input.directory = 'example-input-directory',
             project = 'example-project',
             start.at.beginning = TRUE)
 
-
-
 # Read in both files to compare
 start.standard <- read.csv(list.files(path = './example-output-directory/',
                                       pattern = 'Index_Created',
@@ -126,10 +115,8 @@ unlink(x = 'example-output-directory', recursive = TRUE)
 
 # Other major functions downstream of PAMGuide ================================
 
-# No need to do anything with these for now
-
-# Convert NVSPL files to acoustic indices
-?NVSPL_To_AI
+# birdnet functions
 
 # Run Bayesian Changepoint Analysis for a single site and year based on acoustic indices
-?bcp_phenology_ai
+?bcp_phenology_ai # hold off on these for now since maybe they will not be relevant
+# I think the best place to focus may be BirdNET for now
