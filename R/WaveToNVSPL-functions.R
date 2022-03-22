@@ -1453,18 +1453,15 @@ PAMGuide <- function(...,atype='PSD',plottype='Both',envi='Air',calib=0,
 #' # Create an input directory for this example
 #' dir.create('example-input-directory')
 #'
-#' # Read in example wave file
-#' data(exampleAudio)
+#' # Read in example wave files
+#' data(exampleAudio1)
+#' data(exampleAudio2)
 #'
-#' # Write example wave to example input directory
+#' # Write example waves to example input directory
 #' tuneR::writeWave(object = exampleAudio,
-#'                  filename = 'example-input-directory/GLBABART_20200528_104200.wav')
-#'
-#' # Write the same example wave file twice, but give it a fake different name
-#' # this time (Wave_To_NVSPL expects to process multiple files, so we're
-#' # generating a second "fake" wave file here to demonstrate the function example)
+#'                  filename = 'example-input-directory/Rivendell_20210715_114502.wav')
 #' tuneR::writeWave(object = exampleAudio,
-#'                  filename = 'example-input-directory/GLBABART_20200528_114157.wav')
+#'                  filename = 'example-input-directory/Rivendell_20210715_115502.wav')
 #'
 #' # Perform Wave_To_NVSPL in test mode (test.file = TRUE)
 #' Wave_To_NVSPL(
@@ -1497,12 +1494,12 @@ PAMGuide <- function(...,atype='PSD',plottype='Both',envi='Air',calib=0,
 
 # More ideas:
 #  Instead of test.file, could do a "diagnostics" argument instead, to plot a time continuous, whether time stamp is right etc. (Good idea but a lot more effort
-# since it's essentially eliminating the pamguide function and I'd then have to
+# since it's essentially eliminating the pamguide function and then would have to
 # knit those two functions together to get the same effect. Not a priority for
-# CB at the moment)
+# CB yet)
 # A way to get rid of the pamguide function?
 #  Better variable names and/or commenting. Highly desirable but CB not knowledgeable
-#  enough to expediently do this and know what variable names / math should be, etc. Not a top priority.
+#  enough to do this expediently and know what variable names / math should be, etc. Not a top priority.
 # Params file (like a run log)- use future params file as an input? Good idea
 # need to overhaul NVSPL file in general, but that's a task more for Damon
 

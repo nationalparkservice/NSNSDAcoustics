@@ -8,7 +8,6 @@ NVSPL_To_AI(
   input.directory,
   output.directory,
   project,
-  PAMvers,
   instrum = "SM4",
   start.at.beginning = FALSE,
   fminimum = "H1600",
@@ -29,8 +28,6 @@ NVSPL_To_AI(
 \item{output.directory}{Where to place output files, (possibly "ANALYSIS")}
 
 \item{project}{File name for your project (e.g., 'GLBAPhenology2019')}
-
-\item{PAMvers}{Version of PAMGuide (e.g., 'PAMGUIDE_V12noChunk') or should this be version of this function, in which case where is that documented?}
 
 \item{instrum}{Audio recorder used (e.g., 'SM4')}
 
@@ -108,7 +105,7 @@ CSV file contains the following 59 columns:
 \item{\strong{Hm}: stuff. }
 \item{\strong{HvPres}: stuff. }
 \item{\strong{HvSPL}: stuff. }
-\item{\strong{unlist(dif_L10L90)}: stuff. }
+\item{\strong{unlist(dif_L10L90)}: stuff. What is this colname?}
 \item{\strong{Mamp}:  maybe this is acoustic richness instead, according to the code (though at some point I concluded not based on plots) }
 \item{\strong{NumCL}: stuff. }
 \item{\strong{SP2}: this might be spectral persistence?? }
@@ -151,7 +148,6 @@ write.table(x = exampleNVSPL[[i]],
 NVSPL_To_AI(input.directory = 'example-input-directory',
             output.directory = 'example-output-directory',
             project = 'example-project',
-            PAMvers = 'PAMGUIDE_V12noChunk',
             start.at.beginning = FALSE)
 
 # Run NVSPL_To_AI to generate acoustic indices csv for example NVSPL files,
@@ -159,7 +155,6 @@ NVSPL_To_AI(input.directory = 'example-input-directory',
 NVSPL_To_AI(input.directory = 'example-input-directory',
             output.directory = 'example-output-directory',
             project = 'example-project',
-            PAMvers = 'PAMGUIDE_V12noChunk',
             start.at.beginning = TRUE)
 
 # Read in both files to compare
