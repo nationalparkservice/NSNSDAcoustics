@@ -118,3 +118,8 @@ add_time_cols <- function(dt,
   }
 
 }
+
+
+# normdBA ======================================================================
+# Used within NVSPL_To_AI -- internal pkg function
+normdBA <- function (x) { (x-(-10)) / (80 - (-10)) }

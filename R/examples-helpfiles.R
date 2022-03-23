@@ -1,19 +1,36 @@
 # Documentation for example data
 
-#' @title exampleAudio
-#' @description Sample recording (audio) data stored as a \code{Wave} file. 
+#' @title exampleAudio1
+#' @description Sample recording (audio) data stored as a \code{Wave} file.
 #' @format An object of class \code{Wave} containing 6 slots.
-#' @details The exampleAudio object can be used to experiment with functions that use audio data, such as \code{\link{SongMeter_To_NVSPL}}
+#' @details The exampleAudio1 object can be used to experiment with functions that use audio data, such as \code{\link{Wave_To_NVSPL}}
 #' @docType data
 #' @keywords datasets
-#' @name exampleAudio
-#' @usage data(exampleAudio)
+#' @name exampleAudio1
+#' @usage data(exampleAudio1)
 #' @examples
 #' # Load the dataset
-#' data(exampleAudio)
+#' data(exampleAudio1)
 #'
 #' # View structure
-#' str(exampleAudio, max.level = 1)
+#' str(exampleAudio1, max.level = 1)
+#'
+NULL
+
+#' @title exampleAudio2
+#' @description Sample recording (audio) data stored as a \code{Wave} file.
+#' @format An object of class \code{Wave} containing 6 slots.
+#' @details The exampleAudio2 object can be used to experiment with functions that use audio data, such as \code{\link{Wave_To_NVSPL}}
+#' @docType data
+#' @keywords datasets
+#' @name exampleAudio2
+#' @usage data(exampleAudio2)
+#' @examples
+#' # Load the dataset
+#' data(exampleAudio2)
+#'
+#' # View structure
+#' str(exampleAudio2, max.level = 1)
 #'
 NULL
 
@@ -28,14 +45,14 @@ NULL
 #' @name exampleNVSPL
 #' @usage data(exampleNVSPL)
 #' @examples
-#' 
+#'
 #' # Create an input directory for this example
 #' dir.create('example-input-directory')
 #'
 #' # Read in example NVSPL data
 #' data(exampleNVSPL)
-#' 
-#' # View structure 
+#'
+#' # View structure
 #' str(exampleNVSPL, 1)
 #'
 #' # Write example NVSPL data to example input directory to mimic NVSPL .txt format
@@ -62,11 +79,11 @@ NULL
 #' @name exampleScores
 #' @usage data(exampleScores)
 #' @examples
-#' 
+#'
 #' # Read in example data
 #' data(exampleScores)
-#' 
-#' # View structure 
+#'
+#' # View structure
 #' str(exampleScores, 1)
 #'
 NULL
