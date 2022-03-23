@@ -21,7 +21,7 @@ The exampleScores object is used to demonstrate \code{\link{add_time_cols}}.
 # Read in example data
 data(exampleScores)
 
-# View structure 
+# View structure
 str(exampleScores, 1)
 
 }

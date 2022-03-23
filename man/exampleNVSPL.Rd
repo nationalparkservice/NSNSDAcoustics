@@ -24,7 +24,7 @@ dir.create('example-input-directory')
 # Read in example NVSPL data
 data(exampleNVSPL)
 
-# View structure 
+# View structure
 str(exampleNVSPL, 1)
 
 # Write example NVSPL data to example input directory to mimic NVSPL .txt format
