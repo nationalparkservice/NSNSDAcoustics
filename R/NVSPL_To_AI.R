@@ -1,11 +1,3 @@
-# NSVPL_To_AI functions
-
-
-
-# normdBA ======================================================================
-# Used within NVSPLtoAI... essentially this would be an internal pkg function
-normdBA <- function (x) { (x-(-10)) / (80 - (-10)) }
-
 # NVSPL_To_AI ==================================================================
 #' @name NVSPL_To_AI
 #' @title Convert NVSPL to acoustic indices
