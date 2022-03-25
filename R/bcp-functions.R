@@ -1040,7 +1040,7 @@ species_counts <- function(db.path,
     setkey(n.by.timestep, join_col)
     merge_ai <- ai[n.by.timestep, roll = TRUE, rollends = c(TRUE,TRUE)]
     #  merge_ai <- merge_ai[,c('dateTime', 'detectionTimeMinute','join_col', 'locationID', 'N')]
-    n.by.timestep.2 <- merge_ai[,sum(N), by = 'dateTimeLocal'] # NOW we finally have a close approximately of the N by AI timestep -- may be a little off bc rounds to nearest bin rather than the 10 minutes after, but good enough
+    n.by.timestep.2 <- merge_ai[,sum(N), by = 'dateTimeLocal'] # NOW we finally have a close approximation of the N by AI timestep -- may be a little off bc rounds to nearest bin rather than the 10 minutes after, but good enough
     colnames(n.by.timestep.2)[colnames(n.by.timestep.2) == 'V1'] <- 'N'
 
     # Find dateTimes missing from the merged data
