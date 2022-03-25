@@ -42,21 +42,6 @@ birdnet_run(
 }
 \value{
 Saves an unformatted CSV of results for each wave file in results.directory. Files have prefix "BirdNET_". If there is an issue with any audio files (e.g., file corrupted), problematic files that were not processed will be recorded in a file named 'BirdNET_Problem-Files_DATE.csv'.
-
-Output NVSPL txt file contains the following N columns (need to go through and doc these):
-
-\itemize{
-\item{\strong{SiteID}: Site name.}
-\item{\strong{STime}: tbd.}
-\item{\strong{H12p5}: tbd}
-\item{\strong{all H columns}: tbd.}
-\item{\strong{H20000}: tbd.}
-\item{\strong{dbA}: ....}
-\item{\strong{dbC}: ....}
-\item{\strong{dbZ}: ...}
-\item{\strong{etc}: ...}
-\item{\strong{GPSTimeAdjustment}: Indicates the timezone adjustment made. 'GMT' indicates that audio recordings were taking with no timezone adjustment. If recordings were taken in local time at a study site, an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., 'America/Los_Angeles') should have been specified using the 'timezone' input argument to the function. This is extremely important to foster clarity in data analysis through the years, as some projects have varied year to year in whether recordings were taken in GMT vs. local time. setting used in the audio recorder}
-}
 }
 \description{
 This function uses the reticulate package to run Python from RStudio in order to process files through BirdNET. It assumes that all files in a folder come from the same site, and that the audio files are wave format and follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. To use this function, users must first successfully install \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite}, set up a conda environment, and make necessary modifications to the BirdNET analyze.py file. See \href{https://cbalantic.github.io/Install-BirdNET-Windows-RStudio/}{here} for one way to accomplish these steps. Please input absolute paths for directory arguments. This is necessary due to the way RStudio is communicating with the underlying Python code.

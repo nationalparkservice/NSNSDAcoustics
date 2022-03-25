@@ -9,12 +9,12 @@ birdnet_format_csv(results.directory, timezone)
 \arguments{
 \item{results.directory}{Path to directory where raw BirdNET result CSVs have been stored}
 
-\item{timezone}{Specify timezone setting used in the audio recorder (e.g, 'GMT'). If recordings were taken in local time at your study site, specify an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., 'America/Los_Angeles'). This is extremely important to foster clarity in data analysis through the years, as some projects have varied year to year in whether recordings were taken in GMT vs. local time.}
+\item{timezone}{Timezone setting used in the audio recorder (e.g, "GMT"). This argument allows you to specify the timezone shown by the wave filename. If recordings were taken in local time at your study site, specify an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., "America/Los_Angeles"). If recordings were taken in GMT, you can put either "GMT" or "UTC" (both are acceptable in R for downstream date-time formatting). This argument is critical to foster clarity in data analysis through the years and across monitoring locations, because some projects may vary across time and space as to whether the standard operating procedure specifies recordings in GMT vs. local time.}
 }
 \value{
-Saves a formatted CSV of results with the following columns
+Saves a formatted CSV of results with the following columns:
 
-#' \itemize{
+\itemize{
 \item{\strong{recordingID}: Site name.}
 \item{\strong{start.s}: tbd.}
 \item{\strong{end.s}: tbd}
