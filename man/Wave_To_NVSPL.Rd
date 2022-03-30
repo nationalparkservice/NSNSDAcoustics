@@ -17,7 +17,7 @@ Wave_To_NVSPL(
   vADCset = 1,
   enviset = "Air",
   rescWat = 0,
-  timezone = "GMT"
+  timezone
 )
 }
 \arguments{
@@ -62,7 +62,7 @@ Output NVSPL txt file contains the following N columns (need to go through and d
 \item{\strong{dbC}: ....}
 \item{\strong{dbZ}: ...}
 \item{\strong{etc}: ...}
-\item{\strong{GPSTimeAdjustment}: Indicates the timezone adjustment made. 'GMT' indicates that audio recordings were taking with no timezone adjustment. If recordings were taken in local time at a study site, an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., 'America/Los_Angeles') should have been specified using the 'timezone' input argument to the function. This is extremely important to foster clarity in data analysis through the years, as some projects have varied year to year in whether recordings were taken in GMT vs. local time. setting used in the audio recorder}
+\item{\strong{timezone}: Indicates the timezone reflected in the audio filename. 'GMT' indicates that audio recordings were taken with no timezone adjustment. If recordings were taken in local time at a study site, please specify an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., 'America/Los_Angeles'). This is extremely important to foster clarity in data analysis through the years, as some projects vary across time and space in terms of whether recordings are taken in GMT vs. local time.}
 }
 }
 \description{

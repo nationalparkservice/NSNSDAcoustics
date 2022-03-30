@@ -24,3 +24,17 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
+Collate: 
+    'PAMGuide.R'
+    'PAMGuide_Meta.R'
+    'Meta.R'
+    'NVSPL_To_AI.R'
+    'Viewer.R'
+    'Wave_To_NVSPL.R'
+    'bcp-functions.R'
+    'birdnet_format_csv.R'
+    'birdnet_run.R'
+    'birdnet_species_counts.R'
+    'birdnet_verify.R'
+    'examples-helpfiles.R'
+    'utils.R'

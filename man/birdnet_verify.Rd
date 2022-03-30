@@ -5,12 +5,9 @@
 \title{Verify BirdNET detections}
 \usage{
 birdnet_verify(
-  recordingID,
-  common.name,
+  data,
   audio.directory,
   results.directory,
-  n.verifications,
-  confidence.threshold = 0,
   overwrite = FALSE,
   play = FALSE,
   buffer = 0,
@@ -19,15 +16,11 @@ birdnet_verify(
 )
 }
 \arguments{
-\item{common.name}{tbd}
+\item{data}{Data.table or data.frame of subsetted detections that a user would like to verify. This allows the user precise control over which detections to verify.}
 
 \item{audio.directory}{tbd}
 
 \item{results.directory}{tbd}
-
-\item{n.verifications}{tbd}
-
-\item{confidence.threshold}{tbd}
 
 \item{overwrite}{tbd}
 

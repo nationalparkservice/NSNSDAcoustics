@@ -7,3 +7,7 @@ data/exampleAudio.RData
 data-raw/GLBABART_20200528_104200.wav
 PAMGuide-map.drawio
 example-input-directory
+example-output-directory
+data-raw/NVSPL/
+data-raw/Rivendell_20210715_115502.wav
+data-raw/paramsFileNVSPL_example-data_SM4

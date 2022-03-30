@@ -1,9 +1,9 @@
 # birdnet_species_counts =======================================================
 
 #' @name birdnet_species_counts
-#' @title Provide count data of detection species over a selected time unit.
+#' @title Provide count data of detected species over a selected time unit.
 #' @description tbd
-#' @param dt Path to directory where raw BirdNET result CSVs have been stored
+#' @param dt Data.table of BirdNET results to summarize
 #' @param unit See lubridate::round_date for options. E.g. second, 2 hours, etc.
 #' @return Saves a formatted CSV of results with the following columns:
 #'
@@ -13,7 +13,7 @@
 #'
 #' @details
 #'
-#' This function was developed by the National Park Service Natural Sounds and Night Skies Division to summarize audio data using BirdNET.
+#' This function was developed by the National Park Service Natural Sounds and Night Skies Division to summarize data outputs produced by BirdNET.
 
 #'
 #' @seealso  \code{\link{birdnet_run}}, \code{\link{birdnet_verify}}, \code{\link{birdnet_format_csv}}
@@ -21,6 +21,13 @@
 #' @export
 #' @examples
 #' \dontrun{
+#'
+#' # Read in formatted example data
+#' paths.formatted <- paste0(birdnet.results, '/',
+#'   list.files(path = birdnet.results, pattern = 'formatted'))
+#'
+#' # Gather up all the data
+#' dat <- rbindlist(lapply(paths.formatted, function(x) data.table(read.csv(x))))
 #'
 #' # tbd
 #' }

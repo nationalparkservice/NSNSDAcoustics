@@ -18,6 +18,15 @@
 
 # Author: Nathan D. Merchant. Last modified 22 Sep 2014
 
+#' @name PAMGuide
+#' @title Internal function from PAMGuide code.
+#' @description Internal function from PAMGuide code.
+#' @import svDialogs tuneR
+#' @include Meta.R PAMGuide.R PAMGuide_Meta.R
+#' @export
+#' @keywords internal
+#'
+
 PAMGuide <- function(...,atype='PSD',plottype='Both',envi='Air',calib=0,
                      ctype = 'TS',Si=-159,Mh=-36,G=0,vADC=1.414,r=50,N=Fs,
                      winname='Hann',lcut=Fs/N,hcut=Fs/2,timestring="",
@@ -39,7 +48,6 @@ PAMGuide <- function(...,atype='PSD',plottype='Both',envi='Air',calib=0,
   Nbit <- fIN[[3]]								#bit depth
   xl <- fIN[[4]]									#length of file in samples
   xlglo <- xl										  #back-up file length
-
 
   ## Read time stamp data if provided
   #if (timestring != "") {tstamp <- as.POSIXct(ifile, tz="America/Los_Angeles", format=timestring)

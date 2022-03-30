@@ -18,7 +18,15 @@
 
 # Author: Nathan D. Merchant. Last modified 22 Sep 2014
 
-## Begin PAMGuide_Meta
+#' @name PAMGuide_Meta
+#' @title Internal function from PAMGuide code.
+#' @description Internal function from PAMGuide code.
+#' @import svDialogs tuneR
+#' @include Meta.R PAMGuide.R PAMGuide_Meta.R
+#' @export
+#' @keywords internal
+#'
+
 
 PAMGuide_Meta <- function(fullfile,...,atype='TOL',plottype='Both',envi='Air',
                           calib=0,ctype = 'TS',Si=-159,Mh=-36,G=0,vADC=1.414,r=50,

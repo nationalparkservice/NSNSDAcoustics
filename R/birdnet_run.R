@@ -87,6 +87,7 @@ birdnet_run <- function(audio.directory, # absolute path for now
 
   # Loop through wav files to process through BirdNET
   problem.list <- list()
+
   for (i in 1:length(recIDs)) {
     message('Working on ', i, ' of ', length(recIDs), ': ', recIDs[i], '\n')
     setwd(birdnet.directory)

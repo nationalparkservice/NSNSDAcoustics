@@ -26,6 +26,15 @@
 #rm(list = setdiff(ls(), lsf.str()))
 #clear workspace variables
 
+#' @name Meta
+#' @title Internal function from PAMGuide code.
+#' @description Internal function from PAMGuide code.
+#' @import svDialogs tuneR
+#' @include Meta.R PAMGuide.R PAMGuide_Meta.R
+#' @export
+#' @keywords internal
+#'
+
 Meta <- function(...,atype='TOL',plottype='Both',envi='Air',
                  calib=0,stype = 'MF',Si=-159,Mh=-36,G=0,vADC=1.414,r=50,
                  N=Fs,winname='Hann',lcut=Fs/N,hcut=Fs/2,timestring="",outwrite=1,
@@ -78,11 +87,12 @@ Meta <- function(...,atype='TOL',plottype='Both',envi='Air',
     if (i == 1){disppar <- 1} else {disppar <- 1}
 
     # execute PAMGuide_Meta
-    A <- PAMGuide_Meta(nowfile,atype=atype,plottype='None',envi=envi,calib=calib,
-                       stype=stype,Si=Si,Mh=Mh,G=G,vADC=vADC,r=r,N=N,winname=winname,
-                       lcut=lcut,hcut=hcut,timestring=timestring,outdir=newpath,
-                       outwrite=outwrite,disppar=disppar,welch=welch,
-                       chunksize=chunksize,linlog=linlog)
+    A <- PAMGuide_Meta(
+      nowfile,atype=atype,plottype='None',envi=envi,calib=calib,
+      stype=stype,Si=Si,Mh=Mh,G=G,vADC=vADC,r=r,N=N,winname=winname,
+      lcut=lcut,hcut=hcut,timestring=timestring,outdir=newpath,
+      outwrite=outwrite,disppar=disppar,welch=welch,
+      chunksize=chunksize,linlog=linlog)
 
     if (i == 1 && conkcomp == 1){conc <- A}
     #initialise concatenated array on first iteration

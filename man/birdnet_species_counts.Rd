@@ -2,12 +2,12 @@
 % Please edit documentation in R/birdnet_species_counts.R
 \name{birdnet_species_counts}
 \alias{birdnet_species_counts}
-\title{Provide count data of detection species over a selected time unit.}
+\title{Provide count data of detected species over a selected time unit.}
 \usage{
 birdnet_species_counts(dt, unit)
 }
 \arguments{
-\item{dt}{Path to directory where raw BirdNET result CSVs have been stored}
+\item{dt}{Data.table of}
 
 \item{unit}{See lubridate::round_date for options. E.g. second, 2 hours, etc.}
 }
@@ -22,10 +22,17 @@ Saves a formatted CSV of results with the following columns:
 tbd
 }
 \details{
-This function was developed by the National Park Service Natural Sounds and Night Skies Division to summarize audio data using BirdNET.
+This function was developed by the National Park Service Natural Sounds and Night Skies Division to summarize data outputs produced by BirdNET.
 }
 \examples{
 \dontrun{
+
+# Read in formatted example data
+paths.formatted <- paste0(birdnet.results, '/',
+  list.files(path = birdnet.results, pattern = 'formatted'))
+
+# Gather up all the data
+dat <- rbindlist(lapply(paths.formatted, function(x) data.table(read.csv(x))))
 
 # tbd
 }
