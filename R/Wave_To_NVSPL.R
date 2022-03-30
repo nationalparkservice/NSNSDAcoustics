@@ -31,7 +31,7 @@
 #' \item{\strong{dbC}: ....}
 #' \item{\strong{dbZ}: ...}
 #' \item{\strong{etc}: ...}
-#' \item{\strong{GPSTimeAdjustment}: Indicates the timezone adjustment made. 'GMT' indicates that audio recordings were taking with no timezone adjustment. If recordings were taken in local time at a study site, an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., 'America/Los_Angeles') should have been specified using the 'timezone' input argument to the function. This is extremely important to foster clarity in data analysis through the years, as some projects have varied year to year in whether recordings were taken in GMT vs. local time. setting used in the audio recorder}
+#' \item{\strong{timezone}: Indicates the timezone reflected in the audio filename. 'GMT' indicates that audio recordings were taken with no timezone adjustment. If recordings were taken in local time at a study site, please specify an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., 'America/Los_Angeles'). This is extremely important to foster clarity in data analysis through the years, as some projects vary across time and space in terms of whether recordings are taken in GMT vs. local time.}
 #' }
 #'
 #'
@@ -49,6 +49,7 @@
 #' @seealso  \code{\link{NVSPL_To_AI}}
 #' @import svDialogs tuneR
 #' @export
+#' @include Meta.R PAMGuide.R PAMGuide_Meta.R
 #' @examples
 #' \dontrun{
 #'
@@ -118,9 +119,14 @@ Wave_To_NVSPL <- function(input.directory,
                           vADCset = 1,
                           enviset = "Air",
                           rescWat = 0,
-                          timezone = "GMT"
+                          timezone
 )
 {
+
+
+  if(missing(timezone)) {
+    stop('You are missing an input to the "timezone" argument. Please specify the timezone setting used in the audio recorder (e.g., "GMT", "America/Denver"). This argument allows you to declare the timezone shown by the wave filename. If recordings were taken in local time at your study site, specify an Olson-names-formatted character timezone (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for the location (e.g., "America/Los_Angeles"). If recordings were taken in GMT, you can put either "GMT" or "UTC" (both are acceptable in R for downstream date-time formatting). This argument is critical to foster clarity in data analysis through the years and across monitoring locations, because some projects may vary across time and space as to whether the standard operating procedure specifies recordings in GMT vs. local time.')
+  }
 
   # Ensure a forward slash at end ($) of input.directory
   if (grepl("\\/$", input.directory) == FALSE) {
@@ -172,9 +178,13 @@ Wave_To_NVSPL <- function(input.directory,
 
     # run the calibration
     message('\n Check all outputs. Make sure there isn\'t an NA in "Time stamp start time".\n')
-    PAMGuide(chunksize = 500, atype = 'TOL', timestring = filename2,
+
+    PAMGuide(chunksize = 500, atype = 'TOL',
+             timestring = filename2,
              r=0, outwrite=1, plottype = "None",
-             calib=1, envi=enviset, ctype="TS", Mh=mhset, G=Gset, vADC=vADCset,
+             calib=1, envi=enviset, ctype="TS",
+             Mh=mhset, G=Gset,
+             vADC=vADCset,
              WAVFiles = WAVFiles)
     message('Reminder: Check all outputs. Make sure there isn\'t an NA in "Time stamp start time".\n')
     # In the outputs here, make sure there isn't an NA in your start time
@@ -251,7 +261,8 @@ Wave_To_NVSPL <- function(input.directory,
         ## (2) RUN PAMGUIDE-------------------------------------------------------------
         Meta(atype = 'TOL', timestring = filename,
              r=0, outwrite=1, plottype = "None", calib=1,
-             envi=enviset, ctype="TS", Mh=mhset, G=Gset, vADC=vADCset,
+             envi=enviset, ctype="TS", Mh=mhset, G=Gset,
+             vADC=vADCset,
              filenms = filenms)
 
         ## (3) READ IN file created by PAMGUIDE------------------------------------------
@@ -306,7 +317,8 @@ Wave_To_NVSPL <- function(input.directory,
         NVSPLhead = c("SiteID","STime", "H12p5", "H15p8", "H20", "H25", "H31p5","H40","H50","H63","H80","H100","H125","H160","H200","H250","H315","H400","H500",
                       "H630","H800","H1000","H1250","H1600","H2000","H2500","H3150","H4000","H5000","H6300","H8000","H10000","H12500","H16000","H20000",
                       "dbA","dbC","dbZ","Voltage","WindSpeed","WindDir","TempIns","TempOut","Humidity",
-                      "INVID","INSID","GChar1","PAMGuideVersion","GChar3", "AdjustmentsApplied","CalibrationAdjustment","GPSTimeAdjustment","GainAdjustment","Status")
+                      "INVID","INSID","GChar1","PAMGuideVersion","timezone", "AdjustmentsApplied","CalibrationAdjustment","GPSTimeAdjustment","GainAdjustment","Status")
+        # CB == changed GChar3 to timezone for clarity
 
         # check to see of more 1/3 OCB than 33, if so truncate data
         if(dim(a)[2] > 30) a <- a[,1:30]
@@ -361,8 +373,9 @@ Wave_To_NVSPL <- function(input.directory,
         tempOutput[,'PAMGuideVersion'] <- vers
 
         # CB: I'll keep the GPSTimeAdjustment as the timezone since I'm not
-        # sure the purpose/assumptions of that column
+        # sure the purpose/assumptions of that column. This is how it appears to have been used in the past though.
         tempOutput[,'GPSTimeAdjustment'] <- timezone
+        tempOutput[,'timezone'] <- timezone
 
         # CATHLEEN note to self- -
         # want to redo this so that column contents are assigned by name rather

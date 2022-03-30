@@ -228,10 +228,10 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
 
         myTempMatrix = read.csv(sf)
         timeData = matrix(as.numeric(unlist( strsplit( gsub(":"," ",substr(gsub('-',' ',as.character(myTempMatrix[,2])),0,19)),' ')) ),ncol=6, byrow=T )
-        GPSTimeAdjustment <- unique(myTempMatrix$GPSTimeAdjustment) # CB added. Needs to be carried through since occasionally varies based on who collected the data that year
+        timezone <- unique(myTempMatrix$timezone) # CB added. Needs to be carried through since occasionally varies based on who collected the data that year
         myTempMatrix = cbind(timeData, myTempMatrix[,3:45] )
         colnames(myTempMatrix)[1:6] = c("Yr","Mo", "Day", "Hr", "Min", "Sec")
-        myTempMatrix$GPSTimeAdjustment <- GPSTimeAdjustment
+        myTempMatrix$timezone <- timezone
         dayMatrix = rbind(dayMatrix, myTempMatrix)
 
         #REVIEW spectrogram of the 1 hr file if desired
@@ -735,7 +735,7 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
                                  Rough, ADI_step, Eveness_step,
                                  pk, pkd, pks, Hm, HvPres, HvSPL, unlist(dif_L10L90),
                                  Mamp, NumCL, SP2,CLdets,
-                                 PAMGuideVersion, GPSTimeAdjustment) )
+                                 PAMGuideVersion, timezone) )
 
             BKADI = rbind(BKADI,BKBirddB) # rbind(BKADI,cbind(workingMatrix[1,1:6],BKBirddB))
 
@@ -1191,10 +1191,7 @@ NVSPL_To_AI <- function (input.directory, # top-level NVSPL file directory
                                  Rough, ADI_step, Eveness_step,
                                  pk, pkd, pks, Hm, HvPres, HvSPL, unlist(dif_L10L90), Mamp,
                                  NumCL, SP2,CLdets,
-                                 PAMGuideVersion, GPSTimeAdjustment) )
-
-            # CB - Add timezone
-         #   Output$GPSTimeAdjustment <- GPSTimeAdjustment
+                                 PAMGuideVersion, timezone) )
 
             BKADI = rbind(BKADI,BKBirddB) # rbind(BKADI,cbind(workingMatrix[1,1:6],BKBirddB))
 
