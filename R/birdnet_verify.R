@@ -4,10 +4,10 @@
 #' @name birdnet_verify
 #' @title Verify BirdNET detections
 #' @description tbd
-#' @param results.directory Path to directory where raw BirdNET result CSVs have been stored
 #' @param data Data.table or data.frame of subsetted detections that a user would like to verify. This allows the user precise control over which detections to verify.
+#' @param verification.library List specifying which verification options should be shown to the user. Allows finer control for user to specify whether a detection is a song, a call, a certain song or call type of interest, false alarm, unsure, or whatever the user needs. This allows maximum flexibility for the user, but also requires some thoughtfulness so that verification options remain consistent.
 #' @param audio.directory tbd
-#' @param results.directory tbd
+#' @param results.directory Path to directory where raw BirdNET result CSVs have been stored
 #' @param overwrite tbd
 #' @param play tbd
 #' @param buffer tbd
@@ -29,7 +29,9 @@
 #' @details
 #'
 #' This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data using BirdNET.
-
+#'
+#'
+#' Spectrograms show 3-second segment detected by BirdNET. Title of spectrogram indicates the recordingID of the file name, the start and end times of the detection in seconds, the species detection, and the confidence level of the detection from 0 to 1.
 #'
 #' @seealso  \code{\link{birdnet_run}}, \code{\link{birdnet_format_csv}}
 #' @import tuneR
@@ -43,6 +45,7 @@
 
 
 birdnet_verify <- function(data,
+                           verification.library,
                            audio.directory,
                            results.directory,
                            overwrite = FALSE,
@@ -55,6 +58,18 @@ birdnet_verify <- function(data,
                            spec.col = monitoR::gray.3()
 )
 {
+
+  if(missing(verification.library)) {
+    stop('Please input verification.library argument. See ?birdnet_verify.')
+  }
+
+
+  # DO SOME CONSISTENCY CHECKING AND MESSAGING HERE TO ENSURE THAT ONLY
+  # DATA THAT MATCH TO SPECIES IN THE INPUT LIBRARY ARE SHOWN TO THE VERIFIER
+  # SUMMARIZE N RESULTS IN THE DATASET FOR THIS SPECIES NAME, ETC
+
+  # ALSO -- a better way to "break" instead of esc?
+
 
   # Save existing working directory to reset it after
   #  function is done running:
@@ -72,17 +87,9 @@ birdnet_verify <- function(data,
   data <- as.data.table(data)
   setkey(data, recordingID)
 
-
-
-  paths.formatted <- paste0(results.directory, '/',
-                            list.files(path = results.directory, pattern = 'formatted'))
-
-  # Remove problem files
-  paths.formatted <- paths.formatted[!grepl(pattern = 'problem', x = paths.formatted, ignore.case = TRUE)]
-
   # Gather up all the data
   message('Gathering all results in results.directory...')
-  results <- rbindlist(lapply(paths.formatted, function(x) data.table(read.csv(x))))
+  results <- birdnet_gather_results(results.directory = results.directory)
 
   results[,composite.key := paste(recordingID, start.s, end.s, common.name,
                                   sep = '-')]
@@ -91,7 +98,6 @@ birdnet_verify <- function(data,
   # Subset the results
   all.focal <- results[composite.key %in% data$composite.key]
   # if overwrite true..../false... need to change
-
 
   if (overwrite == FALSE) {
     cat('Since overwrite == FALSE, only detections from unverified results will be verified.')
@@ -102,9 +108,12 @@ birdnet_verify <- function(data,
   }
 
   # Only look at waves for verifications we need to do
+  # Read in paths for all wavs in folder
+  all.wav <- list.files(audio.directory, full.names = TRUE, recursive = TRUE)
   rec.ids <- unique(all.focal.verify$recordingID)
-  wav.paths <- paste0(audio.directory, rec.ids)
 
+  wav.paths <- unique(grep(paste(rec.ids,collapse="|"),
+                                  all.wav, value = TRUE))
   counter <- 0
   verify.list <- list()
   for (w in 1:length(wav.paths)) {
@@ -113,15 +122,19 @@ birdnet_verify <- function(data,
                      list.files(results.directory,
                                 pattern = paste0('_formatted_',
                                                  gsub('.wav', '', rec.ids[w]))))
-
     verify <- all.focal.verify[recordingID == rec.ids[w]]
-   # verify[,scoreID := 1:.N]
     ask <- FALSE
     oldask <- par(ask = par("ask"))
     on.exit(par(oldask))
-    verC <- NULL
+    vers <- NULL
 
     for (i in 1:verify[,.N]) {
+
+      # Narrow down verification.library options to this species
+      ver.lib.sp <- unlist(verification.library[names(verification.library)
+                                         == verify[i, common.name]])
+
+      # Set up helpful spectrogram variables
       counter <- counter + 1
       x <- "x"
       t.start <- max(verify[i,start.s] - buffer, 0)
@@ -176,15 +189,16 @@ birdnet_verify <- function(data,
         #Sys.sleep(duration(wav))
       }
 
-      while (length(x) == 0 || !x %in% c("y", "n", NA)) {
+      while (length(x) == 0 || !x %in% c(ver.lib.sp, NA)) {
         cat(paste0("\n This is recording ", rec.ids[w],
                    " This is verification ", counter,
-                   " out of ", # verify[,.N]),
+                   " out of ",
                    nrow(all.focal.verify),
                    "\n"))
-        cat(paste0("\n", i, ". True detection for target species ",
-                   verify[i]$common.name,
-                   "?\n Enter y for yes, n for no, s to skip, r to replay, or q to exit (q will exit and save any verifications you have already completed): "))
+
+        cat(paste0("\n", i, ". Showing user input verification.library options for ",
+                   verify[i]$common.name,': ', paste0(ver.lib.sp, collapse = ', '),
+                   "\n Enter an option in ", paste0(ver.lib.sp, collapse = ', '), ", s to skip, r to replay, or q to exit (q will exit and save any verifications you have already completed for this recording). To escape out of the function completely, press 'Esc': "))
 
         x <- tolower(readLines(n = 1)[1])
 
@@ -199,31 +213,37 @@ birdnet_verify <- function(data,
           break
         }
 
-        cat(switch(x,
-                   n = FALSE,
-                   y = TRUE,
-                   s = "Skipping to next verification.",
-                   r = "Replaying.",
-                   q = "Exiting and saving what you have already verified.",
-                   "Value not recognized. Enter y, n, s, r, or q."),
-            "\n")
+        if (x %in% ver.lib.sp) {
+          # Save the library label for this verification
+          vers[i] <- x
+        }
 
-        # If skip, skip to next
         if (x == 's') {
+          message("Skipping to next verification.\n")
           break
         }
 
-        if (!x %in% c("y", "n", "r", "s", "q"))
-          next
-        if (x == "q")
+        if (x == 'r') {
+          message("Replaying.\n")
+        }
+
+        if (x == 'q') {
+          message("Exiting and saving what you have already verified.\n")
           break
-      } # end while x %in% y, n, NA
+        }
+
+        if (!x %in% c(ver.lib.sp, "r", "s", "q")) {
+          message("Value not recognized. Enter an option from your verification.library, or enter s, r, or q.\n")
+          next
+        }
+
+      } # end while x %in% ver.lib.sp or NA
 
       # If q, break out of the peaks loop
       if (!is.na(x) & x == 'q') break
 
       if (is.na(x) || x != "r")
-        verC[i] <- x
+        vers[i] <- x
       par(ask = ask)
       if (!is.na(x) && x == "r")
         i <- i - 1
@@ -240,9 +260,6 @@ birdnet_verify <- function(data,
     cat("\n")
 
     # Update verification labels in BirdNET_formatted_ results csv:
-    verC[verC == 'y'] <- 1
-    verC[verC == 'n'] <- 0
-    vers <- as.integer(verC)
     update.composite <- verify$composite.key
 
     # If quit before the end of a recording, update labels for anything verified
@@ -252,9 +269,7 @@ birdnet_verify <- function(data,
 
     # If there is anything to update
     if (length(update.composite) > 0) {
-
-      verify[composite.key %in% update.composite,
-             verify := vers]
+      verify[composite.key %in% update.composite, verify := vers]
       new.results <- results[recordingID == rec.ids[w]]
       new.results[composite.key %in% update.composite,
                   verify := vers]
@@ -274,6 +289,3 @@ birdnet_verify <- function(data,
   # Return scores table updated with verifications
   return(verify.bind)
 }
-
-
-
