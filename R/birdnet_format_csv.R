@@ -34,7 +34,7 @@
 
 birdnet_format_csv <- function(results.directory,
                                timezone) {
-  # NEED TO ADD IN TIMEZONE COLUMN?
+  # Consider wrapping this into birdnet_run() so that we don't need an additional step
 
   if(missing(timezone)) {
     stop('You are missing an input to the "timezone" argument. Please specify the timezone setting used in the audio recorder (e.g., "GMT", "America/Denver"). This argument allows you to declare the timezone shown by the wave filename. If recordings were taken in local time at your study site, specify an Olson-names-formatted character timezone (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for the location (e.g., "America/Los_Angeles"). If recordings were taken in GMT, you can put either "GMT" or "UTC" (both are acceptable in R for downstream date-time formatting). This argument is critical to foster clarity in data analysis through the years and across monitoring locations, because some projects may vary across time and space as to whether the standard operating procedure specifies recordings in GMT vs. local time.')
@@ -48,6 +48,7 @@ birdnet_format_csv <- function(results.directory,
   fi <- list.files(path = results.directory, pattern = 'BirdNET_')
   format <- fi[grep(pattern = '_formatted_', x = fi, fixed = TRUE)]
   fi <- fi[grep(pattern = '_formatted_', x = fi, invert = TRUE, fixed = TRUE)]
+  fi <- fi[grep(pattern = 'problem', x = tolower(fi), invert = TRUE)] # remove "problem" files csv
 
   check.format <- gsub(pattern = 'formatted_', replacement = '',
                        x = format, fixed = TRUE)
@@ -94,7 +95,7 @@ birdnet_format_csv <- function(results.directory,
       result[,recordingID := recID]
 
       # Add a verify column to support downstream manual QA of classifications
-      result[,verify := as.logical(NA)]
+      result[,verify := as.character(NA)]
 
       # Clean up columns and write formatting file
       setcolorder(result, c('recordingID', setdiff(names(result), 'recordingID')))
@@ -110,14 +111,12 @@ birdnet_format_csv <- function(results.directory,
         row1 <- data.table(recordingID = recID, start.s = as.numeric(NA),
                            end.s = as.numeric(NA), scientific.name = as.character(NA),
                            common.name = as.character(NA), confidence = as.numeric(NA),
-                           verify = as.logical(NA), timezone = as.character(NA))
+                           verify = as.character(NA), timezone = as.character(NA))
         result <- rbind(result, row1)
       }
-
       # Write formatted csv
       newname <- gsub(x = finame, pattern = 'BirdNET_', replacement = 'BirdNET_formatted_')
       write.csv(x = result, file = newname, row.names = FALSE)
-
     } else {
       message('Found unformatted result ', fi[i], ' but there is a problem. Make sure your folder only contains .CSVs with the prefix "BirdNET", and that you have not manually modified any of these files. Skipping to next...')
     }
