@@ -40,7 +40,6 @@ PAMGuide_Meta <- function(fullfile,...,atype='TOL',plottype='Both',envi='Air',
   } else {aid <- aid + 10}
   if (timestring != ""){aid <- aid + 1000} else {aid <- aid + 2000}	#add time stamp element to metadata code
 
-
   ## Get file info
 
   ifile <- basename(fullfile)						      #file name
@@ -50,26 +49,17 @@ PAMGuide_Meta <- function(fullfile,...,atype='TOL',plottype='Both',envi='Air',
   xl <- fIN[[4]]									            #length of file in samples
   xlglo <- xl										              #back-up file length
 
-
   ## Read time stamp data if provided-----------------------------------------
   if (timestring != "")
   {
-    tstamp <- as.POSIXct(strptime(ifile,timestring) ,origin="1970-01-01")
+    tstamp <- as.POSIXct(strptime(ifile,timestring), origin="1970-01-01")
+
     if (disppar == 1)
     {
       cat('Time stamp start time: ',format(tstamp),'\n')
     }
   }
   if (timestring == "") tstamp <- NULL		#compute time stamp in R POSIXct format
-
-  #   if (timestring != "") {
-  #     tstamp <- as.POSIXct(strptime(ifile,timestring) ,origin="1970-01-01")
-  #     if (disppar == 1){
-  #       cat('Time stamp start time: ',format(tstamp),'\n')
-  #     }
-  #   }
-  #   else{ tstamp <- NULL }		#compute time stamp in R POSIXct format
-
 
   ## Display user-defined settings------------------------------------------
 
@@ -259,8 +249,6 @@ PAMGuide_Meta <- function(fullfile,...,atype='TOL',plottype='Both',envi='Air',
         a <- t(10*log10(P13/(pref^2))) - S
       }
 
-      #cat('done in',(proc.time()-tana)[3],'s.\n')
-
       # Compute time vector
       tint <- (1-r)*N/Fs
       ttot <- M*tint-tint
@@ -292,16 +280,23 @@ PAMGuide_Meta <- function(fullfile,...,atype='TOL',plottype='Both',envi='Air',
   # If not calibrated, scale relative dB to zero
   if (calib == 0) {a <- a-max(a)}
 
-  if (!is.null(tstamp)){t <- t+tstamp
+  if (!is.null(tstamp)){
+    t <- t+tstamp
 
-  tdiff <- max(t)-min(t)					#define time format for x-axis of time plot
-  if (tdiff < 10){
-    tform <- "%H:%M:%S:%OS3"}
-  else if (tdiff > 10 & tdiff < 86400){
-    tform <- "%H:%M:%S"}
-  else if (tdiff > 86400 & tdiff < 86400*7){
-    tform <- "%H:%M \n %d %b"}
-  else if (tdiff > 86400*7){tform <- "%d %b %y"}
+    tdiff <- max(t)-min(t)					#define time format for x-axis of time plot
+
+    if (is.na(tstamp)) {
+      # CB added messaging to skip NA files associated with time change
+      return(message('Internal function PAMGuide_Meta() encountered NA timestamp for ', ifile, '; this may be due to daylight savings transition. Skipping to next.'))
+    }
+
+    if (tdiff < 10){
+      tform <- "%H:%M:%S:%OS3"}
+    else if (tdiff > 10 & tdiff < 86400){
+      tform <- "%H:%M:%S"}
+    else if (tdiff > 86400 & tdiff < 86400*7){
+      tform <- "%H:%M \n %d %b"}
+    else if (tdiff > 86400*7){tform <- "%d %b %y"}
   }
 
   ## Construct output array
@@ -444,7 +439,6 @@ PAMGuide_Meta <- function(fullfile,...,atype='TOL',plottype='Both',envi='Air',
   }
 
 
-
   ## Write output array to CSV file if selected
 
   A <- data.matrix(A, rownames.force = NA)
@@ -547,5 +541,3 @@ PAMGuide_Meta <- function(fullfile,...,atype='TOL',plottype='Both',envi='Air',
   }
   return(A)			#return output array
 }
-
-
