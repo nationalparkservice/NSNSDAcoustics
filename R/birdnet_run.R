@@ -101,7 +101,7 @@ birdnet_run <- function(audio.directory, # absolute path for now
     py_run_string(paste0("args_o = '", result.fp[i], "'"))
 
     catch.error <- tryCatch(
-      source_python('BirdNET-Reticulate.py'),
+      source_python(birdnet.script),
       error = function(e) e
     )
 
