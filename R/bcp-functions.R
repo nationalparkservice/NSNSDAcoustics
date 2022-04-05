@@ -555,7 +555,7 @@ bcp_phenology_species <- function(db.path,
 #' @param long Latitude in decimal degrees, necessary to computer sunrise times
 #' @param start.rise Character object indicating how long, in hours, before sunrise to begin data subset (necessary if processing multiple years of data with varied audio recording schedules). See Details.
 #' @param end.rise Character object indicating how long, in hours, after sunrise to end data subset (necessary if processing multiple years of data with varied audio recording schedules). See Details
-#' @param tz.recorder Olsen names timezone used by the audio recorder during data collection. For example, you may have collected data using a Wildlife Acoustics SM4, and instead of setting a local time, UTC/GMT likely may have been used. Note that 'UTC' and 'GMT' are synonymous and both acceptable for this function argument. This argument accounts for the fact that recordings may have been taken in UTC. The tz.local argument then allows us to convert the times to local times that will make sense for analysis.
+#' @param tz.recorder OPTIONAL. tz.recorder should now (as of 2022) be preserved in the 'timezone' column of the input CSV. However, if working with old CSVs, this should be an Olsen names timezone used by the audio recorder during data collection. For example, you may have collected data using a Wildlife Acoustics SM4, and instead of setting a local time, UTC/GMT may have been used. Note that 'UTC' and 'GMT' are synonymous and both acceptable for this function argument. This argument accounts for the fact that recordings may have been taken in UTC. Be wary of the possibility that different time settings may have been used in different years.
 #' @param tz.local Olsen names timezone for local time at the monitoring location (e.g., 'America/Anchorage').
 #' @param n.reps Number of times to repeat the BCP analysis to account for stochasticity
 #' @return Returns a list object with full results, peak days, and transition days. Give a detailed explanation of each item.
@@ -631,19 +631,36 @@ bcp_phenology_smooth <- function(db.path,
   # Read in acoustic indices data
   ai <- data.table(read.csv(file = ai.data))
 
-  # Create a time column that reflects the time used for the audio recorder (often, but not always, UTC)
   ai[,date := as.Date(gsub('_', '-', Date))]
-  ai[,dateTimeRecorder := ymd_hms(paste0(date,' ', Hr, ':', Min, ':', Sec), tz = tz.recorder)]
 
-  # Create a UTC time column for computing sunrise-based sampling times that avoid daylight savings issues
-  ai[,dateTimeUTC := with_tz(dateTimeRecorder, tzone = 'UTC')]
+  # Find all unique timezones used for this project -- likely just GMT and/or local time
+  tz.recorders <- unique(ai$timezone) # find unique timezones
 
-  # Create a local time column for downstream interpretability
-  ai[,dateTimeLocal :=  with_tz(dateTimeUTC, tzone = tz.local)]
+  # Can't easily vectorize the timezone conversion, so instead we loop through
+  # timezones to recorder, UTC, and local time columns
+  for (tzr in 1:length(tz.recorders)) {
 
-  # Ensure date and year reflect local time
-  ai[,date := as.Date(dateTimeLocal)]
-  ai[,yr := year(dateTimeLocal)]
+    this.tz <- tz.recorders[tzr]
+
+    # Create a UTC time column for computing sunrise-based sampling times that
+    # avoid daylight savings issues (ymd_hms wil create this in UTC)
+    ai[timezone == this.tz,
+       dateTimeUTC := ymd_hms(paste0(date,' ', Hr, ':', Min, ':', Sec), tz = this.tz)]
+
+    # Create a local time column for downstream interpretability
+    ai[timezone == this.tz,
+       dateTimeLocal :=  with_tz(dateTimeUTC, tzone = tz.local)]
+
+    # Ensure date and year reflect local time
+    ai[timezone == this.tz, date := as.Date(dateTimeLocal, tz = this.tz)]
+    ai[timezone == this.tz,yr := year(dateTimeLocal)]
+
+  }
+
+  # can't check/view data.tables in debugger for some reason??
+
+  # view(ai[,c('Date', 'Yr', 'Mo', 'Day', 'Hr', 'Min', 'Sec', 'timezone', 'dateTimeUTC', 'dateTimeLocal', 'date', 'yr')])
+
 
   # Keep only the year & locationID input by argument
   ai <- ai[yr == year & Site == locationID]
@@ -661,6 +678,17 @@ bcp_phenology_smooth <- function(db.path,
   # Subset all data and keep only that which falls within the designated sampling period
   # Below, we are rounding down to the nearest minute for the start, and up to the nearest
   # minute for the end, to avoid accidentally throwing away data
+  # For earlier years at GLBA that sampled in 10 minute increments, this will lead
+  # to 11-13 10-minute timesteps per day depending on where the minute falls...
+  # This is another place where changes in sampling through time need to be carried through systematically
+  # For later years based on sun, it will be 12 each day if unit = 1 minutes
+  # What if unit = 10 minutes? Nope -- don't do this. It will allow more data
+  # to be sampled from the 24 hour data and then lead to unfair comparison.
+  # Will just have to to accept that subsetting of 24-hour data occurring on 10min increments
+  # will lead to between 11-13 timesteps per day, when trying to compare against
+  # sunrise-based sampling on a fixed schedule.
+  # The other, more precise way is just to clip the earlier 24-hour data to sunrise schedule and process from there
+  # but the conclusions will likely be the same.
   ai <- ai[dateTimeLocal >= floor_date(sample.start, unit = '1 minutes') &
              dateTimeLocal <= ceiling_date(sample.end, unit = '1 minutes')]
 
