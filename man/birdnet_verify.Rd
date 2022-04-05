@@ -6,6 +6,7 @@
 \usage{
 birdnet_verify(
   data,
+  verification.library,
   audio.directory,
   results.directory,
   overwrite = FALSE,
@@ -18,9 +19,11 @@ birdnet_verify(
 \arguments{
 \item{data}{Data.table or data.frame of subsetted detections that a user would like to verify. This allows the user precise control over which detections to verify.}
 
+\item{verification.library}{List specifying which verification options should be shown to the user. Allows finer control for user to specify whether a detection is a song, a call, a certain song or call type of interest, false alarm, unsure, or whatever the user needs. This allows maximum flexibility for the user, but also requires some thoughtfulness so that verification options remain consistent.}
+
 \item{audio.directory}{tbd}
 
-\item{results.directory}{tbd}
+\item{results.directory}{Path to directory where raw BirdNET result CSVs have been stored}
 
 \item{overwrite}{tbd}
 
@@ -51,6 +54,8 @@ tbd
 }
 \details{
 This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data using BirdNET.
+
+Spectrograms show 3-second segment detected by BirdNET. Title of spectrogram indicates the recordingID of the file name, the start and end times of the detection in seconds, the species detection, and the confidence level of the detection from 0 to 1.
 }
 \examples{
 \dontrun{

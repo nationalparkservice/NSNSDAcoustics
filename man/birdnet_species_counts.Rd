@@ -7,7 +7,7 @@
 birdnet_species_counts(dt, unit)
 }
 \arguments{
-\item{dt}{Data.table of}
+\item{dt}{Data.table of BirdNET results to summarize}
 
 \item{unit}{See lubridate::round_date for options. E.g. second, 2 hours, etc.}
 }
