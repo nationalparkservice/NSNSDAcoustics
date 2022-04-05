@@ -1,5 +1,5 @@
-# Wave_To_NVSPL
-#' @name Wave_To_NVSPL
+# wave_to_nvspl
+#' @name wave_to_nvspl
 #' @title Calibrate and convert wave files into NVSPL format
 #' @description This function uses PAMGuide code to convert wave files into NVSPL format. PAMGuide was developed by Nathan D. Merchant et al. 2015 (see \strong{Details}). The suggested workflow for this function is to first set test.file = TRUE to test that your workflow has been accurately parameterized. Next, to batch process NVSPLs, run with test.file = FALSE.
 #' @param input.directory Top-level input directory path to audio files to be processed. e.g. E:/AUDIO. \strong{Audio files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav. Use the filext argument for other file extension patterns (NOT TESTED BY CB).}
@@ -46,7 +46,7 @@
 #' \item{\href{https://sourceforge.net/projects/pamguide/}{Download original PAMGuide code}}
 #' }
 #'
-#' @seealso  \code{\link{NVSPL_To_AI}}
+#' @seealso  \code{\link{nvspl_to_ai}}
 #' @import svDialogs tuneR
 #' @export
 #' @include Meta.R PAMGuide.R PAMGuide_Meta.R
@@ -66,16 +66,16 @@
 #' tuneR::writeWave(object = exampleAudio,
 #'                  filename = 'example-input-directory/Rivendell_20210715_115502.wav')
 #'
-#' # Perform Wave_To_NVSPL in test mode (test.file = TRUE)
-#' Wave_To_NVSPL(
+#' # Perform wave_to_nvspl in test mode (test.file = TRUE)
+#' wave_to_nvspl(
 #'  input.directory = 'example-input-directory',
 #'  data.directory = FALSE,
 #'  test.file = TRUE,
 #'  project = 'testproject',
 #'  timezone = 'GMT')
 #'
-#' # Perform Wave_To_NVSPL in batch mode (test.file = FALSE)
-#' Wave_To_NVSPL(
+#' # Perform wave_to_nvspl in batch mode (test.file = FALSE)
+#' wave_to_nvspl(
 #'  input.directory = 'example-input-directory',
 #'  data.directory = FALSE,
 #'  test.file = FALSE,
