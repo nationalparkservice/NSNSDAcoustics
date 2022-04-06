@@ -23,11 +23,11 @@ Why use this wave --> NVSPL --> acoustic indices workflow instead of using exist
 
 ## Using `birdnet_run()` functions to process audio data through [BirdNET](https://birdnet.cornell.edu/)
 
-`birdnet_run()` will not work unless you have BirdNET installed and have made necessary modifications. [Here is a method for installing BirdNET onto a Windows machine and running it from RStudio.](https://cbalantic.github.io/Install-BirdNET-Windows-RStudio)
+`birdnet_run()` will not work unless you have BirdNET installed and have made necessary modifications. [Here is a method for installing BirdNET onto a Windows machine and running it from RStudio.](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md)
 
 You may not want to process files through RStudio, or you may already have BirdNET-Lite CSV results in hand, in which case you can skip ahead to the next functions. 
 
-## Using `birdnet_()` functions to assess BirdNET results
+## Using `birdnet_*()` functions to assess BirdNET results
 
 * `birdnet_format_csv()` reformats the raw BirdNET results...
 * `birdnet_gather_results()` gathers all BirdNET CSV results from a desired folder into a user-friendly data.table / data.frame
