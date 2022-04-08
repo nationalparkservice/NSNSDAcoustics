@@ -10,57 +10,100 @@ birdnet_verify(
   audio.directory,
   results.directory,
   overwrite = FALSE,
-  play = FALSE,
-  buffer = 0,
-  f.lim = c(0, 12),
+  frq.lim = c(0, 12),
+  play = TRUE,
+  buffer = 1,
+  box.col = "blue",
   spec.col = monitoR::gray.3()
 )
 }
 \arguments{
-\item{data}{Data.table or data.frame of subsetted detections that a user would like to verify. This allows the user precise control over which detections to verify.}
+\item{data}{Data.table or data.frame of subsetted detections that a user would like to verify \strong{for a single species}. Takes formatted results only (see: \code{\link{birdnet_format_csv}}; must contain columns named recordingID, start.s, end.s, scientific.name, common.name, confidence, verify, and timezone.}
 
-\item{verification.library}{List specifying which verification options should be shown to the user. Allows finer control for user to specify whether a detection is a song, a call, a certain song or call type of interest, false alarm, unsure, or whatever the user needs. This allows maximum flexibility for the user, but also requires some thoughtfulness so that verification options remain consistent.}
+\item{verification.library}{List specifying which verification options should be shown to the user. Allows finer control to fit user's needs: user may specify whether a detection is a song, a call, a certain song or call type of interest, false alarm, unsure, or whatever the user needs. This enables maximum flexibility for the user, but also requires some thoughtfulness so that verification options remain consistent. BirdNET provides only species-level confidence and does not classify to song or call types. Thus, depending on expertise and familiarity with a focal species, a user may find themselves in a situation where songs are easily verified, but calls are not. Verification library provides the flexibility to accommodate varying levels of expertise, but must be thought through by the user beforehand.}
 
-\item{audio.directory}{tbd}
+\item{audio.directory}{Top-level input directory path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.}
 
-\item{results.directory}{Path to directory where raw BirdNET result CSVs have been stored}
+\item{results.directory}{Path to directory where formatted BirdNET result CSVs have been stored.}
 
-\item{overwrite}{tbd}
+\item{overwrite}{Logical flag for whether to overwrite existing verifications contained in a CSV. Default = FALSE. If FALSE, no overwriting occurs, and the user only verifies detections that are currently unverified. If TRUE, the user is choosing to overwrite existing verifications.}
 
-\item{play}{tbd}
+\item{frq.lim}{Optional two-element numeric vector specifying frequency limits, in kHz, to apply to the plotted spectrograms. Default = c(0, 12).}
 
-\item{buffer}{tbd}
+\item{play}{Logical value specifying whether a temporary wave file should be written to the working directory for the user to check during verification. If TRUE, a temporary wave file for the detection is written to the working directory, available for the user to listen to, and is deleted after the user closes the player window and adds a verification. If FALSE, no temporary wave file is written.}
 
-\item{f.lim}{tbd}
+\item{buffer}{Numeric buffer, in seconds, to place around BirdNET's 3 second detection area (default = 1). Generally useful for providing acoustic "context" around a detected event; of particular utility in cases where the target signal exceeds BirdNET's 3 second detection window, or in which the detection window overlaps with a partial signal.}
 
-\item{spec.col}{tbd}
+\item{box.col}{Color of border box drawn around 3-second detection area.}
+
+\item{spec.col}{Default = gray.3(). The colors used to plot verification spectrograms. Spectrogram colors are adjustable, and users may create their own gradients for display. A few spectrogram color options are provided via the R package monitoR, including gray.1(), gray.2(()), gray.3(), rainbow.1(), and topo.1(), all of which are based on existing R colors.}
 }
 \value{
-Saves a formatted CSV of results with the following columns, now updated to include any verifications by the user.
-
-#' \itemize{
-\item{\strong{recordingID}: Site name.}
-\item{\strong{start.s}: tbd.}
-\item{\strong{end.s}: tbd}
-\item{\strong{scientific.name}: tbd.}
-\item{\strong{common.name}: tbd.}
-\item{\strong{confidence}: ....}
-\item{\strong{verify}: ....}
-\item{\strong{timezone}: ...}
-}
+Updates the 'verify' column of formatted BirdNET CSV files with user-input verifications.
 }
 \description{
-tbd
+Interactive function that produces spectrograms and wave clips enabling a user to verify BirdNET detections. Underlying CSV files are updated with user verifications.
 }
 \details{
-This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data using BirdNET.
+This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data using BirdNET. The "data" argument allows the user precise control over which detections to verify (e.g., a user could input only detections that exceed a desired confidence threshold, or only detections that have been identified for verification using a stratified sampling scheme).
 
 Spectrograms show 3-second segment detected by BirdNET. Title of spectrogram indicates the recordingID of the file name, the start and end times of the detection in seconds, the species detection, and the confidence level of the detection from 0 to 1.
 }
 \examples{
 \dontrun{
 
-# tbd
+# Create an audio directory for this example
+dir.create('example-audio-directory')
+
+# Read in example wave files
+data(exampleAudio1)
+data(exampleAudio2)
+
+# Write example waves to example audio directory
+tuneR::writeWave(object = exampleAudio1,
+                 filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
+tuneR::writeWave(object = exampleAudio2,
+                 filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+
+# Create a BirdNET results directory for this example
+dir.create('example-results-directory')
+
+# Write examples of formatted BirdNET CSV outputs to example results directory
+data(exampleFormatted1)
+write.csv(x = exampleFormatted1,
+          file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.csv',
+          row.names = FALSE)
+
+data(exampleFormatted2)
+write.csv(x = exampleFormatted2,
+          file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.csv',
+          row.names = FALSE)
+
+# Gather formatted BirdNET results
+dat <- birdnet_gather_results(results.directory = 'example-results-directory',
+                             formatted = TRUE)
+
+# Create a random sample of three detections to verify
+to.verify <- dat[common.name == "Swainson's Thrush"][sample(.N, 3)]
+
+# Create a verification library for this species
+ver.lib <- list("Swainson's Thrush" = c('y', 'n', 'unsure'))
+# Verify detections
+birdnet_verify(data = to.verify,
+               verification.library = ver.lib,
+               audio.directory = 'example-audio-directory',
+               results.directory = 'example-results-directory',
+               overwrite = FALSE)
+
+# Check that underlying CSVs have been updated with user verifications
+dat <- birdnet_gather_results(results.directory = 'example-results-directory',
+                             formatted = TRUE)
+dat[!is.na(verify)]
+
+# Delete all temporary example files when finished
+unlink(x = 'example-audio-directory', recursive = TRUE)
+unlink(x = 'example-results-directory', recursive = TRUE)
+
 }
 
 }

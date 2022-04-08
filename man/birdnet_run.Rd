@@ -13,14 +13,13 @@ birdnet_run(
   lon,
   ovlp = 0,
   sens = 1,
-  min.conf = 0.1,
-  custom.list = NULL
+  min.conf = 0.1
 )
 }
 \arguments{
-\item{audio.directory}{Absolute path to top-level input directory path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.}
+\item{audio.directory}{Absolute path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.}
 
-\item{results.directory}{Absolute path to directory where BirdNET results should be stored. Logical flag to specify whether audio files are housed in 'Data' subdirectories}
+\item{results.directory}{Absolute path to directory where BirdNET results should be stored.}
 
 \item{birdnet.directory}{Absolute path to directory where BirdNET is installed on your machine.}
 
@@ -35,33 +34,96 @@ birdnet_run(
 \item{sens}{Detection sensitivity; higher values result in higher sensitivity. Values from 0.5 to 1.5. Default = 1.0.}
 
 \item{min.conf}{Minimum confidence threshold. Values from 0.01 to 0.99. Default = 0.1.}
-
-\item{custom.list}{Not incorporated yet! From BirdNET:  Path to text file containing a list of species. Not used if not provided.}
-
-\item{timezone}{Specify timezone setting used in the audio recorder (e.g, 'GMT'). If recordings were taken in local time at your study site, specify an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., 'America/Los_Angeles'). This is extremely important to foster clarity in data analysis through the years, as some projects have varied year to year in whether recordings were taken in GMT vs. local time.}
 }
 \value{
-Saves an unformatted CSV of results for each wave file in results.directory. Files have prefix "BirdNET_". If there is an issue with any audio files (e.g., file corrupted), problematic files that were not processed will be recorded in a file named 'BirdNET_Problem-Files_DATE.csv'.
+Saves an unformatted CSV of results for each wave file in results.directory. Files have prefix "BirdNET_". If there is an issue with any audio files (e.g., wave file corrupt or too short), problematic files that were not processed will be recorded in a file named 'BirdNET_Problem-Files_DATE.csv'. Note that problem files may also occur if you have CSV results open from previous runs and are attempting to re-run the results while the CSV is still open; the program will not have write permissions to overwrite an open CSV file.
+
+Each CSV produced by BirdNET contains a single column with detections in semi-colon separated values of the following information:
+
+\itemize{
+\item{\strong{Start (s)}: Start time of detection in seconds.}
+\item{\strong{End (s)}: End time of detection in seconds.}
+\item{\strong{Scientific name}: Species scientific name.}
+\item{\strong{Common name}: Species common name.}
+\item{\strong{Confidence}: BirdNET's confidence level in this detection ranging from 0 (least confident) to 1 (most confident).}
+}
+
+The following list provides an example of these outputs:
+\itemize{
+\item{Start (s);End (s);Scientific name;Common name;Confidence}
+\item{3.0;6.0;Catharus ustulatus;Swainson's Thrush;0.7575617}
+\item{3.0;6.0;Setophaga occidentalis;Hermit Warbler;0.1371203}
+\item{3.0;6.0;Setophaga townsendi;Townsend's Warbler;0.11865085}
+\item{15.0;18.0;Catharus ustulatus;Swainson's Thrush;0.95675665}
+\item{15.0;18.0;Setophaga occidentalis;Hermit Warbler;0.15624857}
+\item{21.0;24.0;Catharus ustulatus;Swainson's Thrush;0.43174374}
+\item{24.0;27.0;Catharus ustulatus;Swainson's Thrush;0.6530585}
+}
 }
 \description{
-This function uses the reticulate package to run Python from RStudio in order to process files through BirdNET. It assumes that all files in a folder come from the same site, and that the audio files are wave format and follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. To use this function, users must first successfully install \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite}, set up a conda environment, and make necessary modifications to the BirdNET analyze.py file. See \href{https://cbalantic.github.io/Install-BirdNET-Windows-RStudio/}{here} for one way to accomplish these steps (note that this does not serve as official guidance). Please input absolute paths for directory arguments. This is necessary due to the way RStudio is communicating with the underlying Python code.
+This function uses the reticulate package to run Python from RStudio in order to process files through BirdNET. It assumes that all files in a folder come from the same site, and that the audio files are wave format and follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. To use this function, users must first successfully install \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite}, set up a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment}{conda environment for BirdNET}, and save \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#3-modify-the-birdnet-analyze-script}{a modified version of the BirdNET analyze.py file}. More details are available \href{https://cbalantic.github.io/Install-BirdNET-Windows-RStudio/}{here} (note that this does not serve as official guidance). \strong{Please input absolute paths for all directory arguments. This is necessary due to the way RStudio is communicating with the underlying Python code.} Note that the option to input a customized species list has not been implemented in this function.
 }
 \details{
-This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET.
+This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET. The example given in this function's documentation below will not run unless you have installed \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite}, set up a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment}{conda environment for BirdNET}, and saved a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#3-modify-the-birdnet-analyze-script}{a modified version of the BirdNET analyze.py file}.
 }
 \examples{
 \dontrun{
 
+##### View examples of CSV outputs produced by birdnet_run(): #####
+data(exampleBirdNET1)
+write.csv(x = exampleBirdNET1,
+          file = 'BirdNET_Rivendell_20210623_113602.csv',
+          row.names = FALSE)
 
+data(exampleBirdNET2)
+write.csv(x = exampleBirdNET2,
+          file = 'BirdNET_Rivendell_20210623_114602.csv',
+          row.names = FALSE)
+
+
+
+##### Please consider the following example as pseudocode ######
+
+# Because this function uses two external programs (Python and BirdNET-Lite),
+# the example function below will not be modifiable to run for you unless
+# you follow the instructions given in "Description".
+
+# Must set environment BEFORE calling in the reticulate package
 Sys.setenv(RETICULATE_PYTHON = "C:/Your/Python/Path/Here/python.exe")
 library(reticulate)
+
+# Set your conda environment
 use_condaenv(condaenv = "pybirdnet", required = TRUE)
 
-# can't really do an reproducible example here since I don't know what their install situation is
-# birdnet_run()
+# Create an audio directory for this example
+dir.create('example-audio-directory')
+
+# Create a results directory for this example
+dir.create('example-results-directory')
+
+# Read in example wave files
+data(exampleAudio1)
+data(exampleAudio2)
+
+# Write example waves to example audio directory
+tuneR::writeWave(object = exampleAudio1,
+                 filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
+tuneR::writeWave(object = exampleAudio2,
+                 filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+
+# Run audio data through BirdNET
+birdnet_run(audio.directory = 'absolute/path/to/example-audio-directory',
+            results.directory = 'absolute/path/to/example-results-directory',
+            birdnet.directory = 'absolute/path/to/BirdNET',
+            birdnet.script = 'BirdNET-Reticulate.py',
+            lat = 46.09924,
+            lon = -123.8765)
+
+# Delete all temporary example files when finished
+unlink(x = 'example-audio-directory', recursive = TRUE)
+unlink(x = 'example-results-directory', recursive = TRUE)
 
 }
-
 }
 \seealso{
 \code{\link{birdnet_format_csv}}, \code{\link{birdnet_verify}}

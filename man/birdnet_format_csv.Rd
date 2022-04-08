@@ -2,7 +2,7 @@
 % Please edit documentation in R/birdnet_format_csv.R
 \name{birdnet_format_csv}
 \alias{birdnet_format_csv}
-\title{Format BirdNET csv outputs}
+\title{Format BirdNET CSV outputs}
 \usage{
 birdnet_format_csv(results.directory, timezone)
 }
@@ -15,26 +15,46 @@ birdnet_format_csv(results.directory, timezone)
 Saves a formatted CSV of results with the following columns:
 
 \itemize{
-\item{\strong{recordingID}: Site name.}
-\item{\strong{start.s}: tbd.}
-\item{\strong{end.s}: tbd}
-\item{\strong{scientific.name}: tbd.}
-\item{\strong{common.name}: tbd.}
-\item{\strong{confidence}: ....}
-\item{\strong{verify}: ....}
-\item{\strong{timezone}: ...}
+\item{\strong{recordingID}: Recording identifier for the file, as SITE_YYYYMMDD_HHMMSS.wav.}
+\item{\strong{start.s}: Start time of detection in seconds.}
+\item{\strong{end.s}: End time of detection in seconds.}
+\item{\strong{scientific.name}: Species scientific name.}
+\item{\strong{common.name}: Species common name.}
+\item{\strong{confidence}: BirdNET's confidence level in this detection ranging from 0 (least confident) to 1 (most confident).}
+\item{\strong{verify}: A column into which verifications may be populated. When initially created, will be 'NA'.}
+\item{\strong{timezone}: Timezone setting used in the audio recorder.}
 }
 }
 \description{
-tbd
+Reformats BirdNET CSV outputs into separated columns with R-friendly column names, a "recordingID" column for easier data manipulation, a "verify" column to support manual verification of detection results, and a "timezone" column to clarify the timezone setting used by the audio recorder.
 }
 \details{
-This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data using BirdNET.
+This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data using BirdNET. It was developed for use on Windows. CSV encodings may vary based on platform and result in errors.
 }
 \examples{
 \dontrun{
 
-# tbd
+# Create a BirdNET results directory for this example
+dir.create('example-results-directory')
+
+# Write examples of raw BirdNET CSV outputs to example results directory
+data(exampleBirdNET1)
+write.csv(x = exampleBirdNET1,
+          file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.csv',
+          row.names = FALSE, )
+
+data(exampleBirdNET2)
+write.csv(x = exampleBirdNET2,
+          file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.csv',
+          row.names = FALSE)
+
+# Run birdnet_format_csv:
+birdnet_format_csv(results.directory = 'example-results-directory',
+                   timezone = 'GMT')
+
+# Delete all temporary example files when finished
+unlink(x = 'example-results-directory', recursive = TRUE)
+
 }
 
 }

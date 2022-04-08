@@ -61,9 +61,9 @@
 #' data(exampleAudio2)
 #'
 #' # Write example waves to example input directory
-#' tuneR::writeWave(object = exampleAudio,
+#' tuneR::writeWave(object = exampleAudio1,
 #'                  filename = 'example-input-directory/Rivendell_20210715_114502.wav')
-#' tuneR::writeWave(object = exampleAudio,
+#' tuneR::writeWave(object = exampleAudio2,
 #'                  filename = 'example-input-directory/Rivendell_20210715_115502.wav')
 #'
 #' # Perform wave_to_nvspl in test mode (test.file = TRUE)
@@ -107,7 +107,7 @@
 # need to overhaul NVSPL file in general, but that's a task more for Damon
 
 
-Wave_To_NVSPL <- function(input.directory,
+wave_to_nvspl <- function(input.directory,
                           data.directory = TRUE,
                           test.file = FALSE,
                           project,
