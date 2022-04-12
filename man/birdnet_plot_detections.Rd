@@ -63,9 +63,8 @@ tuneR::writeWave(object = exampleAudio1,
 tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
 
-# Read in example verified data
+# Read in example data.table/data.frame for plotting
 data(examplePlotData)
-
 
 # Plot only detections of Swainson's Thrush verified as "song",
 # with frequency limits ranging from 0.5 to 12 kHz, gray spectrogram colors,
