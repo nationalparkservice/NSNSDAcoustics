@@ -14,7 +14,7 @@ data(exampleNVSPL)
 Sample NVSPL data stored as data.frames within a list object.
 }
 \details{
-The exampleNVSPL object can be used to experiment with functions that use NVSPL data. See the example code given in \code{\link{NVSPL_To_AI}}.
+The exampleNVSPL object can be used to experiment with functions that use NVSPL data. See the example code given in \code{\link{nvspl_to_ai}}.
 }
 \examples{
 

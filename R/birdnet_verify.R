@@ -3,7 +3,7 @@
 #' @name birdnet_verify
 #' @title Verify BirdNET detections
 #' @description Interactive function that produces spectrograms and wave clips enabling a user to verify BirdNET detections. Underlying CSV files are updated with user verifications.
-#' @param data Data.table or data.frame of subsetted detections that a user would like to verify \strong{for a single species}. Takes formatted results only (see: \code{\link{birdnet_format_csv}}; must contain columns named recordingID, start.s, end.s, scientific.name, common.name, confidence, verify, and timezone.
+#' @param data Data.table or data.frame of subsetted detections that a user would like to verify \strong{for a single species}. Takes formatted results only (see: \code{\link{birdnet_format_csv}}); must contain columns named recordingID, start.s, end.s, scientific.name, common.name, confidence, verify, and timezone.
 #' @param verification.library List specifying which verification options should be shown to the user. Allows finer control to fit user's needs: user may specify whether a detection is a song, a call, a certain song or call type of interest, false alarm, unsure, or whatever the user needs. This enables maximum flexibility for the user, but also requires some thoughtfulness so that verification options remain consistent. BirdNET provides only species-level confidence and does not classify to song or call types. Thus, depending on expertise and familiarity with a focal species, a user may find themselves in a situation where songs are easily verified, but calls are not. Verification library provides the flexibility to accommodate varying levels of expertise, but must be thought through by the user beforehand.
 #'
 #' @param audio.directory Top-level input directory path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.
@@ -13,7 +13,7 @@
 #' @param play Logical value specifying whether a temporary wave file should be written to the working directory for the user to check during verification. If TRUE, a temporary wave file for the detection is written to the working directory, available for the user to listen to, and is deleted after the user closes the player window and adds a verification. If FALSE, no temporary wave file is written.
 #' @param buffer Numeric buffer, in seconds, to place around BirdNET's 3 second detection area (default = 1). Generally useful for providing acoustic "context" around a detected event; of particular utility in cases where the target signal exceeds BirdNET's 3 second detection window, or in which the detection window overlaps with a partial signal.
 #' @param box.col Color of border box drawn around 3-second detection area.
-#' @param spec.col Default = gray.3(). The colors used to plot verification spectrograms. Spectrogram colors are adjustable, and users may create their own gradients for display. A few spectrogram color options are provided via the R package monitoR, including gray.1(), gray.2(()), gray.3(), rainbow.1(), and topo.1(), all of which are based on existing R colors.
+#' @param spec.col The colors used to plot verification spectrograms. Default = gray.3(). Spectrogram colors are adjustable, and users may create their own gradients for display. A few spectrogram color options are provided via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(), and topo.1(), all of which are based on existing R colors.
 #' @return Updates the 'verify' column of formatted BirdNET CSV files with user-input verifications.
 #' @details
 #'
@@ -74,7 +74,7 @@
 #'
 #' # Check that underlying CSVs have been updated with user verifications
 #' dat <- birdnet_gather_results(results.directory = 'example-results-directory',
-#'                              formatted = TRUE)
+#'                               formatted = TRUE)
 #' dat[!is.na(verify)]
 #'
 #' # Delete all temporary example files when finished

@@ -193,3 +193,63 @@ save(exampleFormatted1, file = 'data/exampleFormatted1.RData')
 save(exampleFormatted2, file = 'data/exampleFormatted2.RData')
 
 unlink('example-results-directory')
+
+
+# Example plot data ============================================================
+
+# Create an audio directory for this example
+dir.create('example-audio-directory')
+
+# Read in example wave files
+data(exampleAudio1)
+data(exampleAudio2)
+
+# Write example waves to example audio directory
+tuneR::writeWave(object = exampleAudio1,
+                  filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
+tuneR::writeWave(object = exampleAudio2,
+                  filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+
+# Create a BirdNET results directory for this example
+dir.create('example-results-directory')
+
+# Write examples of formatted BirdNET CSV outputs to example results directory
+data(exampleFormatted1)
+write.csv(x = exampleFormatted1,
+           file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.csv',
+           row.names = FALSE)
+
+data(exampleFormatted2)
+write.csv(x = exampleFormatted2,
+          file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.csv',
+          row.names = FALSE)
+
+# Gather formatted BirdNET results
+dat <- birdnet_gather_results(results.directory = 'example-results-directory',
+                              formatted = TRUE)
+
+# Create a random sample of three detections to verify
+to.verify <- rbind(dat[common.name == "Swainson's Thrush" & confidence >= 0.95],
+                   dat[common.name == "Swainson's Thrush" & confidence <= 0.2])
+
+# Create a verification library for this species
+ver.lib <- list("Swainson's Thrush" = c('song', 'call', 'false', 'unsure'))
+
+# Verify detections
+birdnet_verify(data = to.verify,
+               verification.library = ver.lib,
+                audio.directory = 'example-audio-directory',
+                results.directory = 'example-results-directory',
+                overwrite = FALSE)
+
+# Check that underlying CSVs have been updated with user verifications
+dat <- birdnet_gather_results(results.directory = 'example-results-directory',
+                              formatted = TRUE)
+examplePlotData <- dat
+
+#Save as RData
+save(examplePlotData, file = 'data/examplePlotData.RData')
+
+# Delete all temporary example files when finished
+unlink(x = 'example-audio-directory', recursive = TRUE)
+unlink(x = 'example-results-directory', recursive = TRUE)

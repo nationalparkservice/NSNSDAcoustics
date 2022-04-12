@@ -13,33 +13,36 @@ birdnet_plot_detections(
   spec.col = monitoR::gray.3(),
   box = TRUE,
   box.lwd = 1,
-  box.col = "black"
+  box.col = "black",
+  title.size = 1
 )
 }
 \arguments{
 \item{data}{Data.table or data.frame of subsetted detections that a user would like to plot \strong{for a single species}. This allows the user precise control over which detections to plot.}
 
-\item{audio.directory}{tbd}
+\item{audio.directory}{Top-level input directory path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.}
 
 \item{title}{Optional title describing which detections are being plotted (e.g., "Confidence > 0.5", "True Positives", "Alarm Calls").}
 
-\item{frq.lim}{Default = c(0, 12). Optional two-element numeric vector specifying frequency limits to the plotted spectrograms, in kHz.}
+\item{frq.lim}{Optional two-element numeric vector specifying frequency limits to the plotted spectrograms, in kHz. Default = c(0, 12).}
 
-\item{new.window}{Default = TRUE. Logical value for whether to use \code{dev.new} to produce new plot windows.}
+\item{new.window}{Logical value for whether to use \code{dev.new} to produce new plot windows. Default = TRUE.}
 
-\item{spec.col}{Default = gray.3(). The colors used to plot verification spectrograms. Spectrogram colors are adjustable, and users may create their own gradients for display. A few spectrogram color options are provided via the R package monitoR, including gray.1(), gray.2(()), gray.3(), rainbow.1(), and topo.1(), all of which are based on existing R colors.}
+\item{spec.col}{The colors used to plot verification spectrograms. Default = gray.3(). Spectrogram colors are adjustable, and users may create their own gradients for display. A few spectrogram color options are provided via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(), and topo.1(), all of which are based on existing R colors.}
 
-\item{box}{Default = TRUE. Logical for whether to draw a box around each detection.}
+\item{box}{Logical for whether to draw a box around each detection. Default = TRUE.}
 
-\item{box.lwd}{Default = 1. Integer value for box line thickness.}
+\item{box.lwd}{Integer value for box line thickness. Default = 1.}
 
-\item{box.col}{Default = 'black'. Box color.}
+\item{box.col}{Box color. Default = 'black'.}
+
+\item{title.size}{Size of title. Default = 1.}
 }
 \value{
-At least one plot, and up to N plots based on the number of "verify" categories contained in input data; one of all verified target signals for this template, and the other of all verified false alarms for this template. \code{birdnet_plot_detections} also returns a composite key of each plotted detection, which could be used to backtrack into the CSVs and check or change labels that appear to be incorrect... (not sure if I want to bother including this though).
+Plot of verified detections
 }
 \description{
-tbd
+Plot spectrograms of user-selected verified or unverified data
 }
 \details{
 This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data produced by BirdNET.
@@ -47,10 +50,75 @@ This function was developed by the National Park Service Natural Sounds and Nigh
 \examples{
 \dontrun{
 
-# tbd
+# Create an audio directory for this example
+dir.create('example-audio-directory')
+
+# Read in example wave files
+data(exampleAudio1)
+data(exampleAudio2)
+
+# Write example waves to example audio directory
+tuneR::writeWave(object = exampleAudio1,
+                 filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
+tuneR::writeWave(object = exampleAudio2,
+                 filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+
+# Read in example verified data
+data(examplePlotData)
+
+
+# Plot only detections of Swainson's Thrush verified as "song",
+# with frequency limits ranging from 0.5 to 12 kHz, gray spectrogram colors,
+# a custom title, and a gray box around each detection
+plot.songs <- examplePlotData[common.name == "Swainson's Thrush" & verify == "song"]
+birdnet_plot_detections(data = plot.songs,
+                        audio.directory = 'example-audio-directory',
+                        title = "Swainson's Thrush Songs",
+                        frq.lim = c(0.5, 12),
+                        new.window = TRUE,
+                        spec.col = gray.3(),
+                        box = TRUE,
+                        box.lwd = 1,
+                        box.col = 'gray')
+
+# Plot only detections of Swainson's Thrush verified as "call"
+# with frequency limits ranging from 0.5 to 6 kHz,a custom title, no boxes,
+# and colors sampled from the viridis color package
+plot.calls <- examplePlotData[common.name == "Swainson's Thrush" & verify == "call"]
+birdnet_plot_detections(data = plot.calls,
+                        audio.directory = 'example-audio-directory',
+                        title = "Swainson's Thrush Calls",
+                        frq.lim = c(0.5, 6),
+                        new.window = TRUE,
+                        spec.col = viridis::viridis(30),
+                        box = FALSE,
+                        title.size = 1)
+
+# Loop through to plot detections for selected unverified species
+# where confidence of detection >= 0.25
+# with frequency limits ranging from 0.5 to 12 kHz, custom titles, gray boxes,
+# and gray spectrogram colors
+sp <- c('Brown-crested Flycatcher', 'Pacific-slope Flycatcher')
+for (i in 1:length(sp)) {
+ plot.sp <- examplePlotData[confidence >= 0.25 & common.name == sp[i]]
+ birdnet_plot_detections(data = plot.sp,
+                         audio.directory = 'example-audio-directory',
+                         title = paste0(sp[i], ' Detections >= 0.25'),
+                         frq.lim = c(0.5, 12),
+                         new.window = TRUE,
+                         spec.col = gray.3(),
+                         box = TRUE,
+                         box.lwd = 0.5,
+                         box.col = 'gray',
+                         title.size = 1.5)
+}
+
+# Delete all temporary example files when finished
+unlink(x = 'example-audio-directory', recursive = TRUE)
+
 }
 
 }
 \seealso{
-\code{\link{birdnet_run}}, \code{\link{birdnet_format_csv}}
+\code{\link{birdnet_run}}, \code{\link{birdnet_format_csv}}, \code{\link{birdnet_verify}}
 }

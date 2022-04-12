@@ -14,7 +14,7 @@ data(exampleAudio2)
 Sample recording (audio) data stored as a \code{Wave} file.
 }
 \details{
-The exampleAudio2 object can be used to experiment with functions that use audio data, such as \code{\link{Wave_To_NVSPL}}
+The exampleAudio2 object can be used to experiment with functions that use audio data, such as \code{\link{wave_to_nvspl}}
 }
 \examples{
 # Load the dataset
