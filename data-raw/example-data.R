@@ -117,6 +117,7 @@ save(exampleScores, file = 'data/exampleScores.RData')
 
 # birdnet_run birdnet raw results example data =================================
 
+library(NSNSDAcoustics)
 
 # Set up python/reticulate
 Sys.setenv(RETICULATE_PYTHON = "C:/Users/cbalantic/Anaconda3/envs/pybirdnet/python.exe")
@@ -159,6 +160,17 @@ save(exampleBirdNET1, file = 'data/exampleBirdNET1.RData')
 save(exampleBirdNET2, file = 'data/exampleBirdNET2.RData')
 
 unlink('example-audio-directory')
+
+
+# Example tester for audio.files argument
+# Use optional "audio.files" argument to process specific files
+birdnet_run(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
+            audio.files = 'Rivendell_20210623_113602.wav',
+            results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/data-raw', # must use absolute path!
+            birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/CathleenPythonTest/',
+            birdnet.script = 'BirdNET-Reticulate.py',
+            lat = 46.09924,
+            lon = -123.8765)
 
 
 # Example formatted results ====================================================

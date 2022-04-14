@@ -6,6 +6,7 @@
 \usage{
 birdnet_run(
   audio.directory,
+  audio.files,
   results.directory,
   birdnet.directory,
   birdnet.script,
@@ -17,7 +18,9 @@ birdnet_run(
 )
 }
 \arguments{
-\item{audio.directory}{Absolute path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.}
+\item{audio.directory}{Absolute path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav. Default behavior for this function is to process every file in the audio.directory through BirdNET.}
+
+\item{audio.files}{OPTIONAL character vector of specific file names to process within the audio.directory. If missing, all files in audio.directory will be processed.}
 
 \item{results.directory}{Absolute path to directory where BirdNET results should be stored.}
 
@@ -111,8 +114,17 @@ tuneR::writeWave(object = exampleAudio1,
 tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
 
-# Run audio data through BirdNET
+# Run all audio data in a directory through BirdNET
 birdnet_run(audio.directory = 'absolute/path/to/example-audio-directory',
+            results.directory = 'absolute/path/to/example-results-directory',
+            birdnet.directory = 'absolute/path/to/BirdNET',
+            birdnet.script = 'BirdNET-Reticulate.py',
+            lat = 46.09924,
+            lon = -123.8765)
+
+# Use optional "audio.files" argument to process specific files
+birdnet_run(audio.directory = 'absolute/path/to/example-audio-directory',
+            audio.files = 'Rivendell_20210623_113602.wav',
             results.directory = 'absolute/path/to/example-results-directory',
             birdnet.directory = 'absolute/path/to/BirdNET',
             birdnet.script = 'BirdNET-Reticulate.py',

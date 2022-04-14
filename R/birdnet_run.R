@@ -3,7 +3,8 @@
 #' @name birdnet_run
 #' @title Run BirdNET from RStudio
 #' @description This function uses the reticulate package to run Python from RStudio in order to process files through BirdNET. It assumes that all files in a folder come from the same site, and that the audio files are wave format and follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. To use this function, users must first successfully install \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite}, set up a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment}{conda environment for BirdNET}, and save \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#3-modify-the-birdnet-analyze-script}{a modified version of the BirdNET analyze.py file}. More details are available \href{https://cbalantic.github.io/Install-BirdNET-Windows-RStudio/}{here} (note that this does not serve as official guidance). \strong{Please input absolute paths for all directory arguments. This is necessary due to the way RStudio is communicating with the underlying Python code.} Note that the option to input a customized species list has not been implemented in this function.
-#' @param audio.directory Absolute path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.
+#' @param audio.directory Absolute path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav. Default behavior for this function is to process every file in the audio.directory through BirdNET.
+#' @param audio.files OPTIONAL character vector of specific file names to process within the audio.directory. If missing, all files in audio.directory will be processed.
 #' @param results.directory Absolute path to directory where BirdNET results should be stored.
 #' @param birdnet.directory Absolute path to directory where BirdNET is installed on your machine.
 #' @param birdnet.script Name of Python file that will be sourced to run BirdNET (e.g., 'analyze.py')
@@ -89,8 +90,17 @@
 #' tuneR::writeWave(object = exampleAudio2,
 #'                  filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
 #'
-#' # Run audio data through BirdNET
+#' # Run all audio data in a directory through BirdNET
 #' birdnet_run(audio.directory = 'absolute/path/to/example-audio-directory',
+#'             results.directory = 'absolute/path/to/example-results-directory',
+#'             birdnet.directory = 'absolute/path/to/BirdNET',
+#'             birdnet.script = 'BirdNET-Reticulate.py',
+#'             lat = 46.09924,
+#'             lon = -123.8765)
+#'
+#' # Use optional "audio.files" argument to process specific files
+#' birdnet_run(audio.directory = 'absolute/path/to/example-audio-directory',
+#'             audio.files = 'Rivendell_20210623_113602.wav',
 #'             results.directory = 'absolute/path/to/example-results-directory',
 #'             birdnet.directory = 'absolute/path/to/BirdNET',
 #'             birdnet.script = 'BirdNET-Reticulate.py',
@@ -104,6 +114,7 @@
 #' }
 
 birdnet_run <- function(audio.directory,   # absolute path for now
+                        audio.files,
                         results.directory, # absolute path for now
                         birdnet.directory, # absolute path for now
                         birdnet.script,    # e.g. 'analyze.py'
@@ -147,6 +158,15 @@ birdnet_run <- function(audio.directory,   # absolute path for now
 
   # Identify filepaths and recordingIDs
   rec.paths <- list.files(audio.directory, pattern = '.wav', recursive = TRUE)
+
+  if(!missing(audio.files)) {
+    rec.paths <- rec.paths[rec.paths %in% audio.files]
+    paths.orig <- list.files(audio.directory, pattern = '.wav', recursive = TRUE)
+    if(length(rec.paths) == 0) {
+      stop('You have input something to the audio.files argument, but we can\'t locate audio files with names like ', audio.files[1],' in ', audio.directory, '. Did you mean something like ', paths.orig[1], '?')
+    }
+  }
+
   i.strings <- paste0(audio.directory, rec.paths) # absolute paths to recs
   recIDs <- basename(rec.paths)
 
@@ -161,7 +181,7 @@ birdnet_run <- function(audio.directory,   # absolute path for now
                       '.csv')
 
   # Loop through wav files to process through BirdNET
-  problem.list <- list()
+  problem.list <- error.list <- list()
 
   for (i in 1:length(recIDs)) {
     message('Working on ', i, ' of ', length(recIDs), ': ', recIDs[i], '\n')
@@ -181,8 +201,9 @@ birdnet_run <- function(audio.directory,   # absolute path for now
     )
 
     if (inherits(catch.error, 'error')) {
-      message('\nThere is a problem with ', recIDs[i], '; skipping to next')
+      message('There is a problem with ', recIDs[i], '; skipping to next\n')
       problem.list[[i]] <- recIDs[i]
+      error.list[[i]] <- catch.error
       next
     } # end trycatch
   }
@@ -192,7 +213,14 @@ birdnet_run <- function(audio.directory,   # absolute path for now
   if (nrow(problem.files) > 0) {
     prob.name <- paste0(results.directory, 'BirdNET_Problem-Files_', as.character(Sys.Date()), '.csv')
     write.csv(x = problem.files, file = prob.name)
-    message(nrow(problem.files), ' files could not be processed. This may be due to an issue with the wave file itself, or you may have had a CSV with the same name open at the time of running the function. \nSee list of unprocessed files here: ', prob.name)
+    message(nrow(problem.files), ' files could not be processed. This may be due to an issue with the wave file itself, you may have had a CSV with the same name open at the time of running the function, or there is an error in your BirdNET -> Python -> Reticulate setup. \nSee list of unprocessed files here: ', prob.name)
+  }
+
+  if (length(unlist(error.list)) > 0){
+    # Return only unique errors
+    unq.errs <- unique(error.list)
+    message('\nReturning error list...')
+    message('\n', unlist(unq.errs))
   }
 
   message('\nFINISHED! CSV results for each wave file are saved in ', results.directory, ' with the prefix "BirdNET_"')
