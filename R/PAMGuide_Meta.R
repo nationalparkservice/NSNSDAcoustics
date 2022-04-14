@@ -41,7 +41,6 @@ PAMGuide_Meta <- function(fullfile,...,atype='TOL',plottype='Both',envi='Air',
   if (timestring != ""){aid <- aid + 1000} else {aid <- aid + 2000}	#add time stamp element to metadata code
 
   ## Get file info
-
   ifile <- basename(fullfile)						      #file name
   fIN <- readWave(fullfile,header = TRUE)			#read file header
   Fs <- fIN[[1]]								            	#sampling frequency
@@ -450,7 +449,7 @@ PAMGuide_Meta <- function(fullfile,...,atype='TOL',plottype='Both',envi='Air',
       write.table(A,file = ofile,row.names=FALSE,quote=FALSE,col.names=FALSE,sep=",")
     }
     if (atype != 'Waveform') {
-      ofile <- paste(gsub(".wav","",file.path(outdir,basename(fullfile))),'_',atype,'_',N,'samples',winname,'Window_',round(r*100),'PercentOverlap.csv',sep = "")
+      ofile <- paste(gsub("\\.wav","",file.path(outdir,basename(fullfile))),'_',atype,'_',N,'samples',winname,'Window_',round(r*100),'PercentOverlap.csv',sep = "")
       write.table(A,file = ofile,row.names=FALSE,quote=FALSE,col.names=FALSE,sep=",")
     }
     #if (disppar == 1){cat('done in',(proc.time()-twrite)[3],'s.\n')}
