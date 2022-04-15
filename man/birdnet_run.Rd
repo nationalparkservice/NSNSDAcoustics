@@ -68,6 +68,8 @@ This function uses the reticulate package to run Python from RStudio in order to
 }
 \details{
 This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET. The example given in this function's documentation below will not run unless you have installed \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite}, set up a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment}{conda environment for BirdNET}, and saved a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#3-modify-the-birdnet-analyze-script}{a modified version of the BirdNET analyze.py file}.
+
+The function can handle .wav or .mp3 audio files. The current behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations.
 }
 \examples{
 \dontrun{

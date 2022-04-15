@@ -77,7 +77,9 @@ add_time_cols <- function(dt,
   splt <- strsplit(x = dt[,get(recording.id.col)], fixed = TRUE, split = '_')
   locIDs <- unlist(lapply(splt, '[[', 1))
   dates <- unlist(lapply(splt, '[[', 2))
-  times <- gsub(pattern = '.wav', replacement = '', x = unlist(lapply(splt, "[[", 3)))
+  times <- gsub(pattern = '.wav|.mp3', ignore.case = TRUE, replacement = '',
+                x = unlist(lapply(splt, "[[", 3)))
+
   dateTimes <- as.POSIXct(paste0(dates, times), tz = tz.recorder, format = '%Y%m%d%H%M%S')
   dt[,dateTimeRecorder := dateTimes]
 

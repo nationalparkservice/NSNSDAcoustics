@@ -42,6 +42,8 @@
 #'
 #' This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET. The example given in this function's documentation below will not run unless you have installed \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite}, set up a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment}{conda environment for BirdNET}, and saved a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#3-modify-the-birdnet-analyze-script}{a modified version of the BirdNET analyze.py file}.
 #'
+#' The function can handle .wav or .mp3 audio files. The current behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations.
+#'
 #' @seealso  \code{\link{birdnet_format_csv}}, \code{\link{birdnet_verify}}
 #' @import reticulate tuneR
 #' @export
@@ -157,11 +159,14 @@ birdnet_run <- function(audio.directory,   # absolute path for now
   on.exit(setwd(current.wd))
 
   # Identify filepaths and recordingIDs
-  rec.paths <- list.files(audio.directory, pattern = '.wav', recursive = TRUE)
+  rec.paths <- list.files(audio.directory, pattern = '.wav|.mp3',
+                          recursive = TRUE, ignore.case = TRUE)
 
   if(!missing(audio.files)) {
     rec.paths <- rec.paths[rec.paths %in% audio.files]
-    paths.orig <- list.files(audio.directory, pattern = '.wav', recursive = TRUE)
+    paths.orig <- list.files(audio.directory, pattern = '.wav|.mp3',
+                             recursive = TRUE,
+                             ignore.case = TRUE)
     if(length(rec.paths) == 0) {
       stop('You have input something to the audio.files argument, but we can\'t locate audio files with names like ', audio.files[1],' in ', audio.directory, '. Did you mean something like ', paths.orig[1], '?')
     }
@@ -184,9 +189,25 @@ birdnet_run <- function(audio.directory,   # absolute path for now
   problem.list <- error.list <- list()
 
   for (i in 1:length(recIDs)) {
+    # First, check to see if the file is an mp3.
+    # If it is, since I can't get my python libraries to process mp3, we are
+    # going to convert it to a temporary wav file, and process that instead
     message('Working on ', i, ' of ', length(recIDs), ': ', recIDs[i], '\n')
+    file <- i.strings[i]
+    is.mp3 <- grepl('.mp3', file, ignore.case = TRUE)
+
+    if (is.mp3) {
+      message('This is an mp3. Converting to wave...')
+      r <- readMP3(file)  ## MP3 file in working directory
+      temp.file <- paste0(audio.directory, 'temp-',
+                         gsub('.mp3', '.wav', recIDs[i]))
+      writeWave(r, temp.file, extensible = FALSE)
+      file <- temp.file
+      message('Done converting temporary wave file.')
+    }
+
     setwd(birdnet.directory)
-    py_run_string(paste0("args_i = '", i.strings[i], "'"))
+    py_run_string(paste0("args_i = '", file, "'"))
     py_run_string(paste0("args_lat = ", lat))
     py_run_string(paste0("args_lon = ", lon))
     py_run_string(paste0("args_week = ", wk[i]))
@@ -204,8 +225,12 @@ birdnet_run <- function(audio.directory,   # absolute path for now
       message('There is a problem with ', recIDs[i], '; skipping to next\n')
       problem.list[[i]] <- recIDs[i]
       error.list[[i]] <- catch.error
+      if(file.exists(temp.file)) unlink(temp.file) # remove temporary wav if needed
       next
     } # end trycatch
+
+    if (file.exists(temp.file)) unlink(temp.file) # remove temporary wav if needed
+
   }
 
   # Return names of problematic files
