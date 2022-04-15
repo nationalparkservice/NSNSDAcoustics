@@ -201,14 +201,23 @@ tuneR::writeWave(object = exampleAudio1,
 tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
 
-# Run audio data through BirdNET
+# Run all audio data in a directory through BirdNET
 birdnet_run(audio.directory = 'absolute/path/to/example-audio-directory',
             results.directory = 'absolute/path/to/example-results-directory',
             birdnet.directory = 'absolute/path/to/BirdNET',
             birdnet.script = 'BirdNET-Reticulate.py',
             lat = 46.09924,
             lon = -123.8765)
-
+            
+# Use optional "audio.files" argument to process specific files
+birdnet_run(audio.directory = 'absolute/path/to/example-audio-directory',
+            audio.files = 'Rivendell_20210623_113602.wav',
+            results.directory = 'absolute/path/to/example-results-directory',
+            birdnet.directory = 'absolute/path/to/BirdNET',
+            birdnet.script = 'BirdNET-Reticulate.py',
+            lat = 46.09924,
+            lon = -123.8765)
+             
 # Delete all temporary example files when finished
 unlink(x = 'example-audio-directory', recursive = TRUE)
 unlink(x = 'example-results-directory', recursive = TRUE)
