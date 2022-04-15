@@ -9,8 +9,8 @@ This repository provides a place for NSNSD staff to develop and modernize severa
 - **[Installing NSNSDAcoustics](#installing-nsnsdacoustics)**
 - **[Converting wave audio files to NVSPL with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-with-wave_to_nvspl)**
 - **[Converting NVSPL files to acoustic indices with nvspl_to_ai](#converting-nvspl-files-to-acoustic-indices-with-nvspl_to_ai)**
-- **[Running BirdNET from RStudio with birdnet_run](#running-birdnet-from-rstudio-with-birdnet_run)**: Head here if you need to process .wav or .mp3 audio files through BirdNET, and you want to do that from R.
-- **[Assessing BirdNET results](#assessing-birdnet-results)**: Head here if you already have raw BirdNET CSV outputs in hand and are interested in using R to wrangle, visualize, and verify the results.
+- **[Running BirdNET from RStudio with birdnet_run](#running-birdnet-from-rstudio-with-birdnet_run)**: Head here if you need to process .wav or .mp3 audio files through BirdNET, and you want to do that from R. Warning: although this is possible, it's not for the fainthearted and requires a substantial amount of setup.
+- **[Assessing BirdNET results](#assessing-birdnet-results)**: Head here if you already have raw BirdNET CSV outputs in hand and want to use R to wrangle, visualize, and verify the results.
   * **[Reformat raw BirdNET CSV results](#reformat-raw-birdnet-csv-results)**
   * **[Gather up BirdNET CSV results](#gather-up-birdnet-csv-results)**
   * **[Summarize count data of detected species](#summarize-count-data-of-detected-species)**
@@ -227,11 +227,17 @@ You may not want to process files through RStudio, or you may already have BirdN
 
 ## Assessing BirdNET Results
 ### Reformat raw BirdNET CSV results
+
+`birdnet_format_csv()` reformats the raw BirdNET results...
+
 ### Gather up BirdNET CSV results
+`birdnet_gather_results()` gathers all BirdNET CSV results from a desired folder into a user-friendly data.table / data.frame
+
 ### Summarize count data of detected species
+`birdnet_species_counts()` summarizes count data from a data.table of detected species over a selected time unit
+
 ### Verify BirdNET results
+`birdnet_verify()` allows the user to manually verify a selected subset of detections based on a user-input library of classification options 
+
 ### Visualize BirdNET detections
-* `birdnet_format_csv()` reformats the raw BirdNET results...
-* `birdnet_gather_results()` gathers all BirdNET CSV results from a desired folder into a user-friendly data.table / data.frame
-* `birdnet_species_counts()` summarizes count data from a data.table of detected species over a selected time unit
-* `birdnet_verify()` allows the user to manually verify a selected subset of detections based on a user-input library of classification options 
+`birdnet_plot_detections()` allows the user to visualize data...
