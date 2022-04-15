@@ -9,8 +9,8 @@ This repository provides a place for NSNSD staff to develop and modernize severa
 - **[Installing NSNSDAcoustics](#installing-nsnsdacoustics)**
 - **[Converting wave audio files to NVSPL with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-with-wave_to_nvspl)**
 - **[Converting NVSPL files to acoustic indices with nvspl_to_ai](#converting-nvspl-files-to-acoustic-indices-with-nvspl_to_ai)**
-- **[Running BirdNET from RStudio with birdnet_run](#running-birdnet-from-rstudio-with-birdnet_run)**: Head here if you need to process .wav or .mp3 audio files through BirdNET, and you want to do that from R. Warning: although this is possible, it's not for the fainthearted and requires a substantial amount of setup.
-- **[Assessing BirdNET results](#assessing-birdnet-results)**: Head here if you already have raw BirdNET CSV outputs in hand and want to use R to wrangle, visualize, and verify the results.
+- **[Running BirdNET from RStudio with birdnet_run](#running-birdnet-from-rstudio-with-birdnet_run)**: Go here if you need to process .wav or .mp3 audio files through BirdNET, and you want to do that from R. Warning: not for the fainthearted; requires a substantial amount of setup.
+- **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET CSV outputs in hand and want to use R to wrangle, visualize, and verify the results.
   * **[Reformat raw BirdNET CSV results](#reformat-raw-birdnet-csv-results)**
   * **[Gather up BirdNET CSV results](#gather-up-birdnet-csv-results)**
   * **[Summarize count data of detected species](#summarize-count-data-of-detected-species)**
@@ -35,7 +35,7 @@ If `install_github()` doesn't work, you can download the zip or tar.gz file dire
 After downloading, open R Studio, click on the Install button on the Packages tab, select Install From Package Archive File, and navigate to the downloaded file.
 
 ### A note on data.table syntax
-NSNSDAcoustics depends on the R package `data.table`, which allows for fast querying and manipulation of large data.frames. If you are an R user but have never used `data.table` syntax before, some of the example code may look unfamiliar. Don't fret -- `data.table` object types are also  `data.frames`. If you get frustrated by trying to subset them, you can always convert your `data.table` object type to a regular `data.frame` to work with a more familiar object type.
+NSNSDAcoustics depends on the R package `data.table`, which allows for fast querying and manipulation of large data.frames. If you are an R user but have never used `data.table` syntax before, some of the example code may look unfamiliar. Don't fret -- `data.table` object types are also  `data.frames`. If you get frustrated trying to work with them, you can always convert to a regular `data.frame` to work with a more familiar object type.
 
 ## Converting wave audio files to NVSPL with wave_to_nvspl
 
@@ -153,7 +153,17 @@ unlink(x = 'example-output-directory', recursive = TRUE)
 
 ## Running BirdNET from RStudio with birdnet_run
 
-`birdnet_run()` will not work unless you have [BirdNET](https://birdnet.cornell.edu/) installed and have made necessary modifications. This function uses the reticulate package to run Python from RStudio in order to process files through BirdNET. It assumes that all files in a folder come from the same site, and that the audio files are wave format and follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. To use `birdnet_run()`, users must first successfully install [BirdNET-Lite](https://github.com/kahst/BirdNET-Lite), set up [a conda environment for BirdNET](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment), and save [a modified version of the BirdNET analyze.py file](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#3-modify-the-birdnet-analyze-script). If you're on a Windows machine, [see here](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md) for a way to install BirdNET onto a Windows machine and running it from RStudio.
+`birdnet_run()` processes files through BirdNET by using the [reticulate](https://rstudio.github.io/reticulate/) package to run Python from RStudio. This function was developed for Windows 10 and has not been tested on other systems.
+
+To use `birdnet_run()`, please first complete the following steps: 
+1) Install [BirdNET-Lite](https://github.com/kahst/BirdNET-Lite). If you're on a Windows machine, [see here](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#part-1-installing-birdnet-on-a-windows-machine).
+2) Set up [a conda environment for BirdNET](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment)
+
+`birdnet_run()` will not work otherwise.
+
+It assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention.
+
+
 
 Please input absolute paths for all directory arguments in `birdnet_run()`. This is necessary due to the way RStudio is communicating with the underlying Python code. Note that the option to input a customized species list has not been implemented in this function.
 
@@ -173,7 +183,7 @@ write.csv(x = exampleBirdNET2,
 
 ```
 
-If you **do** want to run BirdNET from R, the following pseudocode provides an outline for how to implement `birdnet_run()`. Because this function uses two external programs (Python and BirdNET-Lite), the example function below will not be modifiable to run for you unless you have installed BirdNET-Lite, set up a conda environment, and modified the `analyze.py` file as described above. 
+If you **do** want to run BirdNET from R, the following pseudocode provides an outline for how to implement `birdnet_run()`. Because this function uses two external programs (Python and BirdNET-Lite), the examples below will not be modifiable to run for you unless you have installed BirdNET-Lite and set up a conda environment.
 
 
 ```r
