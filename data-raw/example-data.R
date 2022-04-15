@@ -144,7 +144,7 @@ tuneR::writeWave(object = exampleAudio2,
 birdnet_run(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
             results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/data-raw', # must use absolute path!
             birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/CathleenPythonTest/',
-            birdnet.script = 'BirdNET-Reticulate.py',
+           # birdnet.script = 'BirdNET-Reticulate.py',
             lat = 46.09924,
             lon = -123.8765)
 
@@ -171,6 +171,44 @@ birdnet_run(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDA
             birdnet.script = 'BirdNET-Reticulate.py',
             lat = 46.09924,
             lon = -123.8765)
+
+
+# BirdNET Run System tester ================================================
+
+# birdnet_run birdnet raw results example data =================================
+
+library(NSNSDAcoustics)
+
+# Set up python/reticulate
+Sys.setenv(RETICULATE_PYTHON = "C:/Users/cbalantic/Anaconda3/envs/pybirdnet/python.exe")
+library(reticulate) # call AFTER Sys.setenv
+use_condaenv(condaenv = "pybirdnet", required = TRUE)
+
+# Create an audio directory for this example
+dir.create('example-audio-directory')
+
+# Create a results directory for this example
+dir.create('example-results-directory')
+
+# Read in example wave files
+data(exampleAudio1)
+data(exampleAudio2)
+
+# Write example waves to example audio directory
+tuneR::writeWave(object = exampleAudio1,
+                 filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
+tuneR::writeWave(object = exampleAudio2,
+                 filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+
+# Run audio data through BirdNET
+birdnet_run_system(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
+            results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-results-directory', # must use absolute path!
+            birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/CathleenPythonTest/',
+            lat = 46.09924,
+            lon = -123.8765)
+
+
+
 
 
 # Example formatted results ====================================================

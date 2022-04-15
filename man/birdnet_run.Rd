@@ -9,7 +9,6 @@ birdnet_run(
   audio.files,
   results.directory,
   birdnet.directory,
-  birdnet.script,
   lat,
   lon,
   ovlp = 0,
@@ -25,8 +24,6 @@ birdnet_run(
 \item{results.directory}{Absolute path to directory where BirdNET results should be stored.}
 
 \item{birdnet.directory}{Absolute path to directory where BirdNET is installed on your machine.}
-
-\item{birdnet.script}{Name of Python file that will be sourced to run BirdNET (e.g., 'analyze.py')}
 
 \item{lat}{Recording location latitude. Set -1 to ignore.}
 
@@ -64,10 +61,10 @@ The following list provides an example of these outputs:
 }
 }
 \description{
-This function uses the reticulate package to run Python from RStudio in order to process files through BirdNET. It assumes that all files in a folder come from the same site, and that the audio files are wave format and follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. To use this function, users must first successfully install \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite}, set up a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment}{conda environment for BirdNET}, and save \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#3-modify-the-birdnet-analyze-script}{a modified version of the BirdNET analyze.py file}. More details are available \href{https://cbalantic.github.io/Install-BirdNET-Windows-RStudio/}{here} (note that this does not serve as official guidance). \strong{Please input absolute paths for all directory arguments. This is necessary due to the way RStudio is communicating with the underlying Python code.} Note that the option to input a customized species list has not been implemented in this function.
+This function uses the reticulate package to run Python from RStudio in order to process files through BirdNET. It is meant for Windows users and may have unexpected results on other systems. To use this function, users must first 1) install \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite} (see \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#part-1-installing-birdnet-on-a-windows-machine}{here} for a method to install on Windows) and 2) set up a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment}{conda environment for BirdNET}. The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. \strong{Please input absolute paths for all directory arguments. This is necessary due to the way RStudio is communicating with the underlying Python code.} Note that the option to input a customized species list has not been implemented in this function.
 }
 \details{
-This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET. The example given in this function's documentation below will not run unless you have installed \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite}, set up a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment}{conda environment for BirdNET}, and saved a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#3-modify-the-birdnet-analyze-script}{a modified version of the BirdNET analyze.py file}.
+This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET. The example given in this function's documentation below will not run unless you have set up BirdNET-Lite and a conda environment as described in the Description.
 
 The function can handle .wav or .mp3 audio files. The current behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations.
 }
@@ -120,7 +117,6 @@ tuneR::writeWave(object = exampleAudio2,
 birdnet_run(audio.directory = 'absolute/path/to/example-audio-directory',
             results.directory = 'absolute/path/to/example-results-directory',
             birdnet.directory = 'absolute/path/to/BirdNET',
-            birdnet.script = 'BirdNET-Reticulate.py',
             lat = 46.09924,
             lon = -123.8765)
 
@@ -129,7 +125,6 @@ birdnet_run(audio.directory = 'absolute/path/to/example-audio-directory',
             audio.files = 'Rivendell_20210623_113602.wav',
             results.directory = 'absolute/path/to/example-results-directory',
             birdnet.directory = 'absolute/path/to/BirdNET',
-            birdnet.script = 'BirdNET-Reticulate.py',
             lat = 46.09924,
             lon = -123.8765)
 
