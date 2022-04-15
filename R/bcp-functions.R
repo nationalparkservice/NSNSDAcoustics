@@ -43,7 +43,7 @@
 #' }
 #'
 #' @seealso  \code{\link{NVSPL_To_AI}}, \code{\link{SongMeter_To_NVSPL}}
-#' @import maptools svDialogs tuneR
+#' @import tuneR
 #' @export
 #' @examples
 #' \dontrun{
@@ -299,7 +299,7 @@ bcp_phenology_ai <- function(ai.data,
 #' }
 #'
 #' @seealso  \code{\link{NVSPL_To_AI}}, \code{\link{SongMeter_To_NVSPL}}
-#' @import AMMonitor maptools svDialogs tuneR
+#' @import tuneR
 #' @export
 #' @examples
 #' \dontrun{
@@ -580,7 +580,7 @@ bcp_phenology_species <- function(db.path,
 #' }
 #'
 #' @seealso  \code{\link{NVSPL_To_AI}}, \code{\link{SongMeter_To_NVSPL}}
-#' @import AMMonitor maptools svDialogs tuneR
+#' @import tuneR
 #' @export
 #' @examples
 #' \dontrun{
@@ -975,7 +975,7 @@ bcp_phenology_smooth <- function(db.path,
 #' }
 #'
 #' @seealso  \code{\link{NVSPL_To_AI}}, \code{\link{SongMeter_To_NVSPL}}, \code{\link{bcp_phenology_ai}}, \code{\link{bcp_phenology_smooth}},  \code{\link{bcp_phenology_counts}}
-#' @import AMMonitor maptools svDialogs tuneR
+#' @import tuneR
 #' @export
 #' @examples
 #' \dontrun{
@@ -1127,7 +1127,7 @@ species_counts <- function(db.path,
 #' }
 #'
 #' @seealso  \code{\link{NVSPL_To_AI}}, \code{\link{SongMeter_To_NVSPL}}
-#' @import AMMonitor maptools svDialogs tuneR
+#' @import tuneR
 #' @export
 #' @examples
 #' \dontrun{

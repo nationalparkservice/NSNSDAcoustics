@@ -47,7 +47,7 @@
 #' }
 #'
 #' @seealso  \code{\link{nvspl_to_ai}}
-#' @import svDialogs tuneR
+#' @import tuneR
 #' @export
 #' @include Meta.R PAMGuide.R PAMGuide_Meta.R
 #' @examples

@@ -8,11 +8,11 @@
 #' @param results.directory Absolute path to directory where BirdNET results should be stored.
 #' @param birdnet.directory Absolute path to directory where BirdNET is installed on your machine.
 #' @param lat Recording location latitude. Set -1 to ignore.
-#' @param lon Recording location latitude. Set -1 to ignore.
+#' @param lon Recording location longitude Set -1 to ignore.
 #' @param ovlp Overlap in seconds between extracted spectrograms. Values from 0.0 to 2.9. Default = 0.0.
 #' @param sens Detection sensitivity; higher values result in higher sensitivity. Values from 0.5 to 1.5. Default = 1.0.
 #' @param min.conf Minimum confidence threshold. Values from 0.01 to 0.99. Default = 0.1.
-#' @return Saves an unformatted CSV of results for each wave file in results.directory. Files have prefix "BirdNET_". If there is an issue with any audio files (e.g., wave file corrupt or too short), problematic files that were not processed will be recorded in a file named 'BirdNET_Problem-Files_DATE.csv'. Note that problem files may also occur if you have CSV results open from previous runs and are attempting to re-run the results while the CSV is still open; the program will not have write permissions to overwrite an open CSV file.
+#' @return Saves an unformatted CSV of results for each wave file in results.directory. Files have prefix "BirdNET_". If there is an issue with any audio files (e.g., wave file corrupt or too short), error messaging will be returned and problematic files that were not processed will be recorded in a file named 'BirdNET_Problem-Files_DATE.csv'. Note that problem files may also occur if you have CSV results open from previous runs and are attempting to re-run the results while the CSV is still open; the program will not have write permissions to overwrite an open CSV file.
 #'
 #' Each CSV produced by BirdNET contains a single column with detections in semi-colon separated values of the following information:
 #'
@@ -43,8 +43,10 @@
 #'
 #' The function can handle .wav or .mp3 audio files. The current behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations.
 #'
+#' NSNSDAcoustics suggests the reticulate package but does not install it for you. To use this function, please install reticulate using install.packages('reticulate')
+#'
 #' @seealso  \code{\link{birdnet_format_csv}}, \code{\link{birdnet_verify}}
-#' @import reticulate tuneR
+#' @import tuneR
 #' @export
 #' @examples
 #' \dontrun{
@@ -116,8 +118,8 @@ birdnet_run <- function(audio.directory,   # absolute path for now
                         audio.files,
                         results.directory, # absolute path for now
                         birdnet.directory, # absolute path for now
-                        lat,
-                        lon,
+                        lat = -1,
+                        lon = -1,
                         ovlp = 0.0,
                         sens = 1.0,
                         min.conf = 0.1) {

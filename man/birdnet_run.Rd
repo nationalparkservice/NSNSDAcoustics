@@ -9,8 +9,8 @@ birdnet_run(
   audio.files,
   results.directory,
   birdnet.directory,
-  lat,
-  lon,
+  lat = -1,
+  lon = -1,
   ovlp = 0,
   sens = 1,
   min.conf = 0.1
@@ -27,7 +27,7 @@ birdnet_run(
 
 \item{lat}{Recording location latitude. Set -1 to ignore.}
 
-\item{lon}{Recording location latitude. Set -1 to ignore.}
+\item{lon}{Recording location longitude Set -1 to ignore.}
 
 \item{ovlp}{Overlap in seconds between extracted spectrograms. Values from 0.0 to 2.9. Default = 0.0.}
 
@@ -36,7 +36,7 @@ birdnet_run(
 \item{min.conf}{Minimum confidence threshold. Values from 0.01 to 0.99. Default = 0.1.}
 }
 \value{
-Saves an unformatted CSV of results for each wave file in results.directory. Files have prefix "BirdNET_". If there is an issue with any audio files (e.g., wave file corrupt or too short), problematic files that were not processed will be recorded in a file named 'BirdNET_Problem-Files_DATE.csv'. Note that problem files may also occur if you have CSV results open from previous runs and are attempting to re-run the results while the CSV is still open; the program will not have write permissions to overwrite an open CSV file.
+Saves an unformatted CSV of results for each wave file in results.directory. Files have prefix "BirdNET_". If there is an issue with any audio files (e.g., wave file corrupt or too short), error messaging will be returned and problematic files that were not processed will be recorded in a file named 'BirdNET_Problem-Files_DATE.csv'. Note that problem files may also occur if you have CSV results open from previous runs and are attempting to re-run the results while the CSV is still open; the program will not have write permissions to overwrite an open CSV file.
 
 Each CSV produced by BirdNET contains a single column with detections in semi-colon separated values of the following information:
 
@@ -61,12 +61,14 @@ The following list provides an example of these outputs:
 }
 }
 \description{
-This function uses the reticulate package to run Python from RStudio in order to process files through BirdNET. It is meant for Windows users and may have unexpected results on other systems. To use this function, users must first 1) install \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite} (see \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#part-1-installing-birdnet-on-a-windows-machine}{here} for a method to install on Windows) and 2) set up a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment}{conda environment for BirdNET}. The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. \strong{Please input absolute paths for all directory arguments. This is necessary due to the way RStudio is communicating with the underlying Python code.} Note that the option to input a customized species list has not been implemented in this function.
+This function uses the reticulate package to run Python from RStudio in order to process files through BirdNET. It is meant for Windows users and may have unexpected results on other systems. To use this function, users must first (1) install \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite} (see \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#part-1-installing-birdnet-on-a-windows-machine}{here} for a method to install on Windows) and (2) set up a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment}{conda environment for BirdNET}. The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. Please input absolute paths for all directory arguments. This is necessary due to the way RStudio is communicating with the underlying Python code. Note that BirdNET's option to input a customized species list has not been implemented in this function.
 }
 \details{
 This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET. The example given in this function's documentation below will not run unless you have set up BirdNET-Lite and a conda environment as described in the Description.
 
 The function can handle .wav or .mp3 audio files. The current behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations.
+
+NSNSDAcoustics suggests the reticulate package but does not install it for you. To use this function, please install reticulate using install.packages('reticulate')
 }
 \examples{
 \dontrun{
