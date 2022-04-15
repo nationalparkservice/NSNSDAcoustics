@@ -155,19 +155,27 @@ unlink(x = 'example-output-directory', recursive = TRUE)
 
 `birdnet_run()` processes files through BirdNET by using the [reticulate](https://rstudio.github.io/reticulate/) package to run Python from RStudio. This function was developed for Windows 10 and has not been tested on other systems.
 
-To use `birdnet_run()`, please first complete the following steps: 
-1) Install [BirdNET-Lite](https://github.com/kahst/BirdNET-Lite). If you're on a Windows machine, [see here](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#part-1-installing-birdnet-on-a-windows-machine).
-2) Set up [a conda environment for BirdNET](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment)
+To use `birdnet_run()`, please first complete the following steps. The function will not work otherwise. 
 
-`birdnet_run()` will not work otherwise.
+(1) Install [BirdNET-Lite](https://github.com/kahst/BirdNET-Lite). If you're on a Windows machine, [see here](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#part-1-installing-birdnet-on-a-windows-machine).
 
-It assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention.
+(2) Set up [a conda environment for BirdNET](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment)
 
+Once you've completed those steps, here are few other tips for using `birdnet_run()`: 
+* The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. If this is not the case for your files, you'll need to do some preprocessing.
+* The function can handle either .wav or .mp3 audio file types. The function's current internal behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations, but is likely necessary for Windows 10 if you have followed the above instructions.
+* The function expects absolute paths for all directory arguments in `birdnet_run()`. This is necessary due to the way RStudio is communicating with the underlying Python code. 
+* Note that BirdNET's option to input a customized species list has not been implemented in this function.
 
+Below, we'll walk through the documentation and example helpfiles for `birdnet_run()`. 
 
-Please input absolute paths for all directory arguments in `birdnet_run()`. This is necessary due to the way RStudio is communicating with the underlying Python code. Note that the option to input a customized species list has not been implemented in this function.
+Start by pulling up the function helpfile: 
+```r
+?birdnet_run
+```
+Everything we'll walk through below is located in the "Examples" section of this helpfile. 
 
-**If you don't want to go to the trouble of installing BirdNET, you can still view example data to get an idea of the raw CSV outputs produced by BirdNET-Lite:**
+Note: if you don't want to go to the trouble of installing BirdNET, you can still view example data to get an idea of the raw CSV outputs produced by BirdNET-Lite:
 ```r
 # View examples of CSV outputs produced by birdnet_run(): 
 
@@ -185,16 +193,18 @@ write.csv(x = exampleBirdNET2,
 
 If you **do** want to run BirdNET from R, the following pseudocode provides an outline for how to implement `birdnet_run()`. Because this function uses two external programs (Python and BirdNET-Lite), the examples below will not be modifiable to run for you unless you have installed BirdNET-Lite and set up a conda environment.
 
-
+First, before even calling in the reticulate package, you need to use `Sys.setenv(RETICULATE_PYTHON = )` to point to your conda python.exe path. If you followed [these instructions](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment), your conda python.exe path may look something like this: "C:/Users/Username/Anaconda3/envs/pybirdnet/python.exe"). You'll then invoke `use_condaenv()` to tell conda to use the pybirdnet conda environment. 
 ```r
-
 # Must set environment BEFORE calling in the reticulate package
 Sys.setenv(RETICULATE_PYTHON = "C:/Your/Python/Path/Here/python.exe")
 library(reticulate)
 
 # Set your conda environment
 use_condaenv(condaenv = "pybirdnet", required = TRUE)
+```
 
+Next, we create a few example directories, one with sample wave audio files that come with the package, and another to collect your BirdNET CSV results. We read in the example audio and write it to the example audio directory. This is meant to illustrate the file types and folder structure `birdnet_run()` expects to interact with in order to process many audio files. 
+```r
 # Create an audio directory for this example
 dir.create('example-audio-directory')
 
@@ -210,24 +220,33 @@ tuneR::writeWave(object = exampleAudio1,
                  filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
 tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+```
 
+Once the example files are set up, we're ready to process audio files through BirdNET. `birdnet_run()` has several arguments. `audio.directory` takes a character string with the aboslute path to audio files that should be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav. `birdnet_run()`'s default behavior is to process every file in the audio.directory through BirdNET. However, if user only wants to process specific files, they can pass in a character vector to the argument `audio.files`. Next, `results.directory` takes an absolute path to the directory where you would like your BirdNET CSV results to be stored. `birdnet.directory` takes the absolute path to the directory where you have installed BirdNET on your machine. The remaining arguments allow you to customize the processing experience. `lat` and `lon` take numeric values of the latitude and longitude of the recording location, respecitvely. It is highly recommended to input latitude and longitude values, but these can be ignored by setting the argument value to -1. `ovlp` indicates the overlap in seconds between extracted spectrograms (accepts values from 0 to 2.9; default = 0.0). `sens`  is the detection sensitivity, with higher values resulting in higher sensitivity (i.e., more results). Sensitivity values may range from 0.5 to 1.5, and the default is 1.0. Finally, `min.conf` is the minimum confidence threshold to generate a detection, accepting values from 0.01 to 0.99 (default = 0.1). 
+
+In the below example, once you modify the directory paths, `birdnet_run()` will process all example audio files in the folder, using default values for overlap, sensitivity, and minimum confidence threshold:
+```r
 # Run all audio data in a directory through BirdNET
 birdnet_run(audio.directory = 'absolute/path/to/example-audio-directory',
             results.directory = 'absolute/path/to/example-results-directory',
             birdnet.directory = 'absolute/path/to/BirdNET',
-            birdnet.script = 'BirdNET-Reticulate.py',
             lat = 46.09924,
             lon = -123.8765)
-            
+```
+
+For cases in which we only want to process selected audio files, we can use the `audio.files` argument to specify one or more files, as below: 
+```r
 # Use optional "audio.files" argument to process specific files
 birdnet_run(audio.directory = 'absolute/path/to/example-audio-directory',
             audio.files = 'Rivendell_20210623_113602.wav',
             results.directory = 'absolute/path/to/example-results-directory',
             birdnet.directory = 'absolute/path/to/BirdNET',
-            birdnet.script = 'BirdNET-Reticulate.py',
             lat = 46.09924,
             lon = -123.8765)
-             
+```             
+
+Finally, we clean up after ourselves by deleting temporary files that we set up for the example. 
+```r
 # Delete all temporary example files when finished
 unlink(x = 'example-audio-directory', recursive = TRUE)
 unlink(x = 'example-results-directory', recursive = TRUE)
