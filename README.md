@@ -7,7 +7,7 @@ This repository provides a place for NSNSD staff to develop and modernize severa
 # Table of Contents
 
 - **[Installing NSNSDAcoustics](#installing-nsnsdacoustics)**
-- **[Running BirdNET from RStudio with birdnet_run](#running-birdnet-from-rstudio-with-birdnet_run)**: Go here if you need to process .wav or .mp3 audio files through BirdNET, and you want to do that from R. Warning: not for the fainthearted; requires a substantial amount of setup.
+- **[Running BirdNET from RStudio with birdnet_run](#running-birdnet-from-rstudio-with-birdnet_run)**: Go here if you want to use RStudio to process .wav or .mp3 audio files through BirdNET. Warning: not for the fainthearted; requires a substantial amount of setup.
 - **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET CSV outputs in hand and want to use R to wrangle, visualize, and verify the results.
   * **[Reformat raw BirdNET CSV results](#reformat-raw-birdnet-csv-results)**
   * **[Gather up BirdNET CSV results](#gather-up-birdnet-csv-results)**
@@ -29,8 +29,8 @@ devtools::install_github('nationalparkservice/NSNSDAcoustics')
 ```
 
 If `install_github()` doesn't work, you can download the zip or tar.gz file directly using one of the following links. 
-* Windows users can download the zip file from NSNSDAcoustics-master.zip **need to create link**
-* Mac or Linux users can download the tar.gz file from NSNSDAcoustcs-master.tar.gz **need to create link**
+* Windows users can download the zip file from NSNSDAcoustics-master.zip [**need to create link**]()
+* Mac or Linux users can download the tar.gz file from NSNSDAcoustcs-master.tar.gz [**need to create link**]()
 
 After downloading, open R Studio, click on the Install button on the Packages tab, select Install From Package Archive File, and navigate to the downloaded file.
 
@@ -50,17 +50,15 @@ To use `birdnet_run()`, please first complete the following steps. The function 
 
 Once you've completed those steps, here are few other tips for using `birdnet_run()`: 
 * The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. If this is not the case for your files, you'll need to do some preprocessing.
-* The function can handle either .wav or .mp3 audio file types. The function's current internal behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations, but is likely necessary for Windows 10 if you have followed the above instructions.
+* The function can handle either .wav or .mp3 audio file types. The function's current internal behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations, but is might be necessary for Windows 10 if you followed the above instructions.
 * The function expects absolute paths for all directory arguments in `birdnet_run()`. This is necessary due to the way RStudio is communicating with the underlying Python code. 
-* Note that BirdNET's option to input a customized species list has not been implemented in this function.
+* Note that BirdNET's option to input a customized species list has not been implemented.
 
-Below, we'll walk through the documentation and example helpfiles for `birdnet_run()`. 
+Below, we'll walk through the documentation and example helpfiles for `birdnet_run()`. Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
 
-Start by pulling up the function helpfile: 
 ```r
 ?birdnet_run
 ```
-Everything we'll walk through below is located in the "Examples" section of this helpfile. 
 
 Note: if you don't want to go to the trouble of installing BirdNET, you can still view example data to get an idea of the raw CSV outputs produced by BirdNET-Lite:
 ```r
@@ -80,7 +78,7 @@ write.csv(x = exampleBirdNET2,
 
 If you **do** want to run BirdNET from R, the following pseudocode provides an outline for how to implement `birdnet_run()`. Because this function uses two external programs (Python and BirdNET-Lite), the examples below will not be modifiable to run for you unless you have installed BirdNET-Lite and set up a conda environment.
 
-First, before even calling in the reticulate package, you need to use `Sys.setenv(RETICULATE_PYTHON = )` to point to your conda python.exe path. If you followed [these instructions](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment), your conda python.exe path may look something like this: "C:/Users/Username/Anaconda3/envs/pybirdnet/python.exe"). You'll then invoke `use_condaenv()` to tell conda to use the pybirdnet conda environment. 
+First, before even calling in the reticulate package, you need to use `Sys.setenv(RETICULATE_PYTHON = )` to point to your conda python.exe path. If you followed [these instructions](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment), your conda python.exe path may look something like this: "C:/Users/Username/Anaconda3/envs/pybirdnet/python.exe"). You'll then invoke `use_condaenv()` to tell conda to use your pybirdnet conda environment. 
 ```r
 # Must set environment BEFORE calling in the reticulate package
 Sys.setenv(RETICULATE_PYTHON = "C:/Your/Python/Path/Here/python.exe")
@@ -142,15 +140,12 @@ unlink(x = 'example-results-directory', recursive = TRUE)
 You may not want to process files through RStudio, or you may already have BirdNET-Lite CSV results in hand that you would like to begin analyzing, in which case you can skip ahead to the next functions. 
 
 ## Assessing BirdNET Results
+
+If you have a large number of audio files, and plan to monitor for a long time across many locations, you may quickly find yourself managing thousands of BirdNET CSVs. It's likely that you'll want a systematic way to track and check on these results, and verify whether BirdNET detections are truly from a target species. The `birdnet_format_csv()` --> `birdnet_verify()` workflow offers one way to keep track of your verifications. An alternative way would be to set up a SQLite database (e.g., [as used in the AMMonitor package](https://code.usgs.gov/vtcfwru/ammonitor/-/wikis/home)). Although a database solution may ultimately be the most robust way to track results through time in a long term project, this can come with a lot of start up and might not be easily extensible to your project needs. Instead, the solution below provides a simple way to reformat and work with the CSVs directly (`birdnet_format_csv()`), allowing you to store your verifications there (`birdnet_verify()`). Lastly, `birdnet_plot_detections()` provides a flexible way to visualize a subset of detected data, whether or not your have verifiied the detections. 
+
 ### Reformat raw BirdNET CSV results
 
-`birdnet_format_csv()` reformats the raw BirdNET results...
-
-### Gather up BirdNET CSV results
-`birdnet_gather_results()` gathers all BirdNET CSV results from a desired folder into a user-friendly data.table / data.frame
-
-### Summarize count data of detected species
-`birdnet_species_counts()` summarizes count data from a data.table of detected species over a selected time unit
+`birdnet_format_csv()` reformats the raw BirdNET CSV into 
 
 ### Verify BirdNET results
 `birdnet_verify()` allows the user to manually verify a selected subset of detections based on a user-input library of classification options 
@@ -158,6 +153,14 @@ You may not want to process files through RStudio, or you may already have BirdN
 ### Visualize BirdNET detections
 `birdnet_plot_detections()` allows the user to visualize data...
 
+
+## A few other convenience functions for BirdNET
+
+### Gather up BirdNET CSV results
+`birdnet_gather_results()` gathers all BirdNET CSV results from a desired folder into a user-friendly data.table / data.frame
+
+### Summarize count data of detected species
+`birdnet_species_counts()` summarizes count data from a data.table of detected species over a selected time unit
 
 
 ## Converting wave audio files to NVSPL with wave_to_nvspl
