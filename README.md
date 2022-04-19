@@ -611,6 +611,3 @@ Finally, we clean up after ourselves by deleting all example files.
 unlink(x = 'example-input-directory', recursive = TRUE)
 unlink(x = 'example-output-directory', recursive = TRUE)
 ```
-
-
-```
