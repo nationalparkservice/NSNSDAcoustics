@@ -477,8 +477,15 @@ First, pull up the documentation file for this function:
 ?wave_to_nvspl
 ```
 
-`wave_to_nvspl()` uses PAMGuide code to convert wave files into NVSPL format. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). The suggested workflow for this function is to first set test.file = TRUE to test that your workflow has been accurately parameterized. Next, to batch process NVSPLs for many audio files, run with test.file = FALSE.
+`wave_to_nvspl()` uses PAMGuide code to convert wave files into NVSPL format. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). 
 
+Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
+
+```r
+?wave_to_nvspl
+```
+
+We start by creating an example audio directory and writing example audio to this directory. This is meant to illustrate the file types and folder structure `wave_to_nvspl()` expects to encounter.
 ```r
 # Create an input directory for this example
 dir.create('example-input-directory')
@@ -492,7 +499,12 @@ tuneR::writeWave(object = exampleAudio1,
                  filename = 'example-input-directory/Rivendell_20210715_114502.wav')
 tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-input-directory/Rivendell_20210715_115502.wav')
+```
 
+The suggested workflow for this function is to first set test.file = TRUE to test that your workflow has been accurately parameterized. **DESCRIBE WHAT WE ARE LOOKING FOR AND WHAT PLOT/OUTPUTS MEAN**
+**DESCRIBE FXN ARGS**
+**DESCRIBE DEFAULTS AND '...' ARG OPTIONS TO PAMGUIDE INTERNAL FXNS**
+```r
 # Perform wave_to_nvspl in test mode (test.file = TRUE)
 wave_to_nvspl(
  input.directory = 'example-input-directory',
@@ -500,7 +512,10 @@ wave_to_nvspl(
  test.file = TRUE,
  project = 'testproject',
  timezone = 'GMT')
+```
 
+Once you feel confident that you have parameterized accurately, run the function in batch mode by setting test.file = FALSE. The function will take a few moments to run, and provide progress feedback. Once complete, we can view the NVSPL outputs. 
+```r
 # Perform wave_to_nvspl in batch mode (test.file = FALSE)
 wave_to_nvspl(
  input.directory = 'example-input-directory',
@@ -514,10 +529,13 @@ nvspls <- list.files('example-input-directory/NVSPL', full.names = TRUE)
 
 # View one of the NVSPL outputs
 one.nvspl <- read.delim(file = nvspls[1], sep = ',')
+```
 
+Finally, we clean up after ourselves by deleting the example input directory.
+```r
 # Delete all temporary example files when finished
 unlink(x = 'example-input-directory', recursive = TRUE)
-
+```
 ```
 
 ## Converting NVSPL files to acoustic indices with nvspl_to_ai
