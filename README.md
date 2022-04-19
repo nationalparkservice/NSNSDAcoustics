@@ -44,7 +44,7 @@ To process audio files through BirdNET, `birdnet_run()` uses the [reticulate](ht
 
 To use `birdnet_run()`, please first complete the following steps. The function will not work otherwise. 
 
-(1) Install [BirdNET-Lite](https://github.com/kahst/BirdNET-Lite). If you're on a Windows machine, [see here](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#part-1-installing-birdnet-on-a-windows-machine).
+(1) Install [BirdNET-Lite](https://github.com/kahst/BirdNET-Lite). If you're on a Windows machine, [see here](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#background).
 
 (2) Set up [a conda environment for BirdNET](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment)
 
