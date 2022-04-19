@@ -145,10 +145,61 @@ If you have a large number of audio files, and plan to monitor for a long time a
 
 ### Reformat raw BirdNET CSV results
 
-`birdnet_format_csv()` reformats the raw BirdNET CSV into 
+`birdnet_format_csv()` is a simple function that reformats the raw BirdNET CSV into a new CSV with R-friendly column names, a "recordingID" column for easier data manipulation, a "verify" column to support manual verification of detection results, and a "timezone" column to clarify the timezone setting used by the audio recorder. 
+
+Below, we'll walk through the documentation and example helpfiles for `birdnet_format_csv()`. It's always good practice to start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
+
+```r
+?birdnet_format_csv
+```
+
+To run this example, we first create an example "results" directory, and then we write some raw BirdNET CSV results to this directory. This is meant to illustrate the file types and folder structure `birdnet_format_csv()` expects to encounter.
+```r
+# Create a BirdNET results directory for this example
+dir.create('example-results-directory')
+
+# Write examples of raw BirdNET CSV outputs to example results directory
+data(exampleBirdNET1)
+write.csv(x = exampleBirdNET1,
+          file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.csv',
+          row.names = FALSE, )
+
+data(exampleBirdNET2)
+write.csv(x = exampleBirdNET2,
+          file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.csv',
+          row.names = FALSE)
+```
+
+Now, we're set up to run the function. `birdnet_format_csv()` takes two arguments. The `results.directory` should point to the folder where you have stored your raw BirdNET CSV outputs. **The `timezone` argument allows you to specify the timezone setting used in the audio recorder (i.e., the timezone reflected in the wave filename). It's important to pay attention to this and get it right!** Recall that the birdnet functions described here expect wave files that follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. In the package sample audio data, we have a wave named Rivendell_20210623_113602.wav. This means the site ID is Rivendell, and the recording was taken on June 23rd, 2021 at 11:36:02. The `timezone` argument allows us to clarify what 11:36:02 actually means. Was the recording taken in local time at your site, or was it taken in UTC? This point might seem trivial if you're just getting started with collecting data at a few sites for a single season, but if you're collecting data across many sites, over many years, with varying audio recorder equipment and varying recording settings through time, different field technicians, and potentially across timezones, you will want to keep meticulous track of your timezones so that you can make accurate comparisons across time and space. If recordings were taken in local time at your study site, specify an [Olson-names-formatted character timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for the location (e.g., "America/Los_Angeles"). If recordings were taken in UTC, you can put either "GMT" or "UTC" (both are acceptable in R for downstream date-time formatting). This argument is critical to foster clarity in data analysis through the years and across monitoring locations, because some projects may vary across time and space as to whether the standard operating procedure specifies recordings in UTC vs. local time.
+
+Below, we point to our example results directory and specify 'GMT' (i.e., 'UTC') as the timezone, since the recordings were not taken in local time at this recorder.
+```r
+# Run birdnet_format_csv:
+birdnet_format_csv(results.directory = 'example-results-directory',
+                   timezone = 'GMT')
+```
+
+After running the function, look in your example results directory folder and check on the results. This function produces new formatted CSVs of BirdNET results with filename prefix "BirdNET_formatted_" (note that it does NOT overwrite your raw BirdNET CSVs). The columns in this formatted CSV can be described as follows.
+
+* recordingID: Recording identifier for the file, as SITE_YYYYMMDD_HHMMSS.wav.
+* start.s: Start time of detection in seconds.
+* end.s: End time of detection in seconds.
+* scientific.name: Species scientific name.
+* common.name: Species common name.
+* confidence: BirdNET's confidence level in this detection ranging from 0 (least confident) to 1 (most confident).
+* verify: A column into which verifications may be populated. When initially created, will be 'NA'.
+* timezone: Timezone setting used in the audio recorder.
+
+Finally, we clean up after ourselves by deleting temporary files that we set up for the example. 
+```r
+# Delete all temporary example files when finished
+unlink(x = 'example-results-directory', recursive = TRUE)
+```
+
+The point of all this CSV reformatting is to make it easier to keep track of our downstream analyses of BirdNET detections. The "verify" column is what allows us to track whether a detected event actually came from a target species. 
 
 ### Verify BirdNET results
-`birdnet_verify()` allows the user to manually verify a selected subset of detections based on a user-input library of classification options 
+`birdnet_verify()` allows the user to manually verify a selected subset of detections based on a user-input library of classification options.
 
 ### Visualize BirdNET detections
 `birdnet_plot_detections()` allows the user to visualize data...
