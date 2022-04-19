@@ -32,6 +32,7 @@ Collate:
     'PAMGuide_Meta.R'
     'Meta.R'
     'Viewer.R'
+    'Wave_To_NVSPL.R'
     'bcp-functions.R'
     'birdnet_format_csv.R'
     'birdnet_gather_results.R'
@@ -42,4 +43,3 @@ Collate:
     'examples-helpfiles.R'
     'nvspl_to_ai.R'
     'utils.R'
-    'wave_to_nvspl.R'

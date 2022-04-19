@@ -63,8 +63,7 @@
 #'                         frq.lim = c(0.5, 6),
 #'                         new.window = TRUE,
 #'                         spec.col = viridis::viridis(30),
-#'                         box = FALSE,
-#'                         title.size = 1)
+#'                         box = FALSE)
 #'
 #' # Loop through to plot detections for selected unverified species
 #' # where confidence of detection >= 0.25

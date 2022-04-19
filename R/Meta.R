@@ -29,7 +29,7 @@
 #' @name Meta
 #' @title Internal function from PAMGuide code.
 #' @description Internal function from PAMGuide code.
-#' @import svDialogs tuneR
+#' @import tuneR
 #' @include Meta.R PAMGuide.R PAMGuide_Meta.R
 #' @export
 #' @keywords internal
