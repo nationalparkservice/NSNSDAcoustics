@@ -357,16 +357,111 @@ unlink(x = 'example-results-directory', recursive = TRUE)
 
 
 ### Visualize BirdNET detections
-`birdnet_plot_detections()` allows the user to visualize data...
+`birdnet_plot_detections()` allows the user to visualize spectrograms of BirdNET detections (whether or not the data have been verified). 
+
+Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
+```r
+?birdnet_plot_detections
+```
+
+We start by creating an example audio directory and writing example audio data to this directory.
+```r
+# Create an audio directory for this example
+dir.create('example-audio-directory')
+
+# Read in example wave files
+data(exampleAudio1)
+data(exampleAudio2)
+
+# Write example waves to example audio directory
+tuneR::writeWave(object = exampleAudio1,
+                 filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
+tuneR::writeWave(object = exampleAudio2,
+                 filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+```
+
+Next, we read in example data.table/data.frame for plotting. Checking the structure of this example data reveals that there are 305 rows of data in the example.
+```r
+# Read in example data.table/data.frame for plotting
+data(examplePlotData)
+
+# Check the structure of this example data
+str(examplePlotData)
+```
+
+`birdnet_plot_detections()` expects a data.table/data.frame that has been formatted with the columns produced by `birdnet_format_csv()`. Beyond that, this data.frame can contain just about anything. A user might choose to plot data by species, song type, verification label, confidence levels, and more. The `audio.directory` argument should point to the folder where your audio are contained. The remaining arguments allow some aesthetic control over plotting, with the option to provide a title, control the frequency limits, and choose spectrogram and box colors (see helpfile for details).  
+
+Below, we subset the `examplePlotData` object plot detections for Swainson's Thrush that contain the label "song" in the verify column. We give the plot a descriptive title, use frequency limits ranging from 0.5 to 12 kHz, specify a gray color scheme for the spectrogram, and draw gray boxes around each detection. 
+```r
+# Plot only detections of Swainson's Thrush verified as "song",
+# with frequency limits ranging from 0.5 to 12 kHz, gray spectrogram colors,
+# a custom title, and a gray box around each detection
+plot.songs <- examplePlotData[common.name == "Swainson's Thrush" & verify == "song"]
+birdnet_plot_detections(data = plot.songs,
+                        audio.directory = 'example-audio-directory',
+                        title = "Swainson's Thrush Songs",
+                        frq.lim = c(0.5, 12),
+                        new.window = TRUE,
+                        spec.col = gray.3(),
+                        box = TRUE,
+                        box.lwd = 1,
+                        box.col = 'gray')
+```
+**Click image for a larger version.**
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot1.png><br>
 
 
-## A few other convenience functions for BirdNET
+In the next example, we plot detections for Swainson's Thrush that contain the label "call" in the verify column. We give the plot a descriptive title, use frequency limits ranging from 0.5 to 6 kHz and choose not to draw any boxes around detections. Below, we demonstrate that the `spec.col` argument allows for adjustable spectrogram colors, and that users can create their own gradients or use existing ones. A few spectrogram color options are provided with the package (e.g., gray.3()). In the example below, we input a color gradient from the [viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html) R package.
+```r
+# install.packages('viridis') # install the package first if you do not have it
+library(viridis) 
 
-### Gather up BirdNET CSV results
-`birdnet_gather_results()` gathers all BirdNET CSV results from a desired folder into a user-friendly data.table / data.frame
+# Plot only detections of Swainson's Thrush verified as "call"
+# with frequency limits ranging from 0.5 to 6 kHz,a custom title, no boxes,
+# and colors sampled from the viridis color package
+plot.calls <- examplePlotData[common.name == "Swainson's Thrush" & verify == "call"]
+birdnet_plot_detections(data = plot.calls,
+                        audio.directory = 'example-audio-directory',
+                        title = "Swainson's Thrush Calls",
+                        frq.lim = c(0.5, 6),
+                        new.window = TRUE,
+                        spec.col = viridis::viridis(30),
+                        box = FALSE)
+```
+**Click image for a larger version.**
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot2.png><br>
 
-### Summarize count data of detected species
-`birdnet_species_counts()` summarizes count data from a data.table of detected species over a selected time unit
+
+In the final example, we demonstrate that `birdnet_plot_detections()` can also be used to visualize unverified data. Below, we loop through to plot all detections for two selected species -- [Brown-crested Flycatcher](https://www.allaboutbirds.org/guide/Brown-crested_Flycatcher/sounds) and [Pacific-slope Flycatcher](https://www.allaboutbirds.org/guide/Pacific-slope_Flycatcher/sounds) -- where the confidence of detection is greater than or equal to 0.25. 
+```r
+# Loop through to plot detections for selected unverified species
+# where confidence of detection >= 0.25
+# with frequency limits ranging from 0.5 to 12 kHz, custom titles, gray boxes,
+# and gray spectrogram colors
+sp <- c('Brown-crested Flycatcher', 'Pacific-slope Flycatcher')
+for (i in 1:length(sp)) {
+ plot.sp <- examplePlotData[confidence >= 0.25 & common.name == sp[i]]
+ birdnet_plot_detections(data = plot.sp,
+                         audio.directory = 'example-audio-directory',
+                         title = paste0(sp[i], ' Detections >= 0.25'),
+                         frq.lim = c(0.5, 12),
+                         new.window = TRUE,
+                         spec.col = gray.3(),
+                         box = TRUE,
+                         box.lwd = 0.5,
+                         box.col = 'gray',
+                         title.size = 1.5)
+}
+**Click image for a larger version.**
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot3.png><br>
+
+```r
+
+Finally, delete all temporary files when finished. 
+```r
+# Delete all temporary example files when finished
+unlink(x = 'example-audio-directory', recursive = TRUE)
+```
 
 
 ## Converting wave audio files to NVSPL with wave_to_nvspl
