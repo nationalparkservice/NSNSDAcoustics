@@ -290,7 +290,9 @@ birdnet_verify(data = to.verify,
 
 When you run this example, the RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide how to label the detection. In this example, we've chosen to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the CSV file, and tells us that BirdNET had a confidence level of 0.43 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
 
-<img src=https://github.com/dbetchkal/NMSIM-Python/blob/pyproj_1p9/static/2020%2010%2022%20NMSIM%20source%20improvement%20schema.png width=700><br>
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/ver1.png><br>
+
+
 
 Once you've added labels for the remaining detections (in fact, they all contain Swainson's Thrush vocalizations!), `birdnet_verify()` will update your verifications to the underlying formatted CSVs contained in the example results directory. Below, we gather up the results again and check that our three verifications have been added.
 
