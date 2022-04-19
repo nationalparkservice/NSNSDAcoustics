@@ -110,7 +110,7 @@ tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
 ```
 
-Once the example files are set up, we're ready to process audio files through BirdNET. `birdnet_run()` has several arguments. `audio.directory` takes a character string with the aboslute path to audio files that should be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav. `birdnet_run()`'s default behavior is to process every file in the audio.directory through BirdNET. However, if the user only wants to process specific files, they can pass in a character vector to the argument `audio.files`. Next, `results.directory` takes an absolute path to the directory where you would like your BirdNET CSV results to be stored. `birdnet.directory` takes the absolute path to the directory where you have installed BirdNET on your machine. The remaining arguments allow you to customize the processing experience. `lat` and `lon` take numeric values of the latitude and longitude of the recording location, respecitvely. It is highly recommended to input latitude and longitude values, but these can be ignored by setting the argument value to -1. `ovlp` indicates the overlap in seconds between extracted spectrograms (accepts values from 0 to 2.9; default = 0.0). `sens`  is the detection sensitivity, with higher values resulting in higher sensitivity (i.e., more results). Sensitivity values may range from 0.5 to 1.5, and the default is 1.0. Finally, `min.conf` is the minimum confidence threshold to generate a detection, accepting values from 0.01 to 0.99 (default = 0.1). 
+Once the example files are set up, we're ready to process audio files through BirdNET. `birdnet_run()` has several arguments. `audio.directory` takes a character string with the absolute path to audio files that should be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav. `birdnet_run()`'s default behavior is to process every file in the audio.directory through BirdNET. However, if the user only wants to process specific files, they can pass in a character vector to the argument `audio.files`. Next, `results.directory` takes an absolute path to the directory where you would like your BirdNET CSV results to be stored. `birdnet.directory` takes the absolute path to the directory where you have installed BirdNET on your machine. The remaining arguments allow you to customize the processing experience. `lat` and `lon` take numeric values of the latitude and longitude of the recording location, respecitvely. It is highly recommended to input latitude and longitude values, but these can be ignored by setting the argument value to -1. `ovlp` indicates the overlap in seconds between extracted spectrograms (accepts values from 0 to 2.9; default = 0.0). `sens`  is the detection sensitivity, with higher values resulting in higher sensitivity (i.e., more results). Sensitivity values may range from 0.5 to 1.5, and the default is 1.0. Finally, `min.conf` is the minimum confidence threshold to generate a detection, accepting values from 0.01 to 0.99 (default = 0.1). 
 
 In the below example, once you modify the directory paths, `birdnet_run()` will process all example audio files in the folder, using default values for overlap, sensitivity, and minimum confidence threshold:
 ```r
@@ -255,30 +255,44 @@ set.seed(4)
 to.verify <- dat[common.name == "Swainson's Thrush"][sample(.N, 3)]
 ```
 
-The next step is to create a verification library for this species. This is your opportunity to define which labels are acceptable during the verification process. Verifying BirdNET detections may be tricky depending on your research question, because BirdNET does not distinguish between the different types of vocalizations a bird may produce. This means the burden is on you, the verifier, to label the detection in a way that will best support you in answering your motivating research question. 
+The next step is to create a "verification library" for this species: essentially, a character vector of acceptable options for your verification labels. Verifying BirdNET detections may be tricky depending on your research question, because BirdNET does not distinguish between the different types of vocalizations a bird may produce. This means the burden is on you, the verifier, to label the detection in a way that will best support you in answering your motivating research question. 
 
-The Swainson's Thrush provides a good example of what makes this tricky, because in addition to its recognizable flutelike song, it has a variety of different call types, including a "peep" note, a "whit", a high-pitched "whine", a "bink", and a "peeer" call. 
+The Swainson's Thrush provides a good example of what makes this challenging, because in addition to its recognizable flutelike song, it has a variety of different call types, including a "peep" note, a "whit", a high-pitched "whine", a "bink", and a "peeer" call. 
 
 Thus, the verification library you set up will depend on the level of detail you need to answer your research question. Here are two examples of questions you might have as you verify. 
-* Is this a Swainson's Thrush or not? --> for this question, you might just want to label a detection as "Yes, this is my target species!" or "No, this definitely isn't my target species", or "I'm not sure". You might choose simple verification labels like c('y', 'n', 'unsure').
-* What type of Swainson's Thrush vocalization is this? --> for this question, you might choose more detailed verification labels like c('song', 'call', 'unsure', 'false'), or something even more detailed like c('song', 'peep', 'whit', 'whine', 'bink', 'peeer', 'false', 'unsure'). 
+* **Is this a Swainson's Thrush or not?** For this question, you might just want to label a detection as "Yes, this is my target species!" or "No, this definitely isn't my target species", or "I'm not sure". You might choose simple verification labels like c('y', 'n', 'unsure').
+* **What type of Swainson's Thrush vocalization is this?** For this question, you might choose more descriptive verification labels like c('song', 'call', 'unsure', 'false'), or something even more detailed like c('song', 'peep', 'whit', 'whine', 'bink', 'peeer', 'false', 'unsure'). 
 
-It's up to your discretion, and this is one of the hard parts about assessing automated detection results. 
+This part is left to your discretion. It's one of the challenging aspects of assessing automated detection results, and you may find that you need to iterate through a few options before settling on the verification library that will work best for a given species and research question.
 
-Below, we'll use a simple verification library where 'y' means yes, it's a Swainson's Thrush, 'n' means no, it's not, and 'unsure' means we aren't certain one way or another. Even a simple verification library like this means that we want a good level of expertise about the different Swainson's Thrush call types.
+Below, we'll use a simple verification library where 'y' means yes, it's a Swainson's Thrush, 'n' means it's not, and 'unsure' means we aren't certain. 
 ```r
 # Create a verification library for this species
-ver.lib <- list("Swainson's Thrush" = c('y', 'n', 'unsure'))
+ver.lib <- c('y', 'n', 'unsure')
 ```
 
+Once we have the data.frame or data.table of detections we want to verify, and once we've set up a verification library, we're ready to use `birdnet_verify()`. This interactive function displays a spectrogram of the detected event and prompts the user to label it with one of the input options defined in the verification library. The function also optionally writes a temporary wave clip to your working directory that you can listen to. (Although there are options for playing a sound clip automatically from R, the behavior of these options varies enough across platforms/operating systems that I decided it would be simpler to write a temporary wave clip file for the user). If you expect to be listening to the clips, you'll want easy access to your working directory so that you can open the wave clips up manually. 
+
+`birdnet_verify()` has several arguments. `data` takes your data.frame or data.table of detections you want to verify. Data must be formatted according to `birdnet_format_csv()` and contain columns named recordingID, start.s, end.s, scientific.name, common.name, confidence, verify, and timezone. `verification.library` takes a character vector of the labeling options you will be using. `audio.directory` should point to the directory where your audio files live, and `results.directory` points to the directory where your formatted BirdNET CSVs are stored. `overwrite` allows you to decide whether or not any previously existing verifications should be overwritten. When FALSE, users will not be prompted to verify any detected events that already have a verification, but when TRUE, you may be overwriting previous labels. The `play` argument specifies whether or not a temporary wave file should be written to the working directory for each detection. The remaining arguments allow the user to customize how detected events should be displayed during the interactive session. We do not review these options here; see `?birdnet_verify` for details.
 ```r
 # Verify detections
 birdnet_verify(data = to.verify,
                verification.library = ver.lib,
                audio.directory = 'example-audio-directory',
                results.directory = 'example-results-directory',
-               overwrite = FALSE)
+               overwrite = FALSE, 
+               play = TRUE,
+               frq.lim = c(0, 12),
+               buffer = 1,
+               box.col = 'blue',
+               spec.col = monitoR::gray.3())
 ```
+
+When you run this example, the RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide how to label the detection. In this example, we've chosen to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the CSV file, and tells us that BirdNET had a confidence level of 0.43 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
+
+<img src=https://github.com/dbetchkal/NMSIM-Python/blob/pyproj_1p9/static/2020%2010%2022%20NMSIM%20source%20improvement%20schema.png width=700><br>
+
+Once you've added labels for the remaining detections (in fact, they all contain Swainson's Thrush vocalizations!), `birdnet_verify()` will update your verifications to the underlying formatted CSVs contained in the example results directory. Below, we gather up the results again and check that our three verifications have been added.
 
 ```r
 # Check that underlying CSVs have been updated with user verifications
