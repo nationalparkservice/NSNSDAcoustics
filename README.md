@@ -14,10 +14,6 @@ This repository provides a place for NSNSD staff to develop and modernize severa
   * **[Verify BirdNET results](#verify-birdnet-results)**
   * **[Visualize BirdNET detections](#visualize-birdnet-detections)**
 
-- **[A few other convenience functions for BirdNET](#a-few-other-convenience-functions-for-birdnet)**
-
-  * **[Summarize count data of detected species](#summarize-count-data-of-detected-species)**
-
 - **[Converting wave audio files to NVSPL with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-with-wave_to_nvspl)**: Go here for a user-friendly PAMGuide wrapper function to convert wave files to NVSPL.
 - **[Converting NVSPL files to acoustic indices with nvspl_to_ai](#converting-nvspl-files-to-acoustic-indices-with-nvspl_to_ai)**: Go here to convert NVSPL.txt files into a CSV of acoustic indices.
 
@@ -334,6 +330,7 @@ birdnet_verify(data = to.verify,
 Running this example will produce an interative output like the below image. The RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide which label to choose. In this example, we've used the `buffer` argument to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the CSV file, and informs us that BirdNET had a confidence level of 0.43 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
 
 **Click image for a larger version.**
+
 <img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/ver1.png><br>
 
 
@@ -408,6 +405,7 @@ birdnet_plot_detections(data = plot.songs,
                         box.col = 'gray')
 ```
 **Click image for a larger version.**
+
 <img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot1.png><br>
 
 
@@ -429,6 +427,7 @@ birdnet_plot_detections(data = plot.calls,
                         box = FALSE)
 ```
 **Click image for a larger version.**
+
 <img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot2.png><br>
 
 
@@ -452,10 +451,11 @@ for (i in 1:length(sp)) {
                          box.col = 'gray',
                          title.size = 1.5)
 }
+```
+
 **Click image for a larger version.**
 <img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot3.png><br>
 
-```r
 
 Finally, delete all temporary files when finished. 
 ```r
