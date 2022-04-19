@@ -10,10 +10,13 @@ This repository provides a place for NSNSD staff to develop and modernize severa
 - **[Running BirdNET from RStudio with birdnet_run](#running-birdnet-from-rstudio-with-birdnet_run)**: Go here if you want to use RStudio to process .wav or .mp3 audio files through BirdNET. Warning: not for the fainthearted; requires a substantial amount of setup.
 - **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET CSV outputs in hand and want to use R to wrangle, visualize, and verify the results.
   * **[Reformat raw BirdNET CSV results](#reformat-raw-birdnet-csv-results)**
-  * **[Gather up BirdNET CSV results](#gather-up-birdnet-csv-results)**
-  * **[Summarize count data of detected species](#summarize-count-data-of-detected-species)**
   * **[Verify BirdNET results](#verify-birdnet-results)**
   * **[Visualize BirdNET detections](#visualize-birdnet-detections)**
+
+- **[A few other convenience functions for BirdNET](#a-few-other-convenience-functions-for-birdnet)**
+  * **[Gather up BirdNET CSV results](#gather-up-birdnet-csv-results)**
+  * **[Summarize count data of detected species](#summarize-count-data-of-detected-species)**
+
 - **[Converting wave audio files to NVSPL with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-with-wave_to_nvspl)**: Go here for a user-friendly PAMGuide wrapper function to convert wave files to NVSPL.
 - **[Converting NVSPL files to acoustic indices with nvspl_to_ai](#converting-nvspl-files-to-acoustic-indices-with-nvspl_to_ai)**: Go here to convert NVSPL.txt files into a CSV of acoustic indices.
 
@@ -200,6 +203,98 @@ The point of all this CSV reformatting is to make it easier to keep track of our
 
 ### Verify BirdNET results
 `birdnet_verify()` allows the user to manually verify a selected subset of detections based on a user-input library of classification options.
+
+Below, we'll walk through the documentation and example helpfiles for `birdnet_verify()`. As always, we start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile.
+
+```r
+?birdnet_verify
+```
+
+To run this example, we first create an example audio directory, to which we will write the sample audio that comes with the package. We'll also set up an example results directory to which we will write example formatted CSV data. This is meant to illustrate the file types and folder structure `birdnet_verify()` expects to encounter.
+
+```r
+
+# Create an audio directory for this example
+dir.create('example-audio-directory')
+
+# Read in example wave files
+data(exampleAudio1)
+data(exampleAudio2)
+
+# Write example waves to example audio directory
+tuneR::writeWave(object = exampleAudio1,
+                 filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
+tuneR::writeWave(object = exampleAudio2,
+                 filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+
+# Create a BirdNET results directory for this example
+dir.create('example-results-directory')
+
+# Write examples of formatted BirdNET CSV outputs to example results directory
+data(exampleFormatted1)
+write.csv(x = exampleFormatted1,
+          file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.csv',
+          row.names = FALSE)
+
+data(exampleFormatted2)
+write.csv(x = exampleFormatted2,
+          file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.csv',
+          row.names = FALSE)
+```
+
+Next, we can use `birdnet_gather_results()` to grab all the formatted results from the example folder. From here, you can manipulate your results however you want to create a subset of detections that you wish to verify. The key is to subset only to a single species. In case you accidentally include multiple species in your data subset, the `birdnet_verify()` function will remind you that it only accepts one species at a time for verifications. In this example, we'll focus on verifying detections for the [Swainson's Thrush (Catharus ustulatus)](https://www.allaboutbirds.org/guide/Swainsons_Thrush/sounds).
+
+You can create your verification sample however you like. A few options are to take a simple random sample, or take a stratified sample based on detections from different locations or times of day. Depending on your question, you might even want to verify *everything* in your CSVs for the target species. In the below example, we set a seed for reproducibility and take a simple random sample of three Swainson's Thrush detections to be verified.
+```r
+# Gather formatted BirdNET results
+dat <- birdnet_gather_results(results.directory = 'example-results-directory',
+                             formatted = TRUE)
+
+# Create a random sample of three detections to verify
+set.seed(4)
+to.verify <- dat[common.name == "Swainson's Thrush"][sample(.N, 3)]
+```
+
+The next step is to create a verification library for this species. This is your opportunity to define which labels are acceptable during the verification process. Verifying BirdNET detections may be tricky depending on your research question, because BirdNET does not distinguish between the different types of vocalizations a bird may produce. This means the burden is on you, the verifier, to label the detection in a way that will best support you in answering your motivating research question. 
+
+The Swainson's Thrush provides a good example of what makes this tricky, because in addition to its recognizable flutelike song, it has a variety of different call types, including a "peep" note, a "whit", a high-pitched "whine", a "bink", and a "peeer" call. 
+
+Thus, the verification library you set up will depend on the level of detail you need to answer your research question. Here are two examples of questions you might have as you verify. 
+* Is this a Swainson's Thrush or not? --> for this question, you might just want to label a detection as "Yes, this is my target species!" or "No, this definitely isn't my target species", or "I'm not sure". You might choose simple verification labels like c('y', 'n', 'unsure').
+* What type of Swainson's Thrush vocalization is this? --> for this question, you might choose more detailed verification labels like c('song', 'call', 'unsure', 'false'), or something even more detailed like c('song', 'peep', 'whit', 'whine', 'bink', 'peeer', 'false', 'unsure'). 
+
+It's up to your discretion, and this is one of the hard parts about assessing automated detection results. 
+
+Below, we'll use a simple verification library where 'y' means yes, it's a Swainson's Thrush, 'n' means no, it's not, and 'unsure' means we aren't certain one way or another. Even a simple verification library like this means that we want a good level of expertise about the different Swainson's Thrush call types.
+```r
+# Create a verification library for this species
+ver.lib <- list("Swainson's Thrush" = c('y', 'n', 'unsure'))
+```
+
+```r
+# Verify detections
+birdnet_verify(data = to.verify,
+               verification.library = ver.lib,
+               audio.directory = 'example-audio-directory',
+               results.directory = 'example-results-directory',
+               overwrite = FALSE)
+```
+
+```r
+# Check that underlying CSVs have been updated with user verifications
+dat <- birdnet_gather_results(results.directory = 'example-results-directory',
+                              formatted = TRUE)
+dat[!is.na(verify)]
+```
+
+Finally, we clean up after ourselves by deleting temporary files that we set up for the example.
+```r
+# Delete all temporary example files when finished
+unlink(x = 'example-audio-directory', recursive = TRUE)
+unlink(x = 'example-results-directory', recursive = TRUE)
+
+```
+
 
 ### Visualize BirdNET detections
 `birdnet_plot_detections()` allows the user to visualize data...
