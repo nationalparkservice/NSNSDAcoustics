@@ -327,12 +327,13 @@ birdnet_verify(data = to.verify,
                spec.col = monitoR::gray.3())
 ```
 
-Running this example will produce an interative output like the below image. The RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide which label to choose. In this example, we've used the `buffer` argument to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the CSV file, and informs us that BirdNET had a confidence level of 0.43 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
+Running this example will produce an interactive output like the below image. The RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide which label to choose. In this example, we've used the `buffer` argument to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the CSV file, and informs us that BirdNET had a confidence level of 0.43 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
 
 **Click image for a larger version.**
 
+<p align="center">
 <img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/ver1.png><br>
-
+</p>
 
 
 Once you've added labels for the remaining detections (in fact, they all contain Swainson's Thrush vocalizations!), `birdnet_verify()` will update the underlying formatted CSVs with your verifications. Below, we gather up the results again and check that our three verifications have been added.
@@ -405,9 +406,9 @@ birdnet_plot_detections(data = plot.songs,
                         box.col = 'gray')
 ```
 **Click image for a larger version.**
-
+<p align="center">
 <img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot1.png><br>
-
+</p>
 
 In the next example, we plot detections for Swainson's Thrush that contain the label "call" in the verify column. We give the plot a descriptive title, use frequency limits ranging from 0.5 to 6 kHz and choose not to draw any boxes around detections. Below, we demonstrate that the `spec.col` argument allows for adjustable spectrogram colors, and that users can create their own gradients or use existing ones. A few spectrogram color options are provided with the package (e.g., gray.3()). In the example below, we input a color gradient from the [viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html) R package.
 ```r
@@ -428,8 +429,9 @@ birdnet_plot_detections(data = plot.calls,
 ```
 **Click image for a larger version.**
 
+<p align="center">
 <img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot2.png><br>
-
+</p>
 
 In the final example, we demonstrate that `birdnet_plot_detections()` can also be used to visualize unverified data. Below, we loop through to plot all detections for two selected species -- [Brown-crested Flycatcher](https://www.allaboutbirds.org/guide/Brown-crested_Flycatcher/sounds) and [Pacific-slope Flycatcher](https://www.allaboutbirds.org/guide/Pacific-slope_Flycatcher/sounds) -- where the confidence of detection is greater than or equal to 0.25. 
 ```r
@@ -454,8 +456,10 @@ for (i in 1:length(sp)) {
 ```
 
 **Click image for a larger version.**
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot3.png><br>
 
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot3.png><br>
+</p>
 
 Finally, delete all temporary files when finished. 
 ```r
@@ -473,7 +477,7 @@ First, pull up the documentation file for this function:
 ?wave_to_nvspl
 ```
 
-`wave_to_nvspl()` uses PAMGuide code to convert wave files into NVSPL format. PAMGuide was developed by Nathan D. Merchant et al. 2015 (**ADD LINKS**). The suggested workflow for this function is to first set test.file = TRUE to test that your workflow has been accurately parameterize. Next, to batch process NVSPLs for many audio files, run with test.file = FALSE.
+`wave_to_nvspl()` uses PAMGuide code to convert wave files into NVSPL format. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). The suggested workflow for this function is to first set test.file = TRUE to test that your workflow has been accurately parameterized. Next, to batch process NVSPLs for many audio files, run with test.file = FALSE.
 
 ```r
 # Create an input directory for this example
