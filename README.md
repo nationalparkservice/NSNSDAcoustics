@@ -7,7 +7,7 @@ This repository provides a place for NSNSD staff to develop and modernize severa
 # Table of Contents
 
 - **[Installing NSNSDAcoustics](#installing-nsnsdacoustics)**
-- **[Running BirdNET from RStudio with birdnet_run](#running-birdnet-from-rstudio-with-birdnet_run)**: Go here if you want to use RStudio to process .wav or .mp3 audio files through BirdNET. Warning: not for the fainthearted; requires a substantial amount of setup.
+- **[Running BirdNET from RStudio with birdnet_run](#running-birdnet-from-rstudio-with-birdnet_run)**: Go here if you want to use RStudio to process .wav or .mp3 audio files through [BirdNET](https://birdnet.cornell.edu/). Warning: not for the fainthearted; requires a substantial amount of setup.
 - **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET CSV outputs in hand and want to use R to wrangle, visualize, and verify the results.
   * **[Reformat raw BirdNET CSV results](#reformat-raw-birdnet-csv-results)**
   * **[Gather BirdNET results](#gather-birdnet-results)**
@@ -39,6 +39,8 @@ NSNSDAcoustics depends on the R package `data.table`, which enables fast queryin
 
 
 ## Running BirdNET from RStudio with birdnet_run
+
+[BirdNET](https://birdnet.cornell.edu/) is a bird sound recognition program developed by the [Cornell Center for Conservation Bioacoustics](https://www.birds.cornell.edu/ccb/). The [BirdNET Github repository](https://github.com/kahst/BirdNET-Lite) provides a promising free tool for processing large volumes of audio data relatively quickly and understanding something about which avian species are present.
 
 To process audio files through BirdNET, `birdnet_run()` uses the [reticulate](https://rstudio.github.io/reticulate/) package to run Python from RStudio. **This function was developed for Windows 10 and has not been tested on other systems.**
 
