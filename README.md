@@ -14,10 +14,6 @@ This repository provides a place for NSNSD staff to develop and modernize severa
   * **[Verify BirdNET results](#verify-birdnet-results)**
   * **[Visualize BirdNET detections](#visualize-birdnet-detections)**
 
-- **[A few other convenience functions for BirdNET](#a-few-other-convenience-functions-for-birdnet)**
-
-  * **[Summarize count data of detected species](#summarize-count-data-of-detected-species)**
-
 - **[Converting wave audio files to NVSPL with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-with-wave_to_nvspl)**: Go here for a user-friendly PAMGuide wrapper function to convert wave files to NVSPL.
 - **[Converting NVSPL files to acoustic indices with nvspl_to_ai](#converting-nvspl-files-to-acoustic-indices-with-nvspl_to_ai)**: Go here to convert NVSPL.txt files into a CSV of acoustic indices.
 
@@ -48,7 +44,7 @@ To process audio files through BirdNET, `birdnet_run()` uses the [reticulate](ht
 
 To use `birdnet_run()`, please first complete the following steps. The function will not work otherwise. 
 
-(1) Install [BirdNET-Lite](https://github.com/kahst/BirdNET-Lite). If you're on a Windows machine, [see here](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#part-1-installing-birdnet-on-a-windows-machine).
+(1) Install [BirdNET-Lite](https://github.com/kahst/BirdNET-Lite). If you're on a Windows machine, [see here](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#background).
 
 (2) Set up [a conda environment for BirdNET](https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment)
 
@@ -331,11 +327,13 @@ birdnet_verify(data = to.verify,
                spec.col = monitoR::gray.3())
 ```
 
-Running this example will produce an interative output like the below image. The RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide which label to choose. In this example, we've used the `buffer` argument to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the CSV file, and informs us that BirdNET had a confidence level of 0.43 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
+Running this example will produce an interactive output like the below image. The RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide which label to choose. In this example, we've used the `buffer` argument to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the CSV file, and informs us that BirdNET had a confidence level of 0.43 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
 
 **Click image for a larger version.**
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/ver1.png><br>
 
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/ver1.png><br>
+</p>
 
 
 Once you've added labels for the remaining detections (in fact, they all contain Swainson's Thrush vocalizations!), `birdnet_verify()` will update the underlying formatted CSVs with your verifications. Below, we gather up the results again and check that our three verifications have been added.
@@ -408,8 +406,9 @@ birdnet_plot_detections(data = plot.songs,
                         box.col = 'gray')
 ```
 **Click image for a larger version.**
+<p align="center">
 <img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot1.png><br>
-
+</p>
 
 In the next example, we plot detections for Swainson's Thrush that contain the label "call" in the verify column. We give the plot a descriptive title, use frequency limits ranging from 0.5 to 6 kHz and choose not to draw any boxes around detections. Below, we demonstrate that the `spec.col` argument allows for adjustable spectrogram colors, and that users can create their own gradients or use existing ones. A few spectrogram color options are provided with the package (e.g., gray.3()). In the example below, we input a color gradient from the [viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html) R package.
 ```r
@@ -429,8 +428,10 @@ birdnet_plot_detections(data = plot.calls,
                         box = FALSE)
 ```
 **Click image for a larger version.**
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot2.png><br>
 
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot2.png><br>
+</p>
 
 In the final example, we demonstrate that `birdnet_plot_detections()` can also be used to visualize unverified data. Below, we loop through to plot all detections for two selected species -- [Brown-crested Flycatcher](https://www.allaboutbirds.org/guide/Brown-crested_Flycatcher/sounds) and [Pacific-slope Flycatcher](https://www.allaboutbirds.org/guide/Pacific-slope_Flycatcher/sounds) -- where the confidence of detection is greater than or equal to 0.25. 
 ```r
@@ -452,10 +453,13 @@ for (i in 1:length(sp)) {
                          box.col = 'gray',
                          title.size = 1.5)
 }
-**Click image for a larger version.**
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot3.png><br>
+```
 
-```r
+**Click image for a larger version.**
+
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot3.png><br>
+</p>
 
 Finally, delete all temporary files when finished. 
 ```r
@@ -466,15 +470,17 @@ unlink(x = 'example-audio-directory', recursive = TRUE)
 
 ## Converting wave audio files to NVSPL with wave_to_nvspl
 
-Define NVSPLs. What are they and why do we convert to them?
+`wave_to_nvspl()` uses PAMGuide code to convert wave files into NVSPL format. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). 
 
-First, pull up the documentation file for this function:
+**Define NVSPLs. What are they and why do we convert to them?**
+
+Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
+
 ```r
 ?wave_to_nvspl
 ```
 
-`wave_to_nvspl()` uses PAMGuide code to convert wave files into NVSPL format. PAMGuide was developed by Nathan D. Merchant et al. 2015 (**ADD LINKS**). The suggested workflow for this function is to first set test.file = TRUE to test that your workflow has been accurately parameterize. Next, to batch process NVSPLs for many audio files, run with test.file = FALSE.
-
+We start by creating an example audio directory and writing example audio to this directory. This is meant to illustrate the file types and folder structure `wave_to_nvspl()` expects to encounter.
 ```r
 # Create an input directory for this example
 dir.create('example-input-directory')
@@ -488,7 +494,17 @@ tuneR::writeWave(object = exampleAudio1,
                  filename = 'example-input-directory/Rivendell_20210715_114502.wav')
 tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-input-directory/Rivendell_20210715_115502.wav')
+```
 
+The suggested workflow for this function is to first set test.file = TRUE to test that your workflow has been accurately parameterized. 
+
+**DESCRIBE WHAT WE ARE LOOKING FOR AND WHAT PLOT/OUTPUTS MEAN**
+
+**DEFINE FXN ARGS**
+
+**DESCRIBE DEFAULTS AND '...' ARG OPTIONS TO PAMGUIDE INTERNAL FXNS**
+
+```r
 # Perform wave_to_nvspl in test mode (test.file = TRUE)
 wave_to_nvspl(
  input.directory = 'example-input-directory',
@@ -496,7 +512,10 @@ wave_to_nvspl(
  test.file = TRUE,
  project = 'testproject',
  timezone = 'GMT')
+```
 
+Once you feel confident that you have parameterized accurately, run the function in batch mode by setting test.file = FALSE. The example below provides progress feedback and takes a few moments to run. Once complete, we can view the NVSPL outputs. 
+```r
 # Perform wave_to_nvspl in batch mode (test.file = FALSE)
 wave_to_nvspl(
  input.directory = 'example-input-directory',
@@ -510,23 +529,29 @@ nvspls <- list.files('example-input-directory/NVSPL', full.names = TRUE)
 
 # View one of the NVSPL outputs
 one.nvspl <- read.delim(file = nvspls[1], sep = ',')
+```
+**DESCIBE WHAT THESE OUTPUTS MEAN**
 
+Finally, we clean up after ourselves by deleting the example input directory.
+```r
 # Delete all temporary example files when finished
 unlink(x = 'example-input-directory', recursive = TRUE)
-
 ```
+
 
 ## Converting NVSPL files to acoustic indices with nvspl_to_ai
 
 Explain about 1/3 octave bands.
 Why use this wave --> NVSPL --> acoustic indices workflow instead of using existing acoustic index functions that take wave data directly?
 
-First, pull up the documentation file for this function:
+Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
 ```r
 ?nvspl_to_ai
 ```
 
-`nvspl_to_ai()` converts NVSPLs (generated by PAMGuide via `wave_to_nvspl`) into a range of acoustic indices. The examples below demonstrate how to use this function. When the start.at.beginning argument is set to TRUE (**DESCRIBE**); when start.at.beginning = FALSE (**DESCRIBE**)
+`nvspl_to_ai()` converts NVSPLs (generated by PAMGuide via `wave_to_nvspl`) into a range of acoustic indices, including **DESCRIBE**. The examples below demonstrate how to use this function.
+
+First, we create a few example directories: an input directory containing the sample wave audio files that come with the package, and an output directory to collect the resulting CSV of acoustic index values. This is meant to illustrate the file types and folder structure `nvspl_to_ai()` expects to encounter.
 
 ```r
 
@@ -544,21 +569,29 @@ write.table(x = exampleNVSPL[[i]],
             sep = ',',
             quote = FALSE)
 }
+```
 
+Now we are positioned to run `nvspl_to_ai()`. **DESCRIBE FXN ARGS, describe difference between start.at.beginning FALSE vs. TRUE**
+```r
 # Run nvspl_to_ai to generate acoustic indices csv for example NVSPL files,
 # setting start.at.beginning = FALSE
 nvspl_to_ai(input.directory = 'example-input-directory',
             output.directory = 'example-output-directory',
             project = 'example-project',
             start.at.beginning = FALSE)
+```
 
+```r
 # Run nvspl_to_ai to generate acoustic indices csv for example NVSPL files,
 # setting start.at.beginning = TRUE
 nvspl_to_ai(input.directory = 'example-input-directory',
             output.directory = 'example-output-directory',
             project = 'example-project',
             start.at.beginning = TRUE)
+```
 
+Comparing both files illustrates the computation differences produced by the `start.at.beginning` argument.
+```r
 # Read in both files to compare
 start.standard <- read.csv(list.files(path = './example-output-directory/',
                                      pattern = 'Index_Created',
@@ -570,10 +603,11 @@ start.begin <- read.csv(list.files(path = './example-output-directory/',
 # View a few rows of each file; note the Hr, Min, Sec differences between both options
 start.standard[1:4, ]
 start.begin[1:4, ]
+```
 
+Finally, we clean up after ourselves by deleting all example files. 
+```r
 # Delete all temporary example files when finished
 unlink(x = 'example-input-directory', recursive = TRUE)
 unlink(x = 'example-output-directory', recursive = TRUE)
-
-
 ```
