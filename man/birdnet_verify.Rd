@@ -10,8 +10,8 @@ birdnet_verify(
   audio.directory,
   results.directory,
   overwrite = FALSE,
-  frq.lim = c(0, 12),
   play = TRUE,
+  frq.lim = c(0, 12),
   buffer = 1,
   box.col = "blue",
   spec.col = monitoR::gray.3()
@@ -20,7 +20,7 @@ birdnet_verify(
 \arguments{
 \item{data}{Data.table or data.frame of subsetted detections that a user would like to verify \strong{for a single species}. Takes formatted results only (see: \code{\link{birdnet_format_csv}}); must contain columns named recordingID, start.s, end.s, scientific.name, common.name, confidence, verify, and timezone.}
 
-\item{verification.library}{List specifying which verification options should be shown to the user. Allows finer control to fit user's needs: user may specify whether a detection is a song, a call, a certain song or call type of interest, false alarm, unsure, or whatever the user needs. This enables maximum flexibility for the user, but also requires some thoughtfulness so that verification options remain consistent. BirdNET provides only species-level confidence and does not classify to song or call types. Thus, depending on expertise and familiarity with a focal species, a user may find themselves in a situation where songs are easily verified, but calls are not. Verification library provides the flexibility to accommodate varying levels of expertise, but must be thought through by the user beforehand.}
+\item{verification.library}{Character vector specifying which verification options should be shown to the user. Allows finer control to fit user's needs: user may specify whether a detection is a song, a call, a certain song or call type of interest, false alarm, unsure, or whatever the user needs. This enables maximum flexibility for the user, but also requires some thoughtfulness so that verification options remain consistent. BirdNET provides only species-level confidence and does not classify to song or call types. Thus, depending on the underlying research question and a verifier's expertise and familiarity with a focal species, a user may find themselves in a situation where songs are easily verified, but calls are not. Verification library provides the flexibility to accommodate varying questions and levels of expertise, but must be thought through by the user beforehand.}
 
 \item{audio.directory}{Top-level input directory path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.}
 
@@ -28,9 +28,9 @@ birdnet_verify(
 
 \item{overwrite}{Logical flag for whether to overwrite existing verifications contained in a CSV. Default = FALSE. If FALSE, no overwriting occurs, and the user only verifies detections that are currently unverified. If TRUE, the user is choosing to overwrite existing verifications.}
 
-\item{frq.lim}{Optional two-element numeric vector specifying frequency limits, in kHz, to apply to the plotted spectrograms. Default = c(0, 12).}
-
 \item{play}{Logical value specifying whether a temporary wave file should be written to the working directory for the user to check during verification. If TRUE, a temporary wave file for the detection is written to the working directory, available for the user to listen to, and is deleted after the user closes the player window and adds a verification. If FALSE, no temporary wave file is written.}
+
+\item{frq.lim}{Optional two-element numeric vector specifying frequency limits, in kHz, to apply to the plotted spectrograms. Default = c(0, 12).}
 
 \item{buffer}{Numeric buffer, in seconds, to place around BirdNET's 3 second detection area (default = 1). Generally useful for providing acoustic "context" around a detected event; of particular utility in cases where the target signal exceeds BirdNET's 3 second detection window, or in which the detection window overlaps with a partial signal.}
 
@@ -84,16 +84,23 @@ dat <- birdnet_gather_results(results.directory = 'example-results-directory',
                              formatted = TRUE)
 
 # Create a random sample of three detections to verify
+set.seed(4)
 to.verify <- dat[common.name == "Swainson's Thrush"][sample(.N, 3)]
 
 # Create a verification library for this species
-ver.lib <- list("Swainson's Thrush" = c('y', 'n', 'unsure'))
+ver.lib <- c('y', 'n', 'unsure')
+
 # Verify detections
 birdnet_verify(data = to.verify,
                verification.library = ver.lib,
                audio.directory = 'example-audio-directory',
                results.directory = 'example-results-directory',
-               overwrite = FALSE)
+               overwrite = FALSE,
+               play = TRUE,
+               frq.lim = c(0, 12),
+               buffer = 1,
+               box.col = 'blue',
+               spec.col = monitoR::gray.3())
 
 # Check that underlying CSVs have been updated with user verifications
 dat <- birdnet_gather_results(results.directory = 'example-results-directory',

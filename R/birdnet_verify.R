@@ -4,13 +4,12 @@
 #' @title Verify BirdNET detections
 #' @description Interactive function that produces spectrograms and wave clips enabling a user to verify BirdNET detections. Underlying CSV files are updated with user verifications.
 #' @param data Data.table or data.frame of subsetted detections that a user would like to verify \strong{for a single species}. Takes formatted results only (see: \code{\link{birdnet_format_csv}}); must contain columns named recordingID, start.s, end.s, scientific.name, common.name, confidence, verify, and timezone.
-#' @param verification.library List specifying which verification options should be shown to the user. Allows finer control to fit user's needs: user may specify whether a detection is a song, a call, a certain song or call type of interest, false alarm, unsure, or whatever the user needs. This enables maximum flexibility for the user, but also requires some thoughtfulness so that verification options remain consistent. BirdNET provides only species-level confidence and does not classify to song or call types. Thus, depending on expertise and familiarity with a focal species, a user may find themselves in a situation where songs are easily verified, but calls are not. Verification library provides the flexibility to accommodate varying levels of expertise, but must be thought through by the user beforehand.
-#'
+#' @param verification.library Character vector specifying which verification options should be shown to the user. Allows finer control to fit user's needs: user may specify whether a detection is a song, a call, a certain song or call type of interest, false alarm, unsure, or whatever the user needs. This enables maximum flexibility for the user, but also requires some thoughtfulness so that verification options remain consistent. BirdNET provides only species-level confidence and does not classify to song or call types. Thus, depending on the underlying research question and a verifier's expertise and familiarity with a focal species, a user may find themselves in a situation where songs are easily verified, but calls are not. Verification library provides the flexibility to accommodate varying questions and levels of expertise, but must be thought through by the user beforehand.
 #' @param audio.directory Top-level input directory path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.
 #' @param results.directory Path to directory where formatted BirdNET result CSVs have been stored.
 #' @param overwrite Logical flag for whether to overwrite existing verifications contained in a CSV. Default = FALSE. If FALSE, no overwriting occurs, and the user only verifies detections that are currently unverified. If TRUE, the user is choosing to overwrite existing verifications.
-#' @param frq.lim Optional two-element numeric vector specifying frequency limits, in kHz, to apply to the plotted spectrograms. Default = c(0, 12).
 #' @param play Logical value specifying whether a temporary wave file should be written to the working directory for the user to check during verification. If TRUE, a temporary wave file for the detection is written to the working directory, available for the user to listen to, and is deleted after the user closes the player window and adds a verification. If FALSE, no temporary wave file is written.
+#' @param frq.lim Optional two-element numeric vector specifying frequency limits, in kHz, to apply to the plotted spectrograms. Default = c(0, 12).
 #' @param buffer Numeric buffer, in seconds, to place around BirdNET's 3 second detection area (default = 1). Generally useful for providing acoustic "context" around a detected event; of particular utility in cases where the target signal exceeds BirdNET's 3 second detection window, or in which the detection window overlaps with a partial signal.
 #' @param box.col Color of border box drawn around 3-second detection area.
 #' @param spec.col The colors used to plot verification spectrograms. Default = gray.3(). Spectrogram colors are adjustable, and users may create their own gradients for display. A few spectrogram color options are provided via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(), and topo.1(), all of which are based on existing R colors.
@@ -60,17 +59,23 @@
 #'                              formatted = TRUE)
 #'
 #' # Create a random sample of three detections to verify
+#' set.seed(4)
 #' to.verify <- dat[common.name == "Swainson's Thrush"][sample(.N, 3)]
 #'
 #' # Create a verification library for this species
-#' ver.lib <- list("Swainson's Thrush" = c('y', 'n', 'unsure'))
-
+#' ver.lib <- c('y', 'n', 'unsure')
+#'
 #' # Verify detections
 #' birdnet_verify(data = to.verify,
 #'                verification.library = ver.lib,
 #'                audio.directory = 'example-audio-directory',
 #'                results.directory = 'example-results-directory',
-#'                overwrite = FALSE)
+#'                overwrite = FALSE,
+#'                play = TRUE,
+#'                frq.lim = c(0, 12),
+#'                buffer = 1,
+#'                box.col = 'blue',
+#'                spec.col = monitoR::gray.3())
 #'
 #' # Check that underlying CSVs have been updated with user verifications
 #' dat <- birdnet_gather_results(results.directory = 'example-results-directory',
@@ -89,10 +94,10 @@ birdnet_verify <- function(data,
                            audio.directory,
                            results.directory,
                            overwrite = FALSE,
+                           play = TRUE,
 
                            # Args that customize the verification experience
                            frq.lim = c(0, 12),
-                           play = TRUE,
                            buffer = 1,
                            box.col = 'blue',
                            spec.col = monitoR::gray.3()
@@ -139,10 +144,12 @@ birdnet_verify <- function(data,
   # if overwrite true..../false... need to change
 
   if (overwrite == FALSE) {
-    cat('Since overwrite == FALSE, only detections from unverified results will be verified.')
+    message('Since overwrite == FALSE, only detections from unverified results will be verified.\n')
     all.focal.verify <- all.focal[is.na(verify)]
+    if (nrow(all.focal.verify) == 0)
+      stop('overwrite == FALSE and there are no more unverified detections in this data. Quitting function.')
   } else {
-    cat('Since overwrite == TRUE, all detections will be verified, even if verification data already exists. This will overwrite any existing verifications.')
+    message('Since overwrite == TRUE, all detections will be verified, even if verification data already exists. This will overwrite any existing verifications.\n')
     all.focal.verify <- all.focal
   }
 
@@ -173,10 +180,6 @@ birdnet_verify <- function(data,
     vers <- NULL
 
     for (i in 1:verify[,.N]) {
-
-      # Narrow down verification.library options to this species
-      ver.lib.sp <- unlist(verification.library[names(verification.library)
-                                         == verify[i, common.name]])
 
       # Set up helpful spectrogram variables
       counter <- counter + 1
@@ -241,16 +244,16 @@ birdnet_verify <- function(data,
         #Sys.sleep(duration(wav))
       }
 
-      while (length(x) == 0 || !x %in% c(ver.lib.sp, NA)) {
+      while (length(x) == 0 || !x %in% c(ver.lib, NA)) {
         cat(paste0("\n This is recording ", rec.ids[w], '.',
                    " This is verification ", counter,
                    " out of ",
                    nrow(all.focal.verify),
-                   "\n"))
+                   ".\n"))
 
         cat(paste0("\n", i, ". Showing user input verification library options for ",
-                   verify[i]$common.name,': ', paste0(ver.lib.sp, collapse = ', '),
-                   "\n Enter an option in ", paste0(ver.lib.sp, collapse = ', '), ", s to skip, r to replay, or q to exit (q will exit and save any verifications you have already completed for this recording). To escape out of the function completely, press 'Esc': "))
+                   verify[i]$common.name,': ', paste0(ver.lib, collapse = ', '),
+                   "\n Enter an option in ", paste0(ver.lib, collapse = ', '), ", s to skip, or q to exit this recording (q will exit and save any verifications you have already completed for this recording). If you have many recordings and wish to escape out of the function completely, press 'Esc': "))
 
         x <- tolower(readLines(n = 1)[1])
 
@@ -265,7 +268,7 @@ birdnet_verify <- function(data,
           break
         }
 
-        if (x %in% ver.lib.sp) {
+        if (x %in% ver.lib) {
           # Save the library label for this verification
           vers[i] <- x
         }
@@ -275,21 +278,17 @@ birdnet_verify <- function(data,
           break
         }
 
-        if (x == 'r') {
-          message("Replaying.\n")
-        }
-
         if (x == 'q') {
-          message("Exiting and saving what you have already verified.\n")
+          message("Quitting out of this recording and saving what you have already verified for this recording.\n")
           break
         }
 
-        if (!x %in% c(ver.lib.sp, "r", "s", "q")) {
+        if (!x %in% c(ver.lib, "r", "s", "q")) {
           message("Value not recognized. Enter an option from your verification library, or enter s, r, or q.\n")
           next
         }
 
-      } # end while x %in% ver.lib.sp or NA
+      } # end while x %in% ver.lib or NA
 
       # If q, break out of the peaks loop
       if (!is.na(x) & x == 'q') break
@@ -337,6 +336,7 @@ birdnet_verify <- function(data,
   } # end 'w' wave for loop
 
   verify.bind <- rbindlist(verify.list)
+  verify.bind[,composite.key := NULL]
 
   # Return scores table updated with verifications
   return(verify.bind)

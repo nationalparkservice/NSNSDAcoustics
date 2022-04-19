@@ -12,7 +12,7 @@ birdnet_format_csv(results.directory, timezone)
 \item{timezone}{Timezone setting used in the audio recorder (e.g, "GMT"). This argument allows you to specify the timezone shown by the wave filename. If recordings were taken in local time at your study site, specify an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., "America/Los_Angeles"). If recordings were taken in GMT, you can put either "GMT" or "UTC" (both are acceptable in R for downstream date-time formatting). This argument is critical to foster clarity in data analysis through the years and across monitoring locations, because some projects may vary across time and space as to whether the standard operating procedure specifies recordings in GMT vs. local time.}
 }
 \value{
-Saves a formatted CSV of results with the following columns:
+Saves a new formatted CSV of BirdNET results with filename prefix "BirdNET_formatted_" and the following columns:
 
 \itemize{
 \item{\strong{recordingID}: Recording identifier for the file, as SITE_YYYYMMDD_HHMMSS.wav.}

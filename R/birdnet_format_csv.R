@@ -5,7 +5,7 @@
 #' @description Reformats BirdNET CSV outputs into separated columns with R-friendly column names, a "recordingID" column for easier data manipulation, a "verify" column to support manual verification of detection results, and a "timezone" column to clarify the timezone setting used by the audio recorder.
 #' @param results.directory Path to directory where raw BirdNET result CSVs have been stored
 #' @param timezone Timezone setting used in the audio recorder (e.g, "GMT"). This argument allows you to specify the timezone shown by the wave filename. If recordings were taken in local time at your study site, specify an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., "America/Los_Angeles"). If recordings were taken in GMT, you can put either "GMT" or "UTC" (both are acceptable in R for downstream date-time formatting). This argument is critical to foster clarity in data analysis through the years and across monitoring locations, because some projects may vary across time and space as to whether the standard operating procedure specifies recordings in GMT vs. local time.
-#' @return Saves a formatted CSV of results with the following columns:
+#' @return Saves a new formatted CSV of BirdNET results with filename prefix "BirdNET_formatted_" and the following columns:
 #'
 #' \itemize{
 #' \item{\strong{recordingID}: Recording identifier for the file, as SITE_YYYYMMDD_HHMMSS.wav.}
@@ -86,7 +86,7 @@ birdnet_format_csv <- function(results.directory,
 
     while (length(x) == 0 || !x %in% c("y", "n", NA)) {
 
-      message(length(files.already.formatted), ' out of ', length(fi), ' files in this directory have already been formatted. Are you sure you want to proceed and overwrite these files? If so, you may lose any existing verifications you have already completed. To proceed with overwriting formatted files, input "y". To stop, input "n".')
+      message('**WARNING**: \n', length(files.already.formatted), ' out of ', length(fi), ' files in this directory have already been formatted.\n Are you sure you want to proceed and overwrite these files?\n IF SO, YOU WILL LOSE ANY EXISTING VERIFICATIONS YOU HAVE ALREADY COMPLETED. \n To proceed with overwriting formatted files, input "y". To stop, input "n".\n')
 
       x <- tolower(readLines(n = 1)[1])
 
