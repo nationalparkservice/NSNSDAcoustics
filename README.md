@@ -7,7 +7,7 @@ This repository provides a place for NSNSD staff to develop and modernize severa
 # Table of Contents
 
 - **[Installing NSNSDAcoustics](#installing-nsnsdacoustics)**
-- **[Running BirdNET from RStudio with birdnet_run](#running-birdnet-from-rstudio-with-birdnet_run)**: Go here if you want to use RStudio to process .wav or .mp3 audio files through BirdNET. Warning: not for the fainthearted; requires a substantial amount of setup.
+- **[Running BirdNET from RStudio with birdnet_run](#running-birdnet-from-rstudio-with-birdnet_run)**: Go here if you want to use RStudio to process .wav or .mp3 audio files through [BirdNET](https://birdnet.cornell.edu/). Warning: not for the fainthearted; requires a substantial amount of setup.
 - **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET CSV outputs in hand and want to use R to wrangle, visualize, and verify the results.
   * **[Reformat raw BirdNET CSV results](#reformat-raw-birdnet-csv-results)**
   * **[Gather BirdNET results](#gather-birdnet-results)**
@@ -39,6 +39,8 @@ NSNSDAcoustics depends on the R package `data.table`, which enables fast queryin
 
 
 ## Running BirdNET from RStudio with birdnet_run
+
+[BirdNET](https://birdnet.cornell.edu/) is a bird sound recognition program developed by the [Cornell Center for Conservation Bioacoustics](https://www.birds.cornell.edu/ccb/). The [BirdNET Github repository](https://github.com/kahst/BirdNET-Lite) provides a promising free tool for processing large volumes of audio data relatively quickly and understanding something about which avian species are present.
 
 To process audio files through BirdNET, `birdnet_run()` uses the [reticulate](https://rstudio.github.io/reticulate/) package to run Python from RStudio. **This function was developed for Windows 10 and has not been tested on other systems.**
 
@@ -281,7 +283,7 @@ write.csv(x = exampleFormatted2,
           row.names = FALSE)
 ```
 
-Next, we can use `birdnet_gather_results()` to grab all the formatted results from the example folder. From here, you can manipulate your results however you want to create a subset of detections that you wish to verify. The key is to subset only to a single species. In case you accidentally include multiple species in your data subset, `birdnet_verify()` will remind you that it only accepts one species at a time for verifications. In this example, we'll focus on verifying detections for the [Swainson's Thrush (Catharus ustulatus)](https://www.allaboutbirds.org/guide/Swainsons_Thrush/sounds).
+Next, we can use `birdnet_gather_results()` to grab all the formatted results from the example folder. From here, you can manipulate your results however you want to create a subset of detections that you wish to verify. The key is to subset only to a single species. In case you accidentally include multiple species in your data subset, `birdnet_verify()` will remind you that it only accepts one species at a time for verifications. In this example, we'll focus on verifying detections for the [Swainson's Thrush (Catharus ustulatus)](https://www.allaboutbirds.org/guide/Swainsons_Thrush).
 
 You can create your verification sample however you like. A few options are to take a simple random sample, or take a stratified sample based on detections from different locations or times of day. Depending on your question, you might even want to verify *every* detection for your target species. In the below example, we set a seed for reproducibility and take a simple random sample of three Swainson's Thrush detections.
 ```r
@@ -296,13 +298,13 @@ to.verify <- dat[common.name == "Swainson's Thrush"][sample(.N, 3)]
 
 The next step is to create a "verification library" for this species; essentially, a character vector of acceptable options for your verification labels. Verifying BirdNET detections may be tricky depending on your research question, because BirdNET does not distinguish between the different types of vocalizations a bird may produce. This means the burden is on you, the verifier, to label the detection in a way that will best support you in answering your motivating research question. 
 
-The Swainson's Thrush provides a good example of what makes this challenging, because in addition to its recognizable flutelike song, it has a variety of different call types, including a "peep" note, a "whit", a high-pitched "whine", a "bink", and a "peeer" call. 
+The Swainson's Thrush provides a good example of what makes this challenging, because in addition to its [recognizable flutelike song, it has a variety of different call types](https://www.allaboutbirds.org/guide/Swainsons_Thrush/sounds), including a "peep" note, a "whit", a high-pitched "whine", a "bink", and a "peeer" call. 
 
 Thus, the verification library you set up will depend on the level of detail you need to answer your research question. Here are two examples of questions you might have as you verify:
-* **Is this a Swainson's Thrush or not?** For this question, you be thinking, "Yes, this is my target species!" or, "No, this definitely isn't my target species", or, "I'm not sure". You might choose simple verification labels like c('y', 'n', 'unsure').
+* **Is this a Swainson's Thrush or not?** For this question, you'll think to yourself, "Yes, this is my target species!" or, "No, this definitely isn't my target species", or, "I'm not sure". You might choose simple verification labels like c('y', 'n', 'unsure').
 * **What type of Swainson's Thrush vocalization is this?** For this question, you might choose more descriptive verification labels like c('song', 'call', 'unsure', 'false'), or something even more detailed like c('song', 'peep', 'whit', 'whine', 'bink', 'peeer', 'false', 'unsure'). 
 
-This part is left to your discretion. It's one of the challenging aspects of assessing automated detection results, and you may find that you need to iterate through a few options before settling on the verification library that work best for a given species and research question.
+This part is left to your discretion. It's one of the challenging aspects of assessing automated detection results, and you may find that you need to iterate through a few options before settling on the verification library that works best for your circumstances.
 
 Below, we'll use a simple verification library where 'y' means yes, it's a Swainson's Thrush, 'n' means it's not, and 'unsure' means we aren't certain. 
 ```r
@@ -327,7 +329,7 @@ birdnet_verify(data = to.verify,
                spec.col = monitoR::gray.3())
 ```
 
-Running this example will produce an interactive output like the below image. The RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide which label to choose. In this example, we've used the `buffer` argument to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the CSV file, and informs us that BirdNET had a confidence level of 0.43 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
+Running this example will produce an interactive output like the below image. The RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide which label to choose. In this example, we've used the `buffer` argument to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the CSV file, and informs us that BirdNET has a confidence level of 0.43 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
 
 **Click image for a larger version.**
 
@@ -345,7 +347,7 @@ dat <- birdnet_gather_results(results.directory = 'example-results-directory',
 dat[!is.na(verify)]
 ```
 
-Finally, we clean up after ourselves by deleting temporary files that we set up for the example.
+Finally, we clean up by deleting temporary files that we set up for the example.
 ```r
 # Delete all temporary example files when finished
 unlink(x = 'example-audio-directory', recursive = TRUE)
@@ -389,7 +391,7 @@ str(examplePlotData)
 
 `birdnet_plot_detections()` expects a data.table/data.frame that has been formatted with the columns produced by `birdnet_format_csv()`. Beyond that, this data.frame can contain just about anything. A user might choose to plot data by species, song type, verification label, confidence levels, and more. The `audio.directory` argument should point to the folder where your audio are contained. The remaining arguments allow some aesthetic control over plotting, with the option to provide a title, control the frequency limits, and choose spectrogram and box colors (see helpfile for details).  
 
-Below, we subset the `examplePlotData` object plot detections for Swainson's Thrush that contain the label "song" in the verify column. We give the plot a descriptive title, use frequency limits ranging from 0.5 to 12 kHz, specify a gray color scheme for the spectrogram, and draw gray boxes around each detection. 
+Below, we subset the `examplePlotData` object to plot detections for Swainson's Thrush that contain the label "song" in the verify column. We give the plot a descriptive title, use frequency limits ranging from 0.5 to 12 kHz, specify a gray color scheme for the spectrogram, and draw gray boxes around each detection. 
 ```r
 # Plot only detections of Swainson's Thrush verified as "song",
 # with frequency limits ranging from 0.5 to 12 kHz, gray spectrogram colors,
@@ -532,7 +534,7 @@ one.nvspl <- read.delim(file = nvspls[1], sep = ',')
 ```
 **DESCIBE WHAT THESE OUTPUTS MEAN**
 
-Finally, we clean up after ourselves by deleting the example input directory.
+Finally, we clean up by deleting the example input directory.
 ```r
 # Delete all temporary example files when finished
 unlink(x = 'example-input-directory', recursive = TRUE)
@@ -605,7 +607,7 @@ start.standard[1:4, ]
 start.begin[1:4, ]
 ```
 
-Finally, we clean up after ourselves by deleting all example files. 
+Finally, we clean up by deleting all example files. 
 ```r
 # Delete all temporary example files when finished
 unlink(x = 'example-input-directory', recursive = TRUE)
