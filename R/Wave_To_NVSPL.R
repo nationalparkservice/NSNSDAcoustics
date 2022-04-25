@@ -49,6 +49,8 @@
 #'
 #' @seealso  \code{\link{nvspl_to_ai}}
 #' @import tuneR
+#' @importFrom utils read.csv write.table
+#' @importFrom graphics hist
 #' @export
 #' @include Meta.R PAMGuide.R PAMGuide_Meta.R
 #' @examples

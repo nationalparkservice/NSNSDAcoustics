@@ -22,6 +22,9 @@
 #' @title Internal function from PAMGuide code.
 #' @description Internal function from PAMGuide code.
 #' @import tuneR
+#' @importFrom graphics axis axis.POSIXct lines legend mtext
+#' @importFrom grDevices dev.new graphics.off
+#' @importFrom stats mvfft
 #' @include Meta.R PAMGuide.R PAMGuide_Meta.R
 #' @export
 #' @keywords internal

@@ -118,9 +118,6 @@ birdnet_format_csv <- function(results.directory,
       result[,`Confidence` := gsub('"', '', x = `Confidence`)]
     }
 
-
-  # testerfiname <- (r'(C:\Users\cbalantic\OneDrive - DOI\BirdNET-guidance\birdnet-sandbox\Results\LEWI\BirdNET_LEWICLAT_20210803_063002.csv)')
-
    # If CSV reads correctly, format and write
     if (all(colnames(result) %in%
             c("Start (s)", "End (s)", "Scientific name",

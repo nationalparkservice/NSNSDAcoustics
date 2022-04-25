@@ -43,10 +43,14 @@
 #'
 #' The function can handle .wav or .mp3 audio files. The current behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations.
 #'
+#' Internally, BirdNET expects a week of the year as an input. The behavior of birdnet_run() is to parse the week of year from the SITEID_YYYYMMDD_HHMMSS filename using lubridate::week().
+#'
 #' NSNSDAcoustics suggests the reticulate package but does not install it for you. To use this function, please install reticulate using install.packages('reticulate')
 #'
 #' @seealso  \code{\link{birdnet_format_csv}}, \code{\link{birdnet_verify}}
 #' @import tuneR
+#' @importFrom lubridate week
+#' @importFrom reticulate py_run_string source_python
 #' @export
 #' @examples
 #' \dontrun{

@@ -24,16 +24,13 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
-Depends: R (>= 3.5.0), data.table, lubridate, monitoR, tuneR
-Suggests: ineq, moments, NbClust, reticulate, vegan
-Imports: data.table, lubridate, monitoR, tuneR
+Depends: R (>= 3.5.0), data.table, monitoR, tuneR
+Imports: reticulate, ineq, lubridate, moments, NbClust, vegan
 Collate: 
     'PAMGuide.R'
     'PAMGuide_Meta.R'
     'Meta.R'
     'Viewer.R'
-    'Wave_To_NVSPL.R'
-    'bcp-functions.R'
     'birdnet_format_csv.R'
     'birdnet_gather_results.R'
     'birdnet_plot_detections.R'
@@ -41,5 +38,6 @@ Collate:
     'birdnet_species_counts.R'
     'birdnet_verify.R'
     'examples-helpfiles.R'
+    'helpers.R'
     'nvspl_to_ai.R'
-    'utils.R'
+    'wave_to_nvspl.R'

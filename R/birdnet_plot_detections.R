@@ -128,7 +128,7 @@ birdnet_plot_detections <- function(data,
 
   # Read in 1 test wave to check and get number of time and frequency bins
   checker <- readWave(filename = wav.paths[1], from = 0, to = 3, units = 'seconds')
-  check.sp <- monitoR:::spectro(wave = checker)
+  check.sp <- monitoR:::spectro(wave = checker) # monitor:::
   which.frq.bins <- which(check.sp$freq >= frq.lim[1] &
                             check.sp$freq <= frq.lim[2])
   nrows <- length(which.frq.bins)  # n freq bins

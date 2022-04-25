@@ -15,7 +15,6 @@ nvspl_to_ai(
   fbinMax = 8,
   BKfminimum = "H31p5",
   BKfmaximum = "H1250",
-  sunrise = 0,
   timestep = 10,
   startday = 1,
   plt = 0,
@@ -44,8 +43,6 @@ If TRUE, simply starts at the start of your recordings on a given day. TRUE is w
 \item{BKfminimum}{Lower limit of frequency bands for background noise (NOTE: if NVSPL calculated with PAMGuide, no data below H25)}
 
 \item{BKfmaximum}{Upper limit of frequency bands for background noise}
-
-\item{sunrise}{Change to 1 if only want to calculate indices over sunrise (Need more explanation for what this is doing??)}
 
 \item{timestep}{in minutes (NOTE: to get daily values, summarizing the timestep values is preferred over running the code for an entire day) - CB - so, number of minutes over which to calculate?}
 

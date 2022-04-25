@@ -22,7 +22,8 @@
 #' Spectrograms show 3-second segment detected by BirdNET. Title of spectrogram indicates the recordingID of the file name, the start and end times of the detection in seconds, the species detection, and the confidence level of the detection from 0 to 1.
 #'
 #' @seealso  \code{\link{birdnet_run}}, \code{\link{birdnet_format_csv}}
-#' @import tuneR
+#' @import data.table monitoR tuneR
+#' @importFrom graphics par polygon axis
 #' @export
 #' @examples
 #' \dontrun{
@@ -141,7 +142,6 @@ birdnet_verify <- function(data,
                                sep = '-')]
   # Subset the results
   all.focal <- results[composite.key %in% data$composite.key]
-  # if overwrite true..../false... need to change
 
   if (overwrite == FALSE) {
     message('Since overwrite == FALSE, only detections from unverified results will be verified.\n')
@@ -162,7 +162,7 @@ birdnet_verify <- function(data,
 
   # Figure out which frequency bins to use
   checker <- readWave(filename = wav.paths[1], from = 0, to = 3, units = 'seconds')
-  check.sp <- monitoR:::spectro(wave = checker)
+  check.sp <- monitoR:::spectro(wave = checker) # monitoR:::
   which.frq.bins <- which(check.sp$freq >= frq.lim[1] &
                             check.sp$freq <= frq.lim[2])
   counter <- 0
@@ -244,7 +244,7 @@ birdnet_verify <- function(data,
         #Sys.sleep(duration(wav))
       }
 
-      while (length(x) == 0 || !x %in% c(ver.lib, NA)) {
+      while (length(x) == 0 || !x %in% c(verification.library, NA)) {
         cat(paste0("\n This is recording ", rec.ids[w], '.',
                    " This is verification ", counter,
                    " out of ",
@@ -252,8 +252,8 @@ birdnet_verify <- function(data,
                    ".\n"))
 
         cat(paste0("\n", i, ". Showing user input verification library options for ",
-                   verify[i]$common.name,': ', paste0(ver.lib, collapse = ', '),
-                   "\n Enter an option in ", paste0(ver.lib, collapse = ', '), ", s to skip, or q to exit this recording (q will exit and save any verifications you have already completed for this recording). If you have many recordings and wish to escape out of the function completely, press 'Esc': "))
+                   verify[i]$common.name,': ', paste0(verification.library, collapse = ', '),
+                   "\n Enter an option in ", paste0(verification.library, collapse = ', '), ", s to skip, or q to exit this recording (q will exit and save any verifications you have already completed for this recording). If you have many recordings and wish to escape out of the function completely, press 'Esc': "))
 
         x <- tolower(readLines(n = 1)[1])
 
@@ -268,7 +268,7 @@ birdnet_verify <- function(data,
           break
         }
 
-        if (x %in% ver.lib) {
+        if (x %in% verification.library) {
           # Save the library label for this verification
           vers[i] <- x
         }
@@ -283,7 +283,7 @@ birdnet_verify <- function(data,
           break
         }
 
-        if (!x %in% c(ver.lib, "r", "s", "q")) {
+        if (!x %in% c(verification.library, "r", "s", "q")) {
           message("Value not recognized. Enter an option from your verification library, or enter s, r, or q.\n")
           next
         }

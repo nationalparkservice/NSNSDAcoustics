@@ -18,6 +18,17 @@
 
 # Author: Nathan D. Merchant. Last modified 22 Sep 2014
 
+#' @name Viewer
+#' @title Internal function from PAMGuide code.
+#' @description Internal function from PAMGuide code.
+#' @import tuneR
+#' @importFrom graphics axis axis.POSIXct lines legend mtext
+#' @importFrom grDevices dev.new graphics.off
+#' @include Meta.R PAMGuide.R PAMGuide_Meta.R
+#' @export
+#' @keywords internal
+#'
+
 Viewer <- function(...,plottype='Both',fullfile="",ifile="",linlog="Log"){
 
   graphics.off()

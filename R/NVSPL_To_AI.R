@@ -14,7 +14,6 @@
 #' @param fbinMax Sets the frequency bins to look across for cluster analysis (???)
 #' @param BKfminimum Lower limit of frequency bands for background noise (NOTE: if NVSPL calculated with PAMGuide, no data below H25)
 #' @param BKfmaximum Upper limit of frequency bands for background noise
-#' @param sunrise Change to 1 if only want to calculate indices over sunrise (Need more explanation for what this is doing??)
 #' @param timestep in minutes (NOTE: to get daily values, summarizing the timestep values is preferred over running the code for an entire day) - CB - so, number of minutes over which to calculate?
 #' @param startday Optional start date if many files or error (CB: NOT A ROBUST WAY TO HANDLE ERRORS. ADD IN CONTINGENCIES FOR THIS AS I FIND THEM)
 #' @param plt Option to plot NVSPL files (cb I think 1 = plot?) (NOTE: this will slow things way down!)
@@ -86,6 +85,13 @@
 #' }
 #'
 #' @seealso  \code{\link{wave_to_nvspl}}
+#' @importFrom grDevices colorRampPalette
+#' @importFrom ineq Gini
+#' @importFrom moments kurtosis skewness
+#' @importFrom NbClust NbClust
+#' @importFrom stats median quantile var
+#' @importFrom utils read.csv write.csv
+#' @importFrom vegan diversity
 #' @export
 #' @examples
 #' \dontrun{
@@ -148,7 +154,6 @@ nvspl_to_ai <- function (input.directory, # top-level NVSPL file directory
                          fbinMax = 8, #sets the frequency bins to looks across for cluster analysis
                          BKfminimum = "H31p5", # lower limit of frequency bands for background noise (NOTE: if NVSPL calculated with PAMGuide, no data below H25)
                          BKfmaximum = "H1250", # upper limit
-                         sunrise = 0, # change to 1 if only want to calculate indices over sunrise
                          timestep = 10, # in minutes (NOTE: to get daily values, summarizing the timestep values is preferred over running the code for an entire day)
                          startday = 1, # optional start day if many files or error
                          plt = 0, # option to plot NVSPL files (cb I think 1 = plot?) (NOTE: this will slow things way down!)
@@ -262,21 +267,6 @@ nvspl_to_ai <- function (input.directory, # top-level NVSPL file directory
         }
       }
       rm(myTempMatrix)
-
-      #TRUNCATE by time of day (for calculating around sunrise)
-      if (sunrise == 1) {
-        ind <- match(mySites[ss],siteloc$ID,nomatch = NA)
-        Lat <- siteloc$Latitude[ind]
-        Lon <- siteloc$Longitude[ind]
-        jDay <- as.numeric(format(as.POSIXct(dy, format="%Y_%m_%d"),"%j"))
-        estsun = suncalc(jDay,Lat,Lon)
-        s1 = unlist(strsplit(as.character(estsun[1]), "[.]") )
-        shr = as.numeric(s1[1])
-        dayMatrix <- cbind(dayMatrix[,"Hr"] + (60 * dayMatrix[,"Min"] + dayMatrix[,"Sec"])/3600, dayMatrix)
-        colnames(dayMatrix)[1] <- "decHr"
-
-        dayMatrix <- dayMatrix[dayMatrix[,"decHr"] > (estsun$sunrise - 1) & dayMatrix[,"decHr"] < (estsun$sunrise + 2),-1]
-      }
 
       #CHECK to see if full minutes are included, remove any non-full minutes
       test    = do.call(paste, c(dayMatrix[c("Hr", "Min")], sep = "_"))

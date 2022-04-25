@@ -34,8 +34,8 @@
 #'
 #' This function was developed by the National Park Service Natural Sounds and Night Skies Division to support bioacoustics projects such as those related to acoustic indices and automated detection of focal species.
 #'
-#' @seealso  \code{\link{NVSPL_To_AI}}, \code{\link{SongMeter_To_NVSPL}}
-#' @import data.table lubridate
+#' @import data.table
+#' @importFrom lubridate floor_date with_tz
 #' @export
 #' @examples
 #' \dontrun{
@@ -99,29 +99,23 @@ add_time_cols <- function(dt,
     # If the DT contains the time column in the recording (i.e., when an event
     # was detected during the recording, in seconds) then we add those additional columns
     # for playing nicely with the acoustic indices
-    # dt[,Date := as.Date(dateTimeLocal)]
-    #  dt[,Mo := month(dateTimeLocal)]
-    # dt[,Day := mday(dateTimeLocal)]
     dt[,detectionTime := dateTimeLocal + time]
     dt[, detectionTimeMinute := floor_date(detectionTime, '1 mins')] # round down to nearest minute of detection time to make start.at.beginning joins easier
-
-    # dt[,Hr := hour(detectionTime)]
-
-    # Set the minutes based on whether acoustic indices were run with generic or start.at.beginning
-    # this might be obsolete/unnecessary now that we have the detectionTimeMinute column taht can be merged with AI dateTime column...
-    # ifelse(start.at.beginning == TRUE,
-    #        yes = dt[, Min := minute(detectionTime)],
-    #        no = dt[, Min := minute(floor_date(detectionTime, paste0(timestep, " mins")))] )
-    #
-    # dt[,Sec := 0 ] # NEED TO FIX THIS, NOT ALL ARE ZERO but i dno't want to get bogged down in this rn
-
   } else {
     return(dt)
   }
-
 }
 
 
 # normdBA ======================================================================
 # Used within NVSPL_To_AI -- internal pkg function
 normdBA <- function (x) { (x-(-10)) / (80 - (-10)) }
+
+
+# # spectrogram colors from monitoR ==============================================
+# # Colors are defined as:
+# gray.1 <- function(n = 30) gray(seq(1, 0, length.out = n))
+# gray.2 <- function(n = 30) gray(1-seq(0, 1, length.out = n)^2)
+# gray.3 <- function(n = 30) gray(1-seq(0, 1, length.out = n)^3)
+# rainbow.1 <- function(n = 15) rev(rainbow(n))
+# topo.1 <- function(n = 12) rev(topo.colors(n))
