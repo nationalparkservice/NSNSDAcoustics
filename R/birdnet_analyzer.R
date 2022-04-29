@@ -1,7 +1,8 @@
 # birdnet_run ==================================================================
+# BirdNET-Analyzer Version
 # process wave files through BirdNET
-#' @name birdnet_run
-#' @title Run BirdNET from RStudio (Warning: deprecated, see \code{\link{birdnet_analyzer}} instead.)
+#' @name birdnet_analyzer
+#' @title Run BirdNET from RStudio
 #' @description This function uses the reticulate package to run Python from RStudio in order to process files through BirdNET. It is meant for Windows users and may have unexpected results on other systems. To use this function, users must first (1) install \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite} (see \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#part-1-installing-birdnet-on-a-windows-machine}{here} for a method to install on Windows) and (2) set up a \href{https://github.com/cbalantic/cbalantic.github.io/blob/master/_posts/2022-03-07-Install-BirdNET-Windows-RStudio.md#1-set-up-a-conda-environment}{conda environment for BirdNET}. The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. Please input absolute paths for all directory arguments. This is necessary due to the way RStudio is communicating with the underlying Python code. Note that BirdNET's option to input a customized species list has not been implemented in this function.
 #' @param audio.directory Absolute path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav. Default behavior for this function is to process every file in the audio.directory through BirdNET.
 #' @param audio.files OPTIONAL character vector of specific file names to process within the audio.directory. If missing, all files in audio.directory will be processed.
@@ -39,13 +40,11 @@
 #'
 #' @details
 #'
-#' This function is now deprecated.
-#'
-#' This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET. The example given in this function's documentation below will not run unless you have set up BirdNET-Lite and a conda environment as described in the Description.
+#' This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET. The example given in this function's documentation below will not run unless you have set up BirdNET-Analyzer and a conda environment as described in the Description.
 #'
 #' The function can handle .wav or .mp3 audio files. The current behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations.
 #'
-#' Internally, BirdNET expects a week of the year as an input. The behavior of birdnet_run() is to parse the week of year from the SITEID_YYYYMMDD_HHMMSS filename using lubridate::week().
+#' Internally, BirdNET expects a week of the year as an input. The behavior of birdnet_analyzer() is to parse the week of year from the SITEID_YYYYMMDD_HHMMSS filename using lubridate::week().
 #'
 #' NSNSDAcoustics suggests the reticulate package but does not install it for you. To use this function, please install reticulate using install.packages('reticulate')
 #'
@@ -81,7 +80,7 @@
 #' library(reticulate)
 #'
 #' # Set your conda environment
-#' use_condaenv(condaenv = "pybirdnet", required = TRUE)
+#' use_condaenv(condaenv = "pybirdanalyze", required = TRUE)
 #'
 #' # Create an audio directory for this example
 #' dir.create('example-audio-directory')
@@ -120,15 +119,37 @@
 #'
 #' }
 
-birdnet_run <- function(audio.directory,   # absolute path for now
-                        audio.files,
-                        results.directory, # absolute path for now
-                        birdnet.directory, # absolute path for now
-                        lat = -1,
-                        lon = -1,
-                        ovlp = 0.0,
-                        sens = 1.0,
-                        min.conf = 0.1) {
+
+# --i, Path to input file or folder. If this is a file, --o needs to be a file too.
+# --o, Path to output file or folder. If this is a file, --i needs to be a file too.
+# --lat, Recording location latitude. Set -1 to ignore.
+# --lon, Recording location longitude. Set -1 to ignore.
+# --week, Week of the year when the recording was made. Values in [1, 48] (4 weeks per month). Set -1 for year-round species list.
+# --slist, Path to species list file or folder. If folder is provided, species list needs to be named "species_list.txt". If lat and lon are provided, this list will be ignored.
+# --sensitivity, Detection sensitivity; Higher values result in higher sensitivity. Values in [0.5, 1.5]. Defaults to 1.0.
+# --min_conf, Minimum confidence threshold. Values in [0.01, 0.99]. Defaults to 0.1.
+# --overlap, Overlap of prediction segments. Values in [0.0, 2.9]. Defaults to 0.0.
+# --rtype, Specifies output format. Values in ['table', 'audacity', 'r', 'csv']. Defaults to 'table' (Raven selection table).
+# --threads, Number of CPU threads.
+# --batchsize, Number of samples to process at the same time. Defaults to 1.
+# --locale, Locale for translated species common names. Values in ['af', 'de', 'it', ...] Defaults to 'en'.
+# --sf_thresh, Minimum species occurrence frequency threshold for location filter. Values in [0.01, 0.99]. Defaults to 0.03.
+
+
+birdnet_analyzer <- function(audio.directory,   # absolute path for now
+                             audio.files,
+                             results.directory, # absolute path for now
+                             birdnet.directory, # absolute path for now
+                             lat = -1,
+                             lon = -1,
+                             ovlp = 0.0,
+                             sens = 1.0,
+                             min.conf = 0.1,
+                             threads = 4,
+                             batchsize = 1,
+                             locale = 'en',
+                             rtype = 'r', # or csv
+                             sf.thresh = 0.03) {
 
 
   # TO DO: Integrate custom.list arg?
@@ -144,6 +165,10 @@ birdnet_run <- function(audio.directory,   # absolute path for now
     )
   }
 
+  # BirdNET offers various file ext types (including r, table, audacity, and csv),
+  # but we are only going to do R here downstream
+  rtype <- 'r'
+
   # Ensure forward slash at end ($) of directories
   if (grepl("\\/$", audio.directory) == FALSE) {
     audio.directory <- paste0(audio.directory, '/')
@@ -155,9 +180,11 @@ birdnet_run <- function(audio.directory,   # absolute path for now
     birdnet.directory <- paste0(birdnet.directory, '/')
   }
 
-  # Read in the modified analyze.py script installed with the package
-  birdnet.script <- paste(system.file(package = "NSNSDAcoustics"),
-                          "reticulate-analyze.py", sep = "/")
+  # # # Read in the modified analyze.py script installed with the package
+  # birdnet.script <- paste(system.file(package = "NSNSDAcoustics"),
+  #                         "reticulate-analyze-april2022.py", sep = "/")
+
+  birdnet.script <- 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/inst/reticulate-analyze-april2022.py'
 
   # Get current working directory and make sure it is reset after function exits
   #  (to deal with fact that wd must be set to BirdNET python directory to
@@ -187,11 +214,15 @@ birdnet_run <- function(audio.directory,   # absolute path for now
   wk <- week(as.Date(unlist(lapply(strsplit(x = recIDs, split = '_'), '[[', 2)),
                      format = '%Y%m%d'))
 
+  if (rtype == 'r') rext <- '.txt'
+  if (rtype == 'csv') rext <- '.csv'
+
   # File path for results
   result.fp <- paste0(results.directory, 'BirdNET_',
-                      unlist(lapply(strsplit(x = recIDs, split = '.', fixed = TRUE),
+                      unlist(lapply(strsplit(x = recIDs, split = '.',
+                                             fixed = TRUE),
                                     '[[', 1)),
-                      '.csv')
+                      rext)
 
   # Loop through wav files to process through BirdNET
   problem.list <- error.list <- list()
@@ -208,7 +239,7 @@ birdnet_run <- function(audio.directory,   # absolute path for now
       message('This is an mp3. Converting to wave...')
       r <- readMP3(file)  ## MP3 file in working directory
       temp.file <- paste0(audio.directory, 'temp-',
-                         gsub('.mp3', '.wav', recIDs[i]))
+                          gsub('.mp3', '.wav', recIDs[i]))
       writeWave(r, temp.file, extensible = FALSE)
       file <- temp.file
       message('Done converting temporary wave file.')
@@ -216,13 +247,19 @@ birdnet_run <- function(audio.directory,   # absolute path for now
 
     setwd(birdnet.directory)
     py_run_string(paste0("args_i = '", file, "'"))
+    py_run_string(paste0("args_o = '", result.fp[i], "'"))
     py_run_string(paste0("args_lat = ", lat))
-    py_run_string(paste0("args_lon = ", lon))
+    py_run_string(paste0("args_lon = ", lon)) # if lat and long are provided, slist is ignored
     py_run_string(paste0("args_week = ", wk[i]))
-    py_run_string(paste0("args_overlap = ", ovlp))
+    #  py_run_string(paste0("args_slist = ", )) # if lat and long are provided, slist is ignored, so i'm leaving this out for now
     py_run_string(paste0("args_sensitivity = ", sens))
     py_run_string(paste0("args_min_conf = ", min.conf))
-    py_run_string(paste0("args_o = '", result.fp[i], "'"))
+    py_run_string(paste0("args_overlap = ", ovlp))
+    py_run_string(paste0("args_rtype = '", rtype, "'"))
+    py_run_string(paste0("args_threads = ", threads))
+    py_run_string(paste0("args_batchsize = ", batchsize))
+    py_run_string(paste0("args_locale = '", locale, "'"))
+    py_run_string(paste0("args_sf_thresh = ", sf.thresh))
 
     catch.error <- tryCatch(
       source_python(birdnet.script),

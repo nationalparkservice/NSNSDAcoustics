@@ -7,9 +7,7 @@
 #' @param formatted Logical indicating whether to gather formatted (see \code{\link{birdnet_format}}) or unformatted (raw) BirdNET results. Default = TRUE. When FALSE, the function will gather only unformatted (raw) results.
 #' @return Returns a data.frame/data.table with the following columns:
 #'
-#'
 #' If input filetype is txt based on rtype = 'r', the following outputs are returned.
-#'
 #'
 #' If formatted = TRUE:
 #'
@@ -62,10 +60,10 @@
 #'
 #' @details
 #'
-#' This function was developed by the National Park Service Natural Sounds and Night Skies Division to gather results produced by BirdNET.
+#' This function was developed by the National Park Service Natural Sounds and Night Skies Division to gather results produced by BirdNET. It uses the data.table function fread for much faster reading of many csv or txt files.
 
 #'
-#' @seealso  \code{\link{birdnet_run}}, \code{\link{birdnet_verify}}, \code{\link{birdnet_format_csv}}
+#' @seealso  \code{\link{birdnet_analyzer}}, \code{\link{birdnet_verify}}, \code{\link{birdnet_format}}
 #' @export
 #' @import data.table
 #' @examples
@@ -74,35 +72,35 @@
 #' # Create a BirdNET results directory for this example
 #' dir.create('example-results-directory')
 #'
-#' # Write examples of formatted BirdNET CSV outputs to example results directory
+#' # Write examples of formatted BirdNET outputs to example results directory
 #' data(exampleFormatted1)
-#' write.csv(x = exampleFormatted1,
-#'           file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.csv',
-#'           row.names = FALSE, )
-#'
+#' write.table(x = exampleFormatted1,
+#'             file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
+#'             row.names = FALSE, quote = FALSE, sep = ',')
+
 #' data(exampleFormatted2)
-#' write.csv(x = exampleFormatted2,
-#'           file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.csv',
-#'           row.names = FALSE)
+#' write.table(x = exampleFormatted2,
+#'             file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.txt',
+#'             row.names = FALSE, quote = FALSE, sep = ',')
 #'
-#' # Write examples of raw BirdNET CSV outputs to example results directory
+#' # Write examples of raw BirdNET outputs to example results directory
 #' data(exampleBirdNET1)
-#' write.csv(x = exampleBirdNET1,
-#'           file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.csv',
-#'           row.names = FALSE, )
-#'
+#' write.table(x = exampleBirdNET1,
+#'             file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.txt',
+#'             row.names = FALSE, quote = FALSE, sep = ',')
+
 #' data(exampleBirdNET2)
-#' write.csv(x = exampleBirdNET2,
-#'           file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.csv',
-#'           row.names = FALSE)
+#' write.table(x = exampleBirdNET2,
+#'             file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.txt',
+#'             row.names = FALSE, quote = FALSE, sep = ',')
 #'
 #' # Gather formatted BirdNET results
-#' formatted.results <- birdnet_gather_results(
+#' formatted.results <- birdnet_gather(
 #'                              results.directory = 'example-results-directory',
 #'                              formatted = TRUE)
 #'
 #' # Gather unformatted (raw) BirdNET results
-#' raw.results <- birdnet_gather_results(
+#' raw.results <- birdnet_gather(
 #'                        results.directory = 'example-results-directory',
 #'                        formatted = FALSE)
 #'
@@ -111,8 +109,8 @@
 #' }
 #'
 
-birdnet_gather_results <- function(results.directory,
-                                   formatted = TRUE) {
+birdnet_gather <- function(results.directory,
+                           formatted = TRUE) {
   ifelse(formatted == TRUE,
          paths <- list.files(path = results.directory,
                              pattern = 'formatted',
@@ -120,6 +118,7 @@ birdnet_gather_results <- function(results.directory,
          paths <- grep(list.files(path = results.directory, full.names = TRUE),
                        pattern = 'formatted',
                        invert = TRUE, value = TRUE))
+
   dat <- suppressWarnings(rbindlist(lapply(paths, function(x) fread(x))))
   if (formatted == TRUE) dat[,verify := as.character(verify)]
   if (formatted == FALSE) {

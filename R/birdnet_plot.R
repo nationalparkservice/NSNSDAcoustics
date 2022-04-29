@@ -42,36 +42,36 @@
 #' # Plot only detections of Swainson's Thrush verified as "song",
 #' # with frequency limits ranging from 0.5 to 12 kHz, gray spectrogram colors,
 #' # a custom title, and a gray box around each detection
-#' plot.songs <- examplePlotData[common.name == "Swainson's Thrush" & verify == "song"]
+#' plot.songs <- examplePlotData[common_name == "Swainson's Thrush" & verify == "song"]
 #' birdnet_plot(data = plot.songs,
-#'                         audio.directory = 'example-audio-directory',
-#'                         title = "Swainson's Thrush Songs",
-#'                         frq.lim = c(0.5, 12),
-#'                         new.window = TRUE,
-#'                         spec.col = gray.3(),
-#'                         box = TRUE,
-#'                         box.lwd = 1,
-#'                         box.col = 'gray')
+#'              audio.directory = 'example-audio-directory',
+#'              title = "Swainson's Thrush Songs",
+#'              frq.lim = c(0.5, 12),
+#'              new.window = TRUE,
+#'              spec.col = gray.3(),
+#'              box = TRUE,
+#'              box.lwd = 1,
+#'              box.col = 'gray')
 #'
 #' # Plot only detections of Swainson's Thrush verified as "call"
 #' # with frequency limits ranging from 0.5 to 6 kHz,a custom title, no boxes,
 #' # and colors sampled from the viridis color package
-#' plot.calls <- examplePlotData[common.name == "Swainson's Thrush" & verify == "call"]
+#' plot.calls <- examplePlotData[common_name == "Swainson's Thrush" & verify == "call"]
 #' birdnet_plot(data = plot.calls,
-#'                         audio.directory = 'example-audio-directory',
-#'                         title = "Swainson's Thrush Calls",
-#'                         frq.lim = c(0.5, 6),
-#'                         new.window = TRUE,
-#'                         spec.col = viridis::viridis(30),
-#'                         box = FALSE)
+#'              audio.directory = 'example-audio-directory',
+#'              title = "Swainson's Thrush Calls",
+#'              frq.lim = c(0.5, 6),
+#'              new.window = TRUE,
+#'              spec.col = viridis::viridis(30),
+#'              box = FALSE)
 #'
 #' # Loop through to plot detections for selected unverified species
 #' # where confidence of detection >= 0.25
 #' # with frequency limits ranging from 0.5 to 12 kHz, custom titles, gray boxes,
 #' # and gray spectrogram colors
-#' sp <- c('Brown-crested Flycatcher', 'Pacific-slope Flycatcher')
+#' sp <- c('Varied Thrush', 'Pacific-slope Flycatcher')
 #' for (i in 1:length(sp)) {
-#'  plot.sp <- examplePlotData[confidence >= 0.25 & common.name == sp[i]]
+#'  plot.sp <- examplePlotData[confidence >= 0.25 & common_name == sp[i]]
 #'  birdnet_plot(data = plot.sp,
 #'               audio.directory = 'example-audio-directory',
 #'               title = paste0(sp[i], ' Detections >= 0.25'),
@@ -104,8 +104,15 @@ birdnet_plot <- function(data,
 )
 {
 
-  if(length(unique(data$common.name)) > 1) {
-    stop("Please input data for one species at a time. You have input a dataset with ", length(unique(data$common.name)), " species.")
+  # Rename columns if came from csv
+  if (all(c('common.name', 'start.s', 'end.s') %in% colnames(data))) {
+    colnames(data)[colnames(data) == 'common.name'] <- 'common_name'
+    colnames(data)[colnames(data) == 'start.s'] <- 'start'
+    colnames(data)[colnames(data) == 'end.s'] <- 'end'
+  }
+
+  if(length(unique(data$common_name)) > 1) {
+    stop("Please input data for one species at a time. You have input a dataset with ", length(unique(data$common_name)), " species.")
   }
 
   # Save existing working directory to reset it after
@@ -140,9 +147,10 @@ birdnet_plot <- function(data,
   for (n in 1:nrow(data)) {
     cat(n, ' ')
     dat <- data[n]
+
     det <- readWave(filename = wav.paths[grepl(pattern = dat$recordingID,
                                                x = wav.paths)],
-                    from = dat$start.s, to = dat$end.s,
+                    from = dat$start, to = dat$end,
                     units = 'seconds')
     det.spec <- monitoR:::spectro(wave = det)
     mats[,,n] <- det.spec$amp[which.frq.bins, ]

@@ -5,7 +5,7 @@
 \alias{exampleBirdNET1}
 \title{exampleBirdNET1}
 \format{
-An object of class \code{data.frame} containing 1 column.
+An object of class \code{data.frame} containing 14 columns.
 }
 \usage{
 data(exampleBirdNET1)
@@ -14,7 +14,7 @@ data(exampleBirdNET1)
 Sample of raw BirdNET output.
 }
 \details{
-The exampleBirdNET1 object can be used to experiment with birdnet_* functions, such as \code{\link{birdnet_format_csv}}
+The exampleBirdNET1 object can be used to experiment with birdnet_* functions, such as \code{\link{birdnet_format}}
 }
 \examples{
 # Load the dataset
@@ -26,11 +26,11 @@ str(exampleBirdNET1, max.level = 1)
 # Create a BirdNET results directory for this example
 dir.create('example-results-directory')
 
-# Write examples of raw BirdNET CSV outputs to example results directory to
+# Write examples of raw BirdNET txt outputs to example results directory to
 # mimic BirdNET output format
-write.csv(x = exampleBirdNET1,
-          file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.csv',
-          row.names = FALSE, )
+write.table(x = exampleBirdNET1,
+          file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.txt',
+          row.names = FALSE, quote = FALSE, sep = ',')
 
 # Delete all temporary example files when finished
 unlink(x = 'example-results-directory', recursive = TRUE)

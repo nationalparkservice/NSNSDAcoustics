@@ -18,7 +18,7 @@ birdnet_verify(
 )
 }
 \arguments{
-\item{data}{Data.table or data.frame of subsetted detections that a user would like to verify \strong{for a single species}. Takes formatted results only (see: \code{\link{birdnet_format_csv}}); must contain columns named recordingID, start.s, end.s, scientific.name, common.name, confidence, verify, and timezone.}
+\item{data}{Data.table or data.frame of subsetted detections that a user would like to verify \strong{for a single species}. Accepts formatted results only (see: \code{\link{birdnet_format}}).}
 
 \item{verification.library}{Character vector specifying which verification options should be shown to the user. Allows finer control to fit user's needs: user may specify whether a detection is a song, a call, a certain song or call type of interest, false alarm, unsure, or whatever the user needs. This enables maximum flexibility for the user, but also requires some thoughtfulness so that verification options remain consistent. BirdNET provides only species-level confidence and does not classify to song or call types. Thus, depending on the underlying research question and a verifier's expertise and familiarity with a focal species, a user may find themselves in a situation where songs are easily verified, but calls are not. Verification library provides the flexibility to accommodate varying questions and levels of expertise, but must be thought through by the user beforehand.}
 
@@ -42,7 +42,7 @@ birdnet_verify(
 Updates the 'verify' column of formatted BirdNET CSV files with user-input verifications.
 }
 \description{
-Interactive function that produces spectrograms and wave clips enabling a user to verify BirdNET detections. Underlying CSV files are updated with user verifications.
+Interactive function that produces spectrograms and wave clips enabling a user to verify BirdNET detections. Underlying files are updated with user verifications.
 }
 \details{
 This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data using BirdNET. The "data" argument allows the user precise control over which detections to verify (e.g., a user could input only detections that exceed a desired confidence threshold, or only detections that have been identified for verification using a stratified sampling scheme).
@@ -68,24 +68,23 @@ tuneR::writeWave(object = exampleAudio2,
 # Create a BirdNET results directory for this example
 dir.create('example-results-directory')
 
-# Write examples of formatted BirdNET CSV outputs to example results directory
+# Write examples of formatted BirdNET outputs to example results directory
 data(exampleFormatted1)
-write.csv(x = exampleFormatted1,
-          file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.csv',
-          row.names = FALSE)
-
+write.table(x = exampleFormatted1,
+            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
+            row.names = FALSE, quote = FALSE, sep = ',')
 data(exampleFormatted2)
-write.csv(x = exampleFormatted2,
-          file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.csv',
-          row.names = FALSE)
+write.table(x = exampleFormatted2,
+            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.txt',
+            row.names = FALSE, quote = FALSE, sep = ',')
 
 # Gather formatted BirdNET results
-dat <- birdnet_gather_results(results.directory = 'example-results-directory',
-                             formatted = TRUE)
+dat <- birdnet_gather(results.directory = 'example-results-directory',
+                      formatted = TRUE)
 
 # Create a random sample of three detections to verify
 set.seed(4)
-to.verify <- dat[common.name == "Swainson's Thrush"][sample(.N, 3)]
+to.verify <- dat[common_name == "Swainson's Thrush"][sample(.N, 3)]
 
 # Create a verification library for this species
 ver.lib <- c('y', 'n', 'unsure')
@@ -103,8 +102,8 @@ birdnet_verify(data = to.verify,
                spec.col = monitoR::gray.3())
 
 # Check that underlying CSVs have been updated with user verifications
-dat <- birdnet_gather_results(results.directory = 'example-results-directory',
-                              formatted = TRUE)
+dat <- birdnet_gather(results.directory = 'example-results-directory',
+                      formatted = TRUE)
 dat[!is.na(verify)]
 
 # Delete all temporary example files when finished

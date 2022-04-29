@@ -5,16 +5,16 @@
 \alias{examplePlotData}
 \title{examplePlotData}
 \format{
-An object of class \code{data.frame} and \code{data.table} containing 8 columns.
+An object of class \code{data.frame} and \code{data.table} containing 17 columns.
 }
 \usage{
 data(examplePlotData)
 }
 \description{
-Sample data.frame to demonstrate birdnet_plot_detections
+Sample data.frame to demonstrate \code{\link{birdnet_plot}}
 }
 \details{
-The examplePlotData object is used to demonstrate \code{\link{birdnet_plot_detections}}
+The examplePlotData object is used to demonstrate \code{\link{birdnet_plot}}
 }
 \examples{
 

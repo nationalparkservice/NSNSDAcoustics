@@ -1,5 +1,6 @@
 # Script for generating and cleaning example data sets for NSNSDAcoustics
 
+# This example-data-old.R version reflects example data formatted for BirdNET-Analyzer
 
 # Sample wave file for wave_to_nvspl ======================================
 
@@ -115,14 +116,14 @@ exampleScores <- s
 save(exampleScores, file = 'data/exampleScores.RData')
 
 
-# birdnet_run birdnet raw results example data =================================
+# birdnet_analyzer =============================================================
 
 library(NSNSDAcoustics)
 
 # Set up python/reticulate
-Sys.setenv(RETICULATE_PYTHON = "C:/Users/cbalantic/Anaconda3/envs/pybirdnet/python.exe")
+Sys.setenv(RETICULATE_PYTHON = "C:/Users/cbalantic/Anaconda3/envs/pybirdanalyze/python.exe")
 library(reticulate) # call AFTER Sys.setenv
-use_condaenv(condaenv = "pybirdnet", required = TRUE)
+use_condaenv(condaenv = "pybirdanalyze", required = TRUE)
 
 # Create an audio directory for this example
 dir.create('example-audio-directory')
@@ -141,74 +142,28 @@ tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
 
 # Run audio data through BirdNET
-birdnet_run(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
-            results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/data-raw', # must use absolute path!
-            birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/CathleenPythonTest/',
-           # birdnet.script = 'BirdNET-Reticulate.py',
-            lat = 46.09924,
-            lon = -123.8765)
+source("C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/R/birdnet_analyzer.R")
+birdnet_analyzer(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
+                 results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/data-raw', # must use absolute path!
+                 birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/BirdNET-Analyzer-main/',
+                 lat = 46.09924,
+                 lon = -123.8765)
+
 
 birdnet.files <- list.files('./data-raw/', pattern = 'BirdNET_Rivendell_', full.names = TRUE)
-exampleBirdNET1 <- read.csv(file = birdnet.files[1], header = TRUE)
-exampleBirdNET2 <- read.csv(file = birdnet.files[2], header = TRUE)
+birdnet.files <- birdnet.files[grep('.txt', birdnet.files)]
+exampleBirdNET1 <- fread(file = birdnet.files[1], header = TRUE)
+exampleBirdNET2 <- fread(file = birdnet.files[2], header = TRUE)
 
-colnames(exampleBirdNET1) <- colnames(exampleBirdNET2) <-
-  c('Start (s);End (s);Scientific name;Common name;Confidence')
+# Scrub out filepath lead
+exampleBirdNET1[,filepath := gsub('C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics', '', filepath)]
+exampleBirdNET2[,filepath := gsub('C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics', '', filepath)]
 
 #Save as RData
 save(exampleBirdNET1, file = 'data/exampleBirdNET1.RData')
 save(exampleBirdNET2, file = 'data/exampleBirdNET2.RData')
 
 unlink('example-audio-directory')
-
-
-# Example tester for audio.files argument
-# Use optional "audio.files" argument to process specific files
-birdnet_run(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
-            audio.files = 'Rivendell_20210623_113602.wav',
-            results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/data-raw', # must use absolute path!
-            birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/CathleenPythonTest/',
-            birdnet.script = 'BirdNET-Reticulate.py',
-            lat = 46.09924,
-            lon = -123.8765)
-
-
-# BirdNET Run System tester ================================================
-
-# birdnet_run birdnet raw results example data =================================
-
-library(NSNSDAcoustics)
-
-# Set up python/reticulate
-Sys.setenv(RETICULATE_PYTHON = "C:/Users/cbalantic/Anaconda3/envs/pybirdnet/python.exe")
-library(reticulate) # call AFTER Sys.setenv
-use_condaenv(condaenv = "pybirdnet", required = TRUE)
-
-# Create an audio directory for this example
-dir.create('example-audio-directory')
-
-# Create a results directory for this example
-dir.create('example-results-directory')
-
-# Read in example wave files
-data(exampleAudio1)
-data(exampleAudio2)
-
-# Write example waves to example audio directory
-tuneR::writeWave(object = exampleAudio1,
-                 filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
-tuneR::writeWave(object = exampleAudio2,
-                 filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
-
-# Run audio data through BirdNET
-birdnet_run_system(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
-            results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-results-directory', # must use absolute path!
-            birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/CathleenPythonTest/',
-            lat = 46.09924,
-            lon = -123.8765)
-
-
-
 
 
 # Example formatted results ====================================================
@@ -218,25 +173,25 @@ dir.create('example-results-directory')
 
 # Write examples of raw BirdNET CSV outputs to example results directory
 data(exampleBirdNET1)
-write.csv(x = exampleBirdNET1,
-          file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.csv',
-          row.names = FALSE, )
+write.table(x = exampleBirdNET1,
+            file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.txt',
+            row.names = FALSE, quote = FALSE, sep = ',')
 
 data(exampleBirdNET2)
-write.csv(x = exampleBirdNET2,
-          file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.csv',
-          row.names = FALSE)
+write.table(x = exampleBirdNET2,
+            file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.txt',
+            row.names = FALSE, quote = FALSE, sep = ',')
 
 # Run birdnet_format_csv:
-birdnet_format_csv(results.directory = 'example-results-directory',
-                   timezone = 'GMT')
+birdnet_format(results.directory = 'example-results-directory',
+               timezone = 'GMT')
 
 formatted.files <- list.files(path = 'example-results-directory',
                               pattern = '_formatted_',
                               full.names = TRUE)
 
-exampleFormatted1 <- read.csv(file = formatted.files[1], header = TRUE)
-exampleFormatted2 <- read.csv(file = formatted.files[2], header = TRUE)
+exampleFormatted1 <- fread(file = formatted.files[1], header = TRUE)
+exampleFormatted2 <- fread(file = formatted.files[2], header = TRUE)
 
 #Save as RData
 save(exampleFormatted1, file = 'data/exampleFormatted1.RData')
@@ -263,27 +218,28 @@ tuneR::writeWave(object = exampleAudio2,
 # Create a BirdNET results directory for this example
 dir.create('example-results-directory')
 
-# Write examples of formatted BirdNET CSV outputs to example results directory
+# Write examples of formatted BirdNET outputs to example results directory
 data(exampleFormatted1)
-write.csv(x = exampleFormatted1,
-           file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.csv',
-           row.names = FALSE)
+write.table(x = exampleFormatted1,
+            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
+            row.names = FALSE, quote = FALSE, sep = ',')
 
 data(exampleFormatted2)
-write.csv(x = exampleFormatted2,
-          file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.csv',
-          row.names = FALSE)
+write.table(x = exampleFormatted2,
+            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.txt',
+            row.names = FALSE, quote = FALSE, sep = ',')
+
 
 # Gather formatted BirdNET results
-dat <- birdnet_gather_results(results.directory = 'example-results-directory',
-                              formatted = TRUE)
+dat <- birdnet_gather(results.directory = 'example-results-directory',
+                      formatted = TRUE)
 
 # Create a random sample of three detections to verify
-to.verify <- rbind(dat[common.name == "Swainson's Thrush" & confidence >= 0.95],
-                   dat[common.name == "Swainson's Thrush" & confidence <= 0.2])
+to.verify <- rbind(dat[common_name == "Swainson's Thrush" & confidence >= 0.95],
+                   dat[common_name == "Swainson's Thrush" & confidence <= 0.2])
 
 # Create a verification library for this species
-ver.lib <- list("Swainson's Thrush" = c('song', 'call', 'false', 'unsure'))
+ver.lib <- c('song', 'call', 'false', 'unsure')
 
 # Verify detections
 birdnet_verify(data = to.verify,
@@ -292,9 +248,10 @@ birdnet_verify(data = to.verify,
                 results.directory = 'example-results-directory',
                 overwrite = FALSE)
 
-# Check that underlying CSVs have been updated with user verifications
-dat <- birdnet_gather_results(results.directory = 'example-results-directory',
-                              formatted = TRUE)
+# Check that underlying data have been updated with user verifications
+dat <- birdnet_gather(results.directory = 'example-results-directory',
+                      formatted = TRUE)
+#dat <- dat[!is.na(verify)] # no! we want all the stuff, even unverified, to demo unverified plotting
 examplePlotData <- dat
 
 #Save as RData
