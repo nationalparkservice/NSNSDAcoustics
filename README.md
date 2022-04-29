@@ -2,7 +2,7 @@
 
 This repository provides a place for NSNSD staff to develop and modernize several bioacoustics workflows. Contributors should clone this repository (set it up as an R project package) and connect it to GitHub (see [Happy Git with R](https://happygitwithr.com/) for tips). While the package is in development, use the Build > Install and Restart buttons in RStudio to install the package locally on your machine.
 
-**All documentation and code is currently under development.**
+**All documentation and code is currently under development. Note that [BirdNET-Lite](https://github.com/kahst/BirdNET-Lite) currently has a deprecation warning and I will need to work on redoing all of the BirdNET code to reflect the new BirdNET version, [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer).**
 
 # Table of Contents
 
