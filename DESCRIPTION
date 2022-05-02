@@ -39,5 +39,3 @@ Collate:
     'birdnet_verify.R'
     'examples-helpfiles.R'
     'helpers.R'
-    'nvspl_to_ai.R'
-    'wave_to_nvspl.R'
