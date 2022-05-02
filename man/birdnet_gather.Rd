@@ -80,6 +80,7 @@ data(exampleFormatted1)
 write.table(x = exampleFormatted1,
             file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
             row.names = FALSE, quote = FALSE, sep = ',')
+
 data(exampleFormatted2)
 write.table(x = exampleFormatted2,
             file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.txt',

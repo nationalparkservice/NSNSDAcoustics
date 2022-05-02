@@ -141,5 +141,5 @@ unlink(x = 'example-results-directory', recursive = TRUE)
 }
 }
 \seealso{
-\code{\link{birdnet_format_csv}}, \code{\link{birdnet_verify}}
+\code{\link{birdnet_format}}, \code{\link{birdnet_verify}}
 }

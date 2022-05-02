@@ -29,7 +29,7 @@ dir.create('example-results-directory')
 # to mimic output format of birdnet_format
 write.table(x = exampleFormatted1,
             file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
-            row.names = FALSE, quote = FALSE, sep = ','))
+            row.names = FALSE, quote = FALSE, sep = ',')
 
 # Delete all temporary example files when finished
 unlink(x = 'example-results-directory', recursive = TRUE)

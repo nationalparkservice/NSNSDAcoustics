@@ -36,7 +36,6 @@ Collate:
     'birdnet_gather.R'
     'birdnet_plot.R'
     'birdnet_run.R'
-    'birdnet_species_counts.R'
     'birdnet_verify.R'
     'examples-helpfiles.R'
     'helpers.R'

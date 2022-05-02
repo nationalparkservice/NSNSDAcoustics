@@ -49,7 +49,7 @@
 #'
 #' NSNSDAcoustics suggests the reticulate package but does not install it for you. To use this function, please install reticulate using install.packages('reticulate')
 #'
-#' @seealso  \code{\link{birdnet_format_csv}}, \code{\link{birdnet_verify}}
+#' @seealso  \code{\link{birdnet_format}}, \code{\link{birdnet_verify}}
 #' @import tuneR
 #' @importFrom lubridate week
 #' @importFrom reticulate py_run_string source_python

@@ -3,7 +3,7 @@
 #' @title exampleAudio1
 #' @description Sample recording (audio) data stored as a \code{Wave} file.
 #' @format An object of class \code{Wave} containing 6 slots.
-#' @details The exampleAudio1 object can be used to experiment with functions that use audio data, such as \code{\link{wave_to_nsvpl}}
+#' @details The exampleAudio1 object can be used to experiment with functions that use audio data.
 #' @docType data
 #' @keywords datasets
 #' @name exampleAudio1
@@ -20,7 +20,7 @@ NULL
 #' @title exampleAudio2
 #' @description Sample recording (audio) data stored as a \code{Wave} file.
 #' @format An object of class \code{Wave} containing 6 slots.
-#' @details The exampleAudio2 object can be used to experiment with functions that use audio data, such as \code{\link{wave_to_nvspl}}
+#' @details The exampleAudio2 object can be used to experiment with functions that use audio data.
 #' @docType data
 #' @keywords datasets
 #' @name exampleAudio2
@@ -172,7 +172,7 @@ NULL
 #' # to mimic output format of birdnet_format
 #' write.table(x = exampleFormatted1,
 #'             file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
-#'             row.names = FALSE, quote = FALSE, sep = ','))
+#'             row.names = FALSE, quote = FALSE, sep = ',')
 #'
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-results-directory', recursive = TRUE)
