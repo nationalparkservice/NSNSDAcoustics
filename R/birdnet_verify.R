@@ -21,7 +21,7 @@
 #'
 #' Spectrograms show 3-second segment detected by BirdNET. Title of spectrogram indicates the recordingID of the file name, the start and end times of the detection in seconds, the species detection, and the confidence level of the detection from 0 to 1.
 #'
-#' @seealso  \code{\link{birdnet_run}}, \code{\link{birdnet_format_csv}}
+#' @seealso  \code{\link{birdnet_analyzer}}, \code{\link{birdnet_format}}
 #' @import data.table monitoR tuneR
 #' @importFrom graphics par polygon axis
 #' @export
@@ -78,7 +78,7 @@
 #'                box.col = 'blue',
 #'                spec.col = monitoR::gray.3())
 #'
-#' # Check that underlying CSVs have been updated with user verifications
+#' # Check that underlying files have been updated with user verifications
 #' dat <- birdnet_gather(results.directory = 'example-results-directory',
 #'                       formatted = TRUE)
 #' dat[!is.na(verify)]
@@ -107,13 +107,8 @@ birdnet_verify <- function(data,
 
   # TO DO-- a better way to "break" instead of esc?
 
-
   if(missing(verification.library)) {
     stop('Please input verification.library argument. See ?birdnet_verify.')
-  }
-
-  if(length(unique(data$common.name)) > 1) {
-    stop("Please input data for one species at a time. You have input a dataset with ", length(unique(data$common.name)), " species.")
   }
 
   # Save existing working directory to reset it after
@@ -138,6 +133,18 @@ birdnet_verify <- function(data,
   # Check ext_type
   ext.type <- unique(file_ext(list.files(results.directory)))
   if (length(ext.type) != 1) stop('Multiple file extension types found in folder. Please make sure results are all txt or all csv. Do not mix file types.')
+
+  if (ext.type == 'csv') {
+    if(length(unique(data$common.name)) > 1) {
+      stop("Please input data for one species at a time. You have input a dataset with ", length(unique(data$common.name)), " species.")
+    }
+  }
+
+  if (ext.type == 'txt') {
+    if(length(unique(data$common_name)) > 1) {
+      stop("Please input data for one species at a time. You have input a dataset with ", length(unique(data$common_name)), " species.")
+    }
+  }
 
   # Create composite key to track results
   results <- birdnet_gather(results.directory = results.directory)
@@ -295,7 +302,10 @@ birdnet_verify <- function(data,
                    ".\n"))
 
         cat(paste0("\n", i, ". Showing user input verification library options for ",
-                   verify[i]$common.name,': ', paste0(verification.library, collapse = ', '),
+                   ifelse(test = ext.type == 'txt',
+                          yes = verify[i]$common_name,
+                          no = verify[i]$common.name),
+                   ': ', paste0(verification.library, collapse = ', '),
                    "\n Enter an option in ", paste0(verification.library, collapse = ', '), ", s to skip, or q to exit this recording (q will exit and save any verifications you have already completed for this recording). If you have many recordings and wish to escape out of the function completely, press 'Esc': "))
 
         x <- tolower(readLines(n = 1)[1])

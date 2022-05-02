@@ -101,7 +101,7 @@ birdnet_verify(data = to.verify,
                box.col = 'blue',
                spec.col = monitoR::gray.3())
 
-# Check that underlying CSVs have been updated with user verifications
+# Check that underlying files have been updated with user verifications
 dat <- birdnet_gather(results.directory = 'example-results-directory',
                       formatted = TRUE)
 dat[!is.na(verify)]
@@ -114,5 +114,5 @@ unlink(x = 'example-results-directory', recursive = TRUE)
 
 }
 \seealso{
-\code{\link{birdnet_run}}, \code{\link{birdnet_format_csv}}
+\code{\link{birdnet_analyzer}}, \code{\link{birdnet_format}}
 }
