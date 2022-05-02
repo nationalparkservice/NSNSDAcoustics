@@ -368,7 +368,7 @@ Running this example will produce an interactive output like the below image. Th
 Once you've added labels for the remaining detections (in fact, they all contain Swainson's Thrush vocalizations!), `birdnet_verify()` will update the underlying formatted txt or csv files with your verifications. Below, we gather up the results again and check that our three verifications have been added.
 
 ```r
-# Check that underlying CSVs have been updated with user verifications
+# Check that underlying files have been updated with user verifications
 dat <- birdnet_gather(results.directory = 'example-results-directory',
                       formatted = TRUE)
 dat[!is.na(verify)]
@@ -498,6 +498,8 @@ unlink(x = 'example-audio-directory', recursive = TRUE)
 
 
 ## Converting wave audio files to NVSPL with wave_to_nvspl
+
+**Note: function [needs to be updated](https://github.com/nationalparkservice/NSNSDAcoustics/issues/2) with PAMGuide corrigendum** 
 
 `wave_to_nvspl()` uses PAMGuide code to convert wave files into NVSPL format. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). 
 
