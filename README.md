@@ -2,7 +2,7 @@
 
 This repository provides a place for NSNSD staff to develop and modernize several bioacoustics workflows. Contributors should clone this repository (set it up as an R project package) and connect it to GitHub (see [Happy Git with R](https://happygitwithr.com/) for tips). While the package is in development, use the Build > Install and Restart buttons in RStudio to install the package locally on your machine.
 
-**All documentation and code is currently under development. Note that [BirdNET-Lite](https://github.com/kahst/BirdNET-Lite) currently has a deprecation warning and I will need to work on redoing all of the BirdNET code to reflect the new BirdNET version, [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer).**
+**All documentation and code is currently under development.**
 
 # Table of Contents
 
@@ -73,14 +73,12 @@ Make sure you know where your pybirdanalyze conda environment lives. It might ha
 
 If you don't do this, `birdnet_analyze()` will throw errors telling you that it can't find these files. 
 
-### (5) Try running `birdnet_analyzer()`. 
+### (5) Process audio data using `birdnet_analyzer()`. 
 
-Once you've completed those steps, you can run `birdnet_analyzer()`. 
+Here are few tips for using this function: 
 
-Here are few other tips for using this function: 
-
-* The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS.wav naming convention. If this is not the case for your files, you'll need to do some preprocessing.
-* BirdNET-Analyzer gives several options for file output types, but the only two implemented in this function are 'r' or 'csv'. **The 'r' option is strongly preferred for all downstream workflows and outputs a txt file.** The 'csv' option produces a csv file with simple columns. See ?birdnet_analyzer for column details. 
+* The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. If this is not the case for your files, you'll need to do some preprocessing.
+* BirdNET-Analyzer gives several options for file output types, but the only two implemented in this function are 'r' or 'csv'. **The 'r' option is strongly preferred for all downstream workflows and outputs a txt file.** The 'csv' option produces a csv file with simple columns, and is retained only to handle outputs from the now deprecated BirdNET-Lite. See `?birdnet_analyzer` for output column details. 
 * The function can handle either .wav or .mp3 audio file types. The current internal behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations, but might be necessary for Windows 10 if you followed the above instructions.
 * The function expects absolute paths for all directory arguments in `birdnet_analyzer()`. This is necessary due to the way RStudio is communicating with the underlying Python code. 
 * Note that BirdNET's option to input a customized species list has not been implemented.
@@ -462,7 +460,7 @@ birdnet_plot(data = plot.calls,
 <img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot2.png><br>
 </p>
 
-In the final example, we demonstrate that `birdnet_plot()` can also be used to visualize unverified data. Below, we loop through to plot all detections for two selected species -- [Brown-crested Flycatcher](https://www.allaboutbirds.org/guide/Brown-crested_Flycatcher/sounds) and [Pacific-slope Flycatcher](https://www.allaboutbirds.org/guide/Pacific-slope_Flycatcher/sounds) -- where the confidence of detection is greater than or equal to 0.25. 
+In the final example, we demonstrate that `birdnet_plot()` can also be used to visualize unverified data. Below, we loop through to plot all detections for two selected species -- [Varied Thrush](https://www.allaboutbirds.org/guide/Varied_Thrush/sounds) and [Pacific-slope Flycatcher](https://www.allaboutbirds.org/guide/Pacific-slope_Flycatcher/sounds) -- where the confidence of detection is greater than or equal to 0.25. 
 ```r
 # Loop through to plot detections for selected unverified species
 # where confidence of detection >= 0.25
