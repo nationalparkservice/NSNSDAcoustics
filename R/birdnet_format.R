@@ -31,7 +31,7 @@
 #' }
 #'
 #'
-#' If input filetype is csv, output contains the following columns:
+#' If input filetype is 'csv', output contains the following columns:
 #'
 #' \itemize{
 #' \item{\strong{recordingID}: Recording identifier for the file, e.g. SITE_YYYYMMDD_HHMMSS.wav.}

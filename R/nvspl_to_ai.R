@@ -133,9 +133,9 @@
 #'                                      pattern = 'Begin_Created',
 #'                                      full.names = TRUE))
 #'
-#' # View a few rows of each file; note the Hr, Min, Sec differences between both options
-#' start.standard[1:4, ]
-#' start.begin[1:4, ]
+#' # View both files; note the Hr, Min, Sec differences between both options
+#' start.standard
+#' start.begin
 #'
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-input-directory', recursive = TRUE)

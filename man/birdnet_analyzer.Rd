@@ -47,16 +47,16 @@ birdnet_analyzer(
 
 \item{batchsize}{Number of samples to process at the same time. Defaults to 1.}
 
-\item{locale}{Locale for translated species common names. Values in C('af', 'de', 'it', ...). Defaults to 'en'.}
+\item{locale}{Locale for translated species common names. Values in c('af', 'de', 'it', ...). Defaults to 'en'.}
 
 \item{rtype}{Specifies output format. BirdNET-Analyzer provides several options, but the only ones available in this function are 'r' or 'csv'. Default = 'r'. \strong{For downstream data processing, 'r' is strongly preferred.} The 'csv' option exists for dealing with outputs from the now deprecated \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite} (and it's accompanying R function, \code{\link{birdnet_run}}).}
 
-\item{sf.thresh}{Minimum species occurrence frequency threshold for location filter. Values in \link{0.01, 0.99}. Defaults to 0.03.}
+\item{sf.thresh}{Minimum species occurrence frequency threshold for location filter. Values in c(0.01, 0.99). Defaults to 0.03.}
 }
 \value{
-Saves either a .txt file or CSV of results for each wave file in results.directory. Files have prefix "BirdNET_". If there is an issue with any audio files (e.g., wave file corrupt or too short), error messaging will be returned and problematic files that were not processed will be recorded in a file named 'BirdNET_Problem-Files_DATE.csv'. Note that problem files may also occur if you have results open from previous runs and are attempting to re-run the results while the file is still open; the program will not have write permissions to overwrite an open file.
+Saves either a .txt file or CSV of results for each audio file in results.directory. Files have prefix "BirdNET_". If there is an issue with any audio files (e.g., wave file corrupt or too short), error messaging will be returned and problematic files that were not processed will be recorded in a file named 'BirdNET_Problem-Files_DATE.csv'. Note that problem files may also occur if you have results open from previous runs and are attempting to re-run the results while the file is still open; the program will not have write permissions to overwrite an open file.
 
-If rtype = 'r', outputs contain the following columns:
+If rtype = 'r', outputs a .txt file containing the following columns:
 
 \itemize{
 \item{\strong{filepath}: Filepath for the processed audio file.}
@@ -75,7 +75,7 @@ If rtype = 'r', outputs contain the following columns:
 \item{\strong{model}: BirdNET model used.}
 }
 
-If rtype = 'csv', outputs contain the following columns:
+If rtype = 'csv', outputs a .csv containing the following columns:
 
 \itemize{
 \item{\strong{Start (s)}: Start time of detection in seconds.}
@@ -86,7 +86,7 @@ If rtype = 'csv', outputs contain the following columns:
 }
 }
 \description{
-This function uses the reticulate package to run Python from RStudio in order to process files through \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer}. It is meant for Windows users and may have unexpected results on other systems. To use this function, follow the steps outlined in the \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md}{NSNSDAcoustics ReadME}. In brief, these steps are to (1) Install BirdNET using the "Install BirdNET from zip" instructions at \href{https://github.com/kahst/BirdNET-Analyzer#setup-windows}{BirdNET-Analyzer Setup (Windows)}, (2) Download \href{https://www.anaconda.com/}{Anaconda}, (3) Set up a \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#3-set-up-a-conda-environment-for-birdnet-analyzer}{conda environment for BirdNET}, (4) Copy the "checkpoints" folder and eBird_taxonomy_codes_2021E.json file into your BirdNET conda environment folder. Function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. Please input absolute paths for all directory arguments (necessary due to the way RStudio is communicating with the underlying Python code). Note that BirdNET's option to input a customized species list has not been implemented in this function. Please see \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer} usage documentation for more details.
+This function uses the reticulate package to run Python from RStudio in order to process files through \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer}. It is meant for Windows users and may have unexpected results on other systems. To use this function, follow the steps outlined in the \href{https://github.com/nationalparkservice/NSNSDAcoustics#running-birdnet-from-rstudio-with-birdnet_analyzer}{NSNSDAcoustics ReadME}. In brief, these steps are to (1) Install BirdNET using the "Install BirdNET from zip" instructions at \href{https://github.com/kahst/BirdNET-Analyzer#setup-windows}{BirdNET-Analyzer Setup (Windows)}, (2) Download \href{https://www.anaconda.com/}{Anaconda}, (3) Set up a \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#3-set-up-a-conda-environment-for-birdnet-analyzer}{conda environment for BirdNET}, (4) Copy the "checkpoints" folder and eBird_taxonomy_codes_2021E.json file into your BirdNET conda environment folder. Function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. Please input absolute paths for all directory arguments (necessary due to the way RStudio is communicating with the underlying Python code). Note that BirdNET's option to input a customized species list has not been implemented in this function. Please see \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer} usage documentation for more details.
 }
 \details{
 This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET. The example given in this function's documentation below will not run unless you have set up BirdNET-Analyzer and a conda environment as conveyed in the Description.

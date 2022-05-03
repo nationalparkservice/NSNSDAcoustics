@@ -36,7 +36,7 @@ If input filetype is txt based on rtype = 'r', output contains the following col
 \item{\strong{timezone}: Timezone setting used in the audio recorder.}
 }
 
-If input filetype is csv, output contains the following columns:
+If input filetype is 'csv', output contains the following columns:
 
 \itemize{
 \item{\strong{recordingID}: Recording identifier for the file, e.g. SITE_YYYYMMDD_HHMMSS.wav.}

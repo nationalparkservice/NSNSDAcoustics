@@ -12,9 +12,9 @@ birdnet_gather(results.directory, formatted = TRUE)
 \item{formatted}{Logical indicating whether to gather formatted (see \code{\link{birdnet_format}}) or unformatted (raw) BirdNET results. Default = TRUE. When FALSE, the function will gather only unformatted (raw) results.}
 }
 \value{
-Returns a data.frame/data.table with the following columns:
+Returns a data.frame/data.table.
 
-If input filetype is txt based on rtype = 'r', the following outputs are returned.
+When input filetype is txt based on rtype = 'r', the following outputs are returned.
 
 If formatted = TRUE:
 
@@ -38,9 +38,9 @@ If formatted = TRUE:
 \item{\strong{timezone}: Timezone setting used in the audio recorder.}
 }
 
-If formatted = FALSE, it returns the same columns without the recordingID, verify, and timezone columns.
+When formatted = FALSE, it returns the same columns without the recordingID, verify, and timezone columns.
 
-If working with CSV files, the following ouptuts are returned.
+When working with CSV files, the following ouptuts are returned.
 
 If formatted = TRUE:
 \itemize{

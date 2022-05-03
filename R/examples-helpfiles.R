@@ -167,7 +167,7 @@ NULL
 #'
 #' # Create a BirdNET results directory for this example
 #' dir.create('example-results-directory')
-
+#'
 #' # Write examples of formatted BirdNET outputs to example results directory
 #' # to mimic output format of birdnet_format
 #' write.table(x = exampleFormatted1,
@@ -197,7 +197,7 @@ NULL
 #'
 #' # Create a BirdNET results directory for this example
 #' dir.create('example-results-directory')
-
+#'
 #' # Write examples of formatted BirdNET outputs to example results directory
 #' # to mimic output format of birdnet_format
 #' write.table(x = exampleFormatted2,

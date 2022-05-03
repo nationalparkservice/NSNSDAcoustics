@@ -24,9 +24,9 @@ birdnet_verify(
 
 \item{audio.directory}{Top-level input directory path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.}
 
-\item{results.directory}{Path to directory where formatted BirdNET result CSVs have been stored.}
+\item{results.directory}{Path to directory where formatted BirdNET results have been stored.}
 
-\item{overwrite}{Logical flag for whether to overwrite existing verifications contained in a CSV. Default = FALSE. If FALSE, no overwriting occurs, and the user only verifies detections that are currently unverified. If TRUE, the user is choosing to overwrite existing verifications.}
+\item{overwrite}{Logical flag for whether to overwrite existing verifications contained in a txt or csv file. Default = FALSE. If FALSE, no overwriting occurs, and the user only verifies detections that are currently unverified. If TRUE, the user is choosing to overwrite existing verifications.}
 
 \item{play}{Logical value specifying whether a temporary wave file should be written to the working directory for the user to check during verification. If TRUE, a temporary wave file for the detection is written to the working directory, available for the user to listen to, and is deleted after the user closes the player window and adds a verification. If FALSE, no temporary wave file is written.}
 
@@ -39,7 +39,7 @@ birdnet_verify(
 \item{spec.col}{The colors used to plot verification spectrograms. Default = gray.3(). Spectrogram colors are adjustable, and users may create their own gradients for display. A few spectrogram color options are provided via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(), and topo.1(), all of which are based on existing R colors.}
 }
 \value{
-Updates the 'verify' column of formatted BirdNET CSV files with user-input verifications.
+Updates the 'verify' column of formatted BirdNET txt or csv files with user-input verifications.
 }
 \description{
 Interactive function that produces spectrograms and wave clips enabling a user to verify BirdNET detections. Underlying files are updated with user verifications.
