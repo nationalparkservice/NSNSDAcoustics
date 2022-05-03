@@ -22,17 +22,34 @@ This repository provides a place for NSNSD staff to develop and modernize severa
 
 First, ensure that you have installed the latest versions of [R](https://cran.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/download/). 
 
-Next, install NSNSDAcoustics using `install_github()` function from the R package `devtools`.
+Next, you can install NSNSDAcoustics using one of two options: 
+
+### (1) Option 1: Use `install_github()`:
+
+You may need to first install the latest version of devtools. Once you have devtools, you can install the latest version of NSNSDAcoustics:
 
 ```r
+install.packages('devtools')
+library(devtools)
 devtools::install_github('nationalparkservice/NSNSDAcoustics')
 ```
 
-If `install_github()` doesn't work, you can download the zip or tar.gz file directly using one of the following links. 
+### (2) Option 2: Download and install manually
+**Note: this option will not be implemented until we have a first stable release of NSNSDAcoustics.**
+
+Eventually, you will be able to download the zip or tar.gz file directly using one of the following links. 
 * Windows users can download the zip file from NSNSDAcoustics-master.zip [**need to create link**]()
 * Mac or Linux users can download the tar.gz file from NSNSDAcoustcs-master.tar.gz [**need to create link**]()
 
 After downloading, open R Studio, click on the Install button on the Packages tab, select Install From Package Archive File, and navigate to the downloaded file.
+
+Once NSNSDAcoustics is installed, you can call in the package and look at all helpfiles: 
+
+```r
+library(NSNSDAcoustics)
+help(package = 'NSNSDAcoustics')
+```
+
 
 ### A note on data.table syntax
 NSNSDAcoustics depends on the R package `data.table`, which enables fast querying and manipulation of large data.frames. If you are an R user but have never used `data.table` syntax before, some of the example code may look unfamiliar. Don't fret -- `data.table` object types are also  `data.frames`. If you get frustrated trying to work with them, you can always convert to a regular `data.frame` to deal with a more familiar object type.
