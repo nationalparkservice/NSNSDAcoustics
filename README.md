@@ -535,9 +535,9 @@ data(exampleAudio2)
 
 # Write example waves to example input directory
 tuneR::writeWave(object = exampleAudio1,
-                 filename = 'example-input-directory/Rivendell_20210715_114502.wav')
+                 filename = 'example-input-directory/Rivendell_20210623_113602.wav')
 tuneR::writeWave(object = exampleAudio2,
-                 filename = 'example-input-directory/Rivendell_20210715_115502.wav')
+                 filename = 'example-input-directory/Rivendell_20210623_114602.wav')
 ```
 
 `wave_to_nvspl()` takes several arguments. `input.directory` indicates the top-level input directory path. `data.directory` is a logical flag for whether audio files are housed in 'Data' subdirectories (common when using Songmeter SM4). The next argument, `test.file`, is a logical flag for whether to run the function in testing mode or in batch processing mode. The `project` argument allows the user to input a project name. The project name will be used to create a "params" file that will save parameter inputs in a file for posterity. The `timezone` argument forces the user to specify the timezone for the time reflected in the audio file name. Additional arguments are described in the helpfile; note that there are several default values in this function customized for NSNSD default settings when using a Songmeter SM4 audio recorder. 
