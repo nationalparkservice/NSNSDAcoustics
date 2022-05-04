@@ -14,7 +14,7 @@ This repository provides a place for NSNSD staff to develop and modernize severa
   * **[Verify BirdNET results](#verify-birdnet-results)**
   * **[Visualize BirdNET detections](#visualize-birdnet-detections)**
 
-- **[Converting wave audio files to NVSPL with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-with-wave_to_nvspl)**: Go here for a user-friendly PAMGuide wrapper function to convert wave files to NVSPL.
+- **[Converting wave audio files to NVSPL tables with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-tables-with-wave_to_nvspl)**: Go here for a PAMGuide wrapper function to convert wave files to NVSPL formatted tables.
 - **[Converting NVSPL files to acoustic indices with nvspl_to_ai](#converting-nvspl-files-to-acoustic-indices-with-nvspl_to_ai)**: Go here to convert NVSPL.txt files into a CSV of acoustic indices.
 
 
@@ -512,13 +512,11 @@ unlink(x = 'example-audio-directory', recursive = TRUE)
 ```
 
 
-## Converting wave audio files to NVSPL with wave_to_nvspl
+## Converting wave audio files to NVSPL tables with wave_to_nvspl
 
 **Note: function [needs to be updated](https://github.com/nationalparkservice/NSNSDAcoustics/issues/2) with PAMGuide corrigendum** 
 
-`wave_to_nvspl()` uses PAMGuide code to convert wave files into NVSPL format. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). 
-
-**Define NVSPLs. What are they and why do we convert to them?**
+`wave_to_nvspl()` uses PAMGuide code to convert wave files into an NVSPL formatted table. NVSPL stands for NPS-Volpe Sound Pressure Level, and is the standard format used in NSNSD analyses. These are hourly files comprised of 1/3 octave data in 1-sec LEQ increments. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). 
 
 Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
 
@@ -526,7 +524,7 @@ Start by pulling up the function helpfile. Everything covered below is located i
 ?wave_to_nvspl
 ```
 
-We start by creating an example audio directory and writing example audio to this directory. This is meant to illustrate the file types and folder structure `wave_to_nvspl()` expects to encounter.
+We start by creating an example audio input directory and writing example audio to this directory. This is meant to illustrate the file types and folder structure `wave_to_nvspl()` expects to encounter.
 ```r
 # Create an input directory for this example
 dir.create('example-input-directory')
@@ -537,18 +535,14 @@ data(exampleAudio2)
 
 # Write example waves to example input directory
 tuneR::writeWave(object = exampleAudio1,
-                 filename = 'example-input-directory/Rivendell_20210715_114502.wav')
+                 filename = 'example-input-directory/Rivendell_20210623_113602.wav')
 tuneR::writeWave(object = exampleAudio2,
-                 filename = 'example-input-directory/Rivendell_20210715_115502.wav')
+                 filename = 'example-input-directory/Rivendell_20210623_114602.wav')
 ```
 
-The suggested workflow for this function is to first set test.file = TRUE to test that your workflow has been accurately parameterized. 
+`wave_to_nvspl()` takes several arguments. `input.directory` indicates the top-level input directory path. `data.directory` is a logical flag for whether audio files are housed in 'Data' subdirectories (common when using Songmeter SM4). The next argument, `test.file`, is a logical flag for whether to run the function in testing mode or in batch processing mode. The `project` argument allows the user to input a project name. The project name will be used to create a "params" file that will save parameter inputs in a file for posterity. The `timezone` argument forces the user to specify the timezone for the time reflected in the audio file name. Additional arguments are described in the helpfile; note that there are several default values in this function customized for NSNSD default settings when using a Songmeter SM4 audio recorder. 
 
-**DESCRIBE WHAT WE ARE LOOKING FOR AND WHAT PLOT/OUTPUTS MEAN**
-
-**DEFINE FXN ARGS**
-
-**DESCRIBE DEFAULTS AND '...' ARG OPTIONS TO PAMGUIDE INTERNAL FXNS**
+The suggested workflow for this function is to first set `test.file = TRUE` to verify that your workflow has been accurately parameterized. When `test.file = TRUE`, `wave_to_nvspl()` will assess one file and encourage the user to check all outputs. Users should ensure there isn't an NA in the "Time stamp start time" output (if so, something is wrong). Lastly, the `test.file = TRUE` argument will create a plot allowing the user to verify that time is continuous. If there are breaks in the plotted line, there is an issue with your parameterization. For additional context and details, NSNSD staff and collaborators should view [this video tutorial](https://doimspp.sharepoint.com/sites/nsnsdallstaff/Shared%20Documents/Science%20and%20Tech/Software/SongMeterToNVSPL/SongMeter4toNVSPL.mp4).
 
 ```r
 # Perform wave_to_nvspl in test mode (test.file = TRUE)
@@ -560,7 +554,7 @@ wave_to_nvspl(
  timezone = 'GMT')
 ```
 
-Once you feel confident that you have parameterized accurately, run the function in batch mode by setting test.file = FALSE. The example below provides progress feedback and takes a few moments to run. Once complete, we can view the NVSPL outputs. 
+Once you feel confident that you have parameterized accurately, run the function in batch mode by setting `test.file = FALSE`. The example below provides progress feedback and takes a few moments to run. Once complete, we can view the NVSPL table outputs. Column names are described in the helpfile.
 ```r
 # Perform wave_to_nvspl in batch mode (test.file = FALSE)
 wave_to_nvspl(
@@ -576,7 +570,6 @@ nvspls <- list.files('example-input-directory/NVSPL', full.names = TRUE)
 # View one of the NVSPL outputs
 one.nvspl <- read.delim(file = nvspls[1], sep = ',')
 ```
-**DESCIBE WHAT THESE OUTPUTS MEAN**
 
 Finally, we clean up by deleting the example input directory.
 ```r
@@ -587,15 +580,12 @@ unlink(x = 'example-input-directory', recursive = TRUE)
 
 ## Converting NVSPL files to acoustic indices with nvspl_to_ai
 
-Explain about 1/3 octave bands.
-Why use this wave --> NVSPL --> acoustic indices workflow instead of using existing acoustic index functions that take wave data directly?
+`nvspl_to_ai()` takes NVSPL table data created by `wave_to_nvspl()` and converts it into a broad range of acoustic index values, including acoustic activity, acoustic complexity index, acoustic diversity index, acoustic richness, spectral persistence, and roughness. 
 
 Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
 ```r
 ?nvspl_to_ai
 ```
-
-`nvspl_to_ai()` converts NVSPLs (generated by PAMGuide via `wave_to_nvspl`) into a range of acoustic indices, including **DESCRIBE**. The examples below demonstrate how to use this function.
 
 First, we create a few example directories: an input directory containing the sample wave audio files that come with the package, and an output directory to collect the resulting CSV of acoustic index values. This is meant to illustrate the file types and folder structure `nvspl_to_ai()` expects to encounter.
 
@@ -617,38 +607,17 @@ write.table(x = exampleNVSPL[[i]],
 }
 ```
 
-Now we are positioned to run `nvspl_to_ai()`. **DESCRIBE FXN ARGS, describe difference between start.at.beginning FALSE vs. TRUE**
-```r
-# Run nvspl_to_ai to generate acoustic indices csv for example NVSPL files,
-# setting start.at.beginning = FALSE
-nvspl_to_ai(input.directory = 'example-input-directory',
-            output.directory = 'example-output-directory',
-            project = 'example-project',
-            start.at.beginning = FALSE)
-```
+Now we are positioned to run `nvspl_to_ai()`. `input.directory` indicates the top-level input directory path, `output.directory` specifies where csv results should be stored, and  `project` allows the user to input a project name. The project name will be used to create a "params" file that will save parameter inputs in a file for posterity. Additional arguments are described in the helpfile; note that there are several default values in this function customized for NSNSD default settings.
 
 ```r
 # Run nvspl_to_ai to generate acoustic indices csv for example NVSPL files,
-# setting start.at.beginning = TRUE
 nvspl_to_ai(input.directory = 'example-input-directory',
             output.directory = 'example-output-directory',
-            project = 'example-project',
-            start.at.beginning = TRUE)
-```
-
-Comparing both files illustrates the computation differences produced by the `start.at.beginning` argument.
-```r
-# Read in both files to compare
-start.standard <- read.csv(list.files(path = './example-output-directory/',
-                                     pattern = 'Index_Created',
-                                     full.names = TRUE))
-start.begin <- read.csv(list.files(path = './example-output-directory/',
-                                     pattern = 'Begin_Created',
-                                     full.names = TRUE))
-
-# View a few rows of each file; note the Hr, Min, Sec differences between both options
-start.standard[1:4, ]
-start.begin[1:4, ]
+            project = 'example-project')
+            
+# View Results
+(ai.results <- read.csv(list.files(path = 'example-output-directory',
+                                   pattern = '.csv', full.names = TRUE)))
 ```
 
 Finally, we clean up by deleting all example files. 
