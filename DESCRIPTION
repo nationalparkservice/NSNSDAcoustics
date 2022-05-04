@@ -1,23 +1,25 @@
 Package: NSNSDAcoustics
-Title: What the Package Does (One Line, Title Case)
+Title: Streamline National Park Service Bioacoustics Analysis
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Cathleen",
            family = "Balantic",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           email = "cathleen_balantic@nps.gov",
+           comment = c(ORCID = "0000-0003-2043-0975"))
         person(given = "Damon",
            family = "Joyce",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-    person(given = "Whoever-wrote",
-           family = "the-other-functions",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           role = c("aut"),
+           email = "damon_joyce@nps.gov")
+    person(given = "Megan F.",
+           family = "McKenna",
+           role = c("aut"),
+           comment = c(ORCID = "0000-0003-3475-0785"))
+Description: This package facilitates streamlined bioacoustics analysis developed 
+    for and by the National Park Service (NPS) Natural Sounds and Night Skies 
+    Division (NSNSD). Workflows include processing, analyzing, and verifying data
+    produced by BirdNET, converting wave files to NVSPL tables, and converting 
+    NVSPL tables into acoustic indices.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
