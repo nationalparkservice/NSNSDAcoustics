@@ -14,7 +14,7 @@ This repository provides a place for NSNSD staff to develop and modernize severa
   * **[Verify BirdNET results](#verify-birdnet-results)**
   * **[Visualize BirdNET detections](#visualize-birdnet-detections)**
 
-- **[Converting wave audio files to NVSPL with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-with-wave_to_nvspl)**: Go here for a PAMGuide wrapper function to convert wave files to NVSPL.
+- **[Converting wave audio files to NVSPL tables with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-tables-with-wave_to_nvspl)**: Go here for a PAMGuide wrapper function to convert wave files to NVSPL formatted tables.
 - **[Converting NVSPL files to acoustic indices with nvspl_to_ai](#converting-nvspl-files-to-acoustic-indices-with-nvspl_to_ai)**: Go here to convert NVSPL.txt files into a CSV of acoustic indices.
 
 
@@ -512,13 +512,11 @@ unlink(x = 'example-audio-directory', recursive = TRUE)
 ```
 
 
-## Converting wave audio files to NVSPL with wave_to_nvspl
+## Converting wave audio files to NVSPL tables with wave_to_nvspl
 
 **Note: function [needs to be updated](https://github.com/nationalparkservice/NSNSDAcoustics/issues/2) with PAMGuide corrigendum** 
 
-`wave_to_nvspl()` uses PAMGuide code to convert wave files into NVSPL format. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). 
-
-**Define NVSPLs. What are they and why do we convert to them?**
+`wave_to_nvspl()` uses PAMGuide code to convert wave files into an NVSPL formatted table. NVSPL stands for NPS-Volpe Sound Pressure Level, and is the standard format used in NSNSD analyses. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). 
 
 Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
 
