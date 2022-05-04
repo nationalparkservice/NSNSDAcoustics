@@ -18,7 +18,7 @@
 #' @param locale Locale for translated species common names. Values in c('af', 'de', 'it', ...). Defaults to 'en'.
 #' @param sf.thresh Minimum species occurrence frequency threshold for location filter. Values in c(0.01, 0.99). Defaults to 0.03.
 
-#' @return Saves either a .txt file or CSV of results for each audio file in results.directory. Files have prefix "BirdNET_". If there is an issue with any audio files (e.g., wave file corrupt or too short), error messaging will be returned and problematic files that were not processed will be recorded in a file named 'BirdNET_Problem-Files_DATE.csv'. Note that problem files may also occur if you have results open from previous runs and are attempting to re-run the results while the file is still open; the program will not have write permissions to overwrite an open file.
+#' @return Saves either a txt or csv file of results for each audio file in results.directory. Files have prefix "BirdNET_".
 #'
 #'
 #' If rtype = 'r', outputs a .txt file containing the following columns:
@@ -58,6 +58,8 @@
 #' The function can handle .wav or .mp3 audio files. The current behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations.
 #'
 #' Internally, BirdNET-Analyzer expects a week of the year as an input. The behavior of birdnet_analyzer() is to parse the week of year from the SITEID_YYYYMMDD_HHMMSS filename using lubridate::week().
+#'
+#' If there is an issue with any audio files (e.g., audio file corrupt or too short), error messaging will be returned and problematic files that were not processed in this call to the function will be recorded in a file named 'BirdNET_Problem-Files_results.directory_YYYY-MM-DD HHMMSS.csv'. Note that problem files may also occur if you have results open from previous runs and are attempting to rewrite the results while the file is still open. To help diagnose problems, birdnet_analyzer() attempts to catch error messaging and return errors to the user at the end of the function run. However, internal error catching in R from BirdNET-Analyzer's underlying Python code does not always work; you may need to rely on the "Problem-Files" result to rerun problematic files and diagnose issues.
 #'
 #' NSNSDAcoustics suggests the reticulate package but does not install it for you. To use this function, please install reticulate using install.packages('reticulate').
 #'
@@ -208,8 +210,7 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
                       rext)
 
   # Loop through wav files to process through BirdNET
-  problem.list <- error.list <- list()
-
+  error.list <- list()
   for (i in start:length(recIDs)) {
     # First, check to see if the file is an mp3.
     # If it is, since I can't get my python libraries to process mp3, we are
@@ -250,7 +251,6 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
 
     if (inherits(catch.error, 'error')) {
       message('There is a problem with ', recIDs[i], '; skipping to next\n')
-      problem.list[[i]] <- recIDs[i]
       error.list[[i]] <- catch.error
       if(exists('temp.file')) unlink(temp.file) # remove temporary wav if needed
       next
@@ -258,12 +258,28 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
     if (exists('temp.file')) unlink(temp.file) # remove temporary wav if needed
   }
 
+  # tryCatch does not always catch the errors due to how error handling
+  # seems to have changed from BirdNET-Lite to BirdNET-Analyzer
+  # So go through and do a comparison
+  audio.ext <- file_ext(recIDs[start:length(recIDs)])
+  wanted.to.process <- gsub('.wav|.mp3', '', recIDs[start:length(recIDs)])
+  processed <- gsub('.txt|.csv', '', gsub('BirdNET_', '', list.files(path = results.directory)))
+  not.processed <- wanted.to.process[!(wanted.to.process %in% processed)]
+  if(length(not.processed) > 0) {
+    problem.files <-
+      data.table(recordingID =
+                   paste0(not.processed, '.', audio.ext[which(!(wanted.to.process %in% processed))]))
+  } else {
+    problem.files <- data.table(recordingID = NULL)
+  }
+
   # Return names of problematic files
-  problem.files <- data.table(recordingID = unlist(problem.list))
   if (nrow(problem.files) > 0) {
-    prob.name <- paste0(results.directory, 'BirdNET_Problem-Files_', as.character(Sys.Date()), '.csv')
-    write.csv(x = problem.files, file = prob.name)
-    message(nrow(problem.files), ' files could not be processed. This may be due to an issue with the wave file itself, you may have had a CSV with the same name open at the time of running the function, or there is an error in your BirdNET -> Python -> Reticulate setup. \nSee list of unprocessed files here: ', prob.name)
+    prob.name <- paste0(results.directory, 'BirdNET_Problem-Files_',
+                        basename(audio.directory), '_', gsub(':', '', as.character(Sys.time())),
+                        '.csv')
+    write.csv(x = problem.files, file = prob.name, row.names = FALSE)
+    message(nrow(problem.files), ' files could not be processed. This may be due to an issue with the wave file itself, you may have had a txt or csv file with the same name open at the time of running the function, or there is an error in your BirdNET -> Python -> Reticulate setup. \nSee list of unprocessed files here: ', prob.name)
   }
 
   if (length(unlist(error.list)) > 0){

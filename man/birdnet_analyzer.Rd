@@ -54,7 +54,7 @@ birdnet_analyzer(
 \item{sf.thresh}{Minimum species occurrence frequency threshold for location filter. Values in c(0.01, 0.99). Defaults to 0.03.}
 }
 \value{
-Saves either a .txt file or CSV of results for each audio file in results.directory. Files have prefix "BirdNET_". If there is an issue with any audio files (e.g., wave file corrupt or too short), error messaging will be returned and problematic files that were not processed will be recorded in a file named 'BirdNET_Problem-Files_DATE.csv'. Note that problem files may also occur if you have results open from previous runs and are attempting to re-run the results while the file is still open; the program will not have write permissions to overwrite an open file.
+Saves either a txt or csv file of results for each audio file in results.directory. Files have prefix "BirdNET_".
 
 If rtype = 'r', outputs a .txt file containing the following columns:
 
@@ -94,6 +94,8 @@ This function was developed by the National Park Service Natural Sounds and Nigh
 The function can handle .wav or .mp3 audio files. The current behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations.
 
 Internally, BirdNET-Analyzer expects a week of the year as an input. The behavior of birdnet_analyzer() is to parse the week of year from the SITEID_YYYYMMDD_HHMMSS filename using lubridate::week().
+
+If there is an issue with any audio files (e.g., audio file corrupt or too short), error messaging will be returned and problematic files that were not processed in this call to the function will be recorded in a file named 'BirdNET_Problem-Files_results.directory_YYYY-MM-DD HHMMSS.csv'. Note that problem files may also occur if you have results open from previous runs and are attempting to rewrite the results while the file is still open. To help diagnose problems, birdnet_analyzer() attempts to catch error messaging and return errors to the user at the end of the function run. However, internal error catching in R from BirdNET-Analyzer's underlying Python code does not always work; you may need to rely on the "Problem-Files" result to rerun problematic files and diagnose issues.
 
 NSNSDAcoustics suggests the reticulate package but does not install it for you. To use this function, please install reticulate using install.packages('reticulate').
 }
