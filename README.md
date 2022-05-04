@@ -516,7 +516,7 @@ unlink(x = 'example-audio-directory', recursive = TRUE)
 
 **Note: function [needs to be updated](https://github.com/nationalparkservice/NSNSDAcoustics/issues/2) with PAMGuide corrigendum** 
 
-`wave_to_nvspl()` uses PAMGuide code to convert wave files into an NVSPL formatted table. NVSPL stands for NPS-Volpe Sound Pressure Level, and is the standard format used in NSNSD analyses. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). 
+`wave_to_nvspl()` uses PAMGuide code to convert wave files into an NVSPL formatted table. NVSPL stands for NPS-Volpe Sound Pressure Level, and is the standard format used in NSNSD analyses. These are hourly files comprised of 1/3 octave data in 1-sec LEQ increments. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). 
 
 Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
 
@@ -524,7 +524,7 @@ Start by pulling up the function helpfile. Everything covered below is located i
 ?wave_to_nvspl
 ```
 
-We start by creating an example audio directory and writing example audio to this directory. This is meant to illustrate the file types and folder structure `wave_to_nvspl()` expects to encounter.
+We start by creating an example audio input directory and writing example audio to this directory. This is meant to illustrate the file types and folder structure `wave_to_nvspl()` expects to encounter.
 ```r
 # Create an input directory for this example
 dir.create('example-input-directory')
@@ -540,13 +540,9 @@ tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-input-directory/Rivendell_20210715_115502.wav')
 ```
 
-The suggested workflow for this function is to first set test.file = TRUE to test that your workflow has been accurately parameterized. 
+`wave_to_nvspl()` takes several arguments. `input.directory` indicates the top-level input directory path to audio files to be processed. `data.directory` is a logical flag for whether audio files are housed in 'Data' subdirectories (common when using Songmeter SM4). The next argument, `test.file`, is a logical flag for whether to run the function in testing mode or in batch processing mode. The `project` argument allows the user to input a project name. The project name will be used to create a "params" file that will save your parameter inputs as a file for posterity. The `timezone` argument forces the user to specify the timezone for the time reflected in the audio file name. Additional arguments are described in the helpfile; note that there are several default values in this function customized for NSNSD default settings when using an SM4 Songmeter audio recorder. 
 
-**DESCRIBE WHAT WE ARE LOOKING FOR AND WHAT PLOT/OUTPUTS MEAN**
-
-**DEFINE FXN ARGS**
-
-**DESCRIBE DEFAULTS AND '...' ARG OPTIONS TO PAMGUIDE INTERNAL FXNS**
+The suggested workflow for this function is to first set `test.file = TRUE` to verify that your workflow has been accurately parameterized. When `test.file = TRUE`, `wave_to_nvspl()` will assess one file and encourage the user to check all outputs. Users should ensure there isn't an NA in the "Time stamp start time" output (if so, something is wrong). Lastly, the `test.file = TRUE` argument will create a plot allowing the user to verify that time is continuous. If there are breaks in the plotted line, there is an issue with your parameterization. For additional context and details, NSNSD staff and collaborators should view [this video tutorial](https://doimspp.sharepoint.com/sites/nsnsdallstaff/Shared%20Documents/Science%20and%20Tech/Software/SongMeterToNVSPL/SongMeter4toNVSPL.mp4).
 
 ```r
 # Perform wave_to_nvspl in test mode (test.file = TRUE)
@@ -558,7 +554,7 @@ wave_to_nvspl(
  timezone = 'GMT')
 ```
 
-Once you feel confident that you have parameterized accurately, run the function in batch mode by setting test.file = FALSE. The example below provides progress feedback and takes a few moments to run. Once complete, we can view the NVSPL outputs. 
+Once you feel confident that you have parameterized accurately, run the function in batch mode by setting test.file = FALSE. The example below provides progress feedback and takes a few moments to run. Once complete, we can view the NVSPL table outputs. Column names are described in the helpfile.
 ```r
 # Perform wave_to_nvspl in batch mode (test.file = FALSE)
 wave_to_nvspl(
@@ -574,7 +570,6 @@ nvspls <- list.files('example-input-directory/NVSPL', full.names = TRUE)
 # View one of the NVSPL outputs
 one.nvspl <- read.delim(file = nvspls[1], sep = ',')
 ```
-**DESCIBE WHAT THESE OUTPUTS MEAN**
 
 Finally, we clean up by deleting the example input directory.
 ```r
