@@ -1,7 +1,7 @@
 # birdnet_analyzer ====================================================
 #' @name birdnet_analyzer
 #' @title Run BirdNET-Analyzer from RStudio
-#' @description This function uses the reticulate package to run Python from RStudio in order to process files through \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer}. It is meant for Windows users and may have unexpected results on other systems. To use this function, follow the steps outlined in the \href{https://github.com/nationalparkservice/NSNSDAcoustics#running-birdnet-from-rstudio-with-birdnet_analyzer}{NSNSDAcoustics ReadME}. In brief, these steps are to (1) Install BirdNET using the "Install BirdNET from zip" instructions at \href{https://github.com/kahst/BirdNET-Analyzer#setup-windows}{BirdNET-Analyzer Setup (Windows)}, (2) Download \href{https://www.anaconda.com/}{Anaconda}, (3) Set up a \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#3-set-up-a-conda-environment-for-birdnet-analyzer}{conda environment for BirdNET}, (4) Copy the "checkpoints" folder and eBird_taxonomy_codes_2021E.json file into your BirdNET conda environment folder. Function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. Please input absolute paths for all directory arguments (necessary due to the way RStudio is communicating with the underlying Python code). Note that BirdNET's option to input a customized species list has not been implemented in this function. Please see \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer} usage documentation for more details.
+#' @description This function uses the reticulate package to run Python from RStudio in order to process files through \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer}. It is meant for Windows users and may have unexpected results on other systems. To use this function, follow the steps outlined in the \href{https://github.com/nationalparkservice/NSNSDAcoustics#running-birdnet-from-rstudio-with-birdnet_analyzer}{NSNSDAcoustics ReadME}. In brief, these steps are to (1) Install BirdNET using the "Install BirdNET from zip" instructions at \href{https://github.com/kahst/BirdNET-Analyzer#setup-windows}{BirdNET-Analyzer Setup (Windows)}, (2) Download \href{https://www.anaconda.com/}{Anaconda}, (3) Set up a \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#3-set-up-a-conda-environment-for-birdnet-analyzer}{conda environment for BirdNET}, (4) Copy the "checkpoints" folder and eBird_taxonomy_codes_2021E.json file into your BirdNET conda environment folder. Function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. Please input absolute paths for all directory arguments (necessary due to the way RStudio is communicating with the underlying Python code). Note that BirdNET's option to input a customized species list has not been implemented in this function. Supported audio file types are wave and mp3. Please see \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer} usage documentation for more details.
 #' @param audio.directory Absolute path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS. Default behavior is to process every file in the audio.directory through BirdNET.
 #' @param audio.files Optional character vector of specific file names to process within the audio.directory. If missing, all files in audio.directory will be processed.
 #' @param start Optional file number in folder to start on if data processing fails or is interrupted. Default = 1. This argument provides an alternative to the 'audio.files' argument.
@@ -182,13 +182,17 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
   rec.paths <- list.files(audio.directory, pattern = '.wav|.mp3',
                           recursive = TRUE, ignore.case = TRUE)
 
+  if (length(rec.paths) == 0){
+    stop('No wave or mp3 audio files found in audio.directory.')
+  }
+
   if(!missing(audio.files)) {
     rec.paths <- rec.paths[rec.paths %in% audio.files]
     paths.orig <- list.files(audio.directory, pattern = '.wav|.mp3',
                              recursive = TRUE,
                              ignore.case = TRUE)
     if(length(rec.paths) == 0) {
-      stop('You have input something to the audio.files argument, but we can\'t locate audio files with names like ', audio.files[1],' in ', audio.directory, '. Did you mean something like ', paths.orig[1], '?')
+      stop('You have input something to the audio.files argument. We either can\'t locate audio files with names like ', audio.files[1],' in ', audio.directory, ' or you have input an unsupported audio file type (only wave and mp3 are supported by this function). Did you mean something like ', paths.orig[1], '?')
     }
   }
 
@@ -223,7 +227,7 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
       message('This is an mp3. Converting to wave...')
       r <- readMP3(file)  ## MP3 file in working directory
       temp.file <- paste0(audio.directory, 'temp-',
-                          gsub('.mp3', '.wav', recIDs[i]))
+                          gsub('.mp3', '.wav', recIDs[i], ignore.case = TRUE))
       writeWave(r, temp.file, extensible = FALSE)
       file <- temp.file
       message('Done converting temporary wave file.')
@@ -262,8 +266,9 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
   # seems to have changed from BirdNET-Lite to BirdNET-Analyzer
   # So go through and do a comparison
   audio.ext <- file_ext(recIDs[start:length(recIDs)])
-  wanted.to.process <- gsub('.wav|.mp3', '', recIDs[start:length(recIDs)])
-  processed <- gsub('.txt|.csv', '', gsub('BirdNET_', '', list.files(path = results.directory)))
+  wanted.to.process <- gsub('.wav|.mp3', '', recIDs[start:length(recIDs)], ignore.case = TRUE)
+  processed <- gsub('.txt|.csv', '', gsub('BirdNET_', '', list.files(path = results.directory), ignore.case = TRUE),
+                    ignore.case = TRUE)
   not.processed <- wanted.to.process[!(wanted.to.process %in% processed)]
   if(length(not.processed) > 0) {
     problem.files <-
