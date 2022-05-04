@@ -540,7 +540,7 @@ tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-input-directory/Rivendell_20210715_115502.wav')
 ```
 
-`wave_to_nvspl()` takes several arguments. `input.directory` indicates the top-level input directory path to audio files to be processed. `data.directory` is a logical flag for whether audio files are housed in 'Data' subdirectories (common when using Songmeter SM4). The next argument, `test.file`, is a logical flag for whether to run the function in testing mode or in batch processing mode. The `project` argument allows the user to input a project name. The project name will be used to create a "params" file that will save your parameter inputs as a file for posterity. The `timezone` argument forces the user to specify the timezone for the time reflected in the audio file name. Additional arguments are described in the helpfile; note that there are several default values in this function customized for NSNSD default settings when using an SM4 Songmeter audio recorder. 
+`wave_to_nvspl()` takes several arguments. `input.directory` indicates the top-level input directory path. `data.directory` is a logical flag for whether audio files are housed in 'Data' subdirectories (common when using Songmeter SM4). The next argument, `test.file`, is a logical flag for whether to run the function in testing mode or in batch processing mode. The `project` argument allows the user to input a project name. The project name will be used to create a "params" file that will save parameter inputs in a file for posterity. The `timezone` argument forces the user to specify the timezone for the time reflected in the audio file name. Additional arguments are described in the helpfile; note that there are several default values in this function customized for NSNSD default settings when using a Songmeter SM4 audio recorder. 
 
 The suggested workflow for this function is to first set `test.file = TRUE` to verify that your workflow has been accurately parameterized. When `test.file = TRUE`, `wave_to_nvspl()` will assess one file and encourage the user to check all outputs. Users should ensure there isn't an NA in the "Time stamp start time" output (if so, something is wrong). Lastly, the `test.file = TRUE` argument will create a plot allowing the user to verify that time is continuous. If there are breaks in the plotted line, there is an issue with your parameterization. For additional context and details, NSNSD staff and collaborators should view [this video tutorial](https://doimspp.sharepoint.com/sites/nsnsdallstaff/Shared%20Documents/Science%20and%20Tech/Software/SongMeterToNVSPL/SongMeter4toNVSPL.mp4).
 
@@ -554,7 +554,7 @@ wave_to_nvspl(
  timezone = 'GMT')
 ```
 
-Once you feel confident that you have parameterized accurately, run the function in batch mode by setting test.file = FALSE. The example below provides progress feedback and takes a few moments to run. Once complete, we can view the NVSPL table outputs. Column names are described in the helpfile.
+Once you feel confident that you have parameterized accurately, run the function in batch mode by setting `test.file = FALSE`. The example below provides progress feedback and takes a few moments to run. Once complete, we can view the NVSPL table outputs. Column names are described in the helpfile.
 ```r
 # Perform wave_to_nvspl in batch mode (test.file = FALSE)
 wave_to_nvspl(
