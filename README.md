@@ -14,7 +14,7 @@ This repository provides a place for NSNSD staff to develop and modernize severa
   * **[Verify BirdNET results](#verify-birdnet-results)**
   * **[Visualize BirdNET detections](#visualize-birdnet-detections)**
 
-- **[Converting wave audio files to NVSPL with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-with-wave_to_nvspl)**: Go here for a user-friendly PAMGuide wrapper function to convert wave files to NVSPL.
+- **[Converting wave audio files to NVSPL with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-with-wave_to_nvspl)**: Go here for a PAMGuide wrapper function to convert wave files to NVSPL.
 - **[Converting NVSPL files to acoustic indices with nvspl_to_ai](#converting-nvspl-files-to-acoustic-indices-with-nvspl_to_ai)**: Go here to convert NVSPL.txt files into a CSV of acoustic indices.
 
 
