@@ -14,7 +14,7 @@ Authors@R:
     person(given = "Megan F.",
            family = "McKenna",
            role = "aut"),
-           comment = c(ORCID = "0000-0003-3475-0785")))
+           comment = c(ORCID = "0000-0003-3475-0785"))
 Description: This package facilitates streamlined bioacoustics analysis developed 
     for and by the National Park Service (NPS) Natural Sounds and Night Skies 
     Division (NSNSD). Workflows include processing, analyzing, and verifying data
