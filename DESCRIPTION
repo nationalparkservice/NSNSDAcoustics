@@ -5,15 +5,14 @@ Authors@R:
     person(given = "Cathleen",
            family = "Balantic",
            role = c("aut", "cre"),
-           email = "cathleen_balantic@nps.gov",
+           email = "cbalantic@gmail.com",
            comment = c(ORCID = "0000-0003-2043-0975"))
-        person(given = "Damon",
+    person(given = "Damon",
            family = "Joyce",
-           role = c("aut"),
-           email = "damon_joyce@nps.gov")
+           role = "aut")
     person(given = "Megan F.",
            family = "McKenna",
-           role = c("aut"),
+           role = "aut",
            comment = c(ORCID = "0000-0003-3475-0785"))
 Description: This package facilitates streamlined bioacoustics analysis developed 
     for and by the National Park Service (NPS) Natural Sounds and Night Skies 
