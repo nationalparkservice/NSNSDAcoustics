@@ -2,7 +2,7 @@ Package: NSNSDAcoustics
 Title: Streamline National Park Service Bioacoustics Analysis
 Version: 0.0.0.9000
 Authors@R: 
-    c ( person(given = "Cathleen",
+    c(person(given = "Cathleen",
            family = "Balantic",
            role = c("aut", "cre"),
            email = "cathleen_balantic@nps.gov",
