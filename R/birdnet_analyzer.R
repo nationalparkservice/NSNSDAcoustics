@@ -67,6 +67,7 @@
 #' @import tuneR
 #' @importFrom lubridate week
 #' @importFrom reticulate py_run_string source_python
+#' @importFrom tools file_ext
 #' @export
 #' @examples
 #' \dontrun{
