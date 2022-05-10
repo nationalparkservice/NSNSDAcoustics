@@ -88,14 +88,14 @@ Make sure you know where your pybirdanalyze conda environment lives. It might ha
 
 ### (4) Copy the "checkpoints" folder and "eBird_taxonomy_codes_2021E.json" file from BirdNET-Analyze-main into your BirdNET conda environment folder.
 
-If you don't do this, `birdnet_analyze()` will throw errors telling you that it can't find these files. 
+If you don't do this, `birdnet_analyzer()` will throw errors telling you that it can't find these files. 
 
 ### (5) Process audio data using `birdnet_analyzer()`. 
 
 Here are few tips for using this function: 
 
-* The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. If this is not the case for your files, you'll need to do some preprocessing.
-* BirdNET-Analyzer gives several options for file output types, but the only two implemented in this function are 'r' or 'csv'. **The 'r' option is strongly preferred for all downstream workflows and outputs a txt file.** The 'csv' option produces a csv file with simple columns, and is retained only to handle outputs from the now deprecated BirdNET-Lite. See `?birdnet_analyzer` for output column details. 
+* The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. If this is not the case for your files (e.g., AudioMoth files do not come with a SiteID), you'll need to do some preprocessing.
+* Cornell's underlying BirdNET-Analyzer software gives several options for file output types, but the only two implemented in this function are 'r' or 'csv'. **The 'r' option is strongly preferred for all downstream workflows and outputs a txt file.** The 'csv' option produces a csv file with simple columns, and is retained only to handle outputs from the now deprecated BirdNET-Lite. See `?birdnet_analyzer` for output column details. 
 * The function can handle either .wav or .mp3 audio file types. The current internal behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations, but might be necessary for Windows 10 if you followed the above instructions.
 * The function expects absolute paths for all directory arguments in `birdnet_analyzer()`. This is necessary due to the way RStudio is communicating with the underlying Python code. 
 * Note that BirdNET's option to input a customized species list has not been implemented.
