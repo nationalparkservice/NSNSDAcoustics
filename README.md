@@ -1,6 +1,6 @@
 # NSNSDAcoustics
 
-This repository provides a place for NSNSD staff to develop and modernize several bioacoustics workflows. Contributors should clone this repository (set it up as an R project package) and connect it to GitHub (see [Happy Git with R](https://happygitwithr.com/) for tips). While the package is in development, use the Build > Install and Restart buttons in RStudio to install the package locally on your machine.
+This repository provides a place for National Park Service [Natural Sounds and Night Skies Division (NSNSD)](https://www.nps.gov/orgs/1050/index.htm) staff to develop and modernize several bioacoustics workflows. 
 
 **All documentation and code is currently under development.**
 
@@ -88,14 +88,14 @@ Make sure you know where your pybirdanalyze conda environment lives. It might ha
 
 ### (4) Copy the "checkpoints" folder and "eBird_taxonomy_codes_2021E.json" file from BirdNET-Analyze-main into your BirdNET conda environment folder.
 
-If you don't do this, `birdnet_analyze()` will throw errors telling you that it can't find these files. 
+If you don't do this, `birdnet_analyzer()` will throw errors telling you that it can't find these files. 
 
 ### (5) Process audio data using `birdnet_analyzer()`. 
 
 Here are few tips for using this function: 
 
-* The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. If this is not the case for your files, you'll need to do some preprocessing.
-* BirdNET-Analyzer gives several options for file output types, but the only two implemented in this function are 'r' or 'csv'. **The 'r' option is strongly preferred for all downstream workflows and outputs a txt file.** The 'csv' option produces a csv file with simple columns, and is retained only to handle outputs from the now deprecated BirdNET-Lite. See `?birdnet_analyzer` for output column details. 
+* The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. If this is not the case for your files (e.g., AudioMoth files do not come with a SiteID), you'll need to do some preprocessing.
+* Cornell's underlying BirdNET-Analyzer software gives several options for file output types, but the only two implemented in this function are 'r' or 'csv'. **The 'r' option is strongly preferred for all downstream workflows and outputs a txt file.** The 'csv' option produces a csv file with simple columns, and is retained only to handle outputs from the now deprecated BirdNET-Lite. See `?birdnet_analyzer` for output column details. 
 * The function can handle either .wav or .mp3 audio file types. The current internal behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations, but might be necessary for Windows 10 if you followed the above instructions.
 * The function expects absolute paths for all directory arguments in `birdnet_analyzer()`. This is necessary due to the way RStudio is communicating with the underlying Python code. 
 * Note that BirdNET's option to input a customized species list has not been implemented.
@@ -185,7 +185,7 @@ You may not want to process files through RStudio, or you may already have BirdN
 
 ## Assessing BirdNET Results
 
-If you have a large number of audio files, and plan to monitor for a long time across many locations, you may very quickly find yourself managing thousands of BirdNET CSVs. It's likely that you'll want a systematic way to track and check on these results, and verify whether BirdNET detections are truly from a target species. The `birdnet_format()` --> `birdnet_verify()` workflow offers one way to keep track of your verifications. An alternative way would be to set up a SQLite database (e.g., [as used in the AMMonitor package](https://code.usgs.gov/vtcfwru/ammonitor/-/wikis/home)). Although a database solution may ultimately be the most robust way to track results through time in a long term project, this can come with a lot of start up and might not be easily extensible to your project needs. Instead, the worfklow below provides a simple way to reformat and work with the CSVs directly, allowing you to store your verifications there. Lastly, `birdnet_plot()` provides a flexible way to visualize a subset of detected data.
+If you have a large number of audio files, and plan to monitor for a long time across many locations, you may very quickly find yourself managing thousands of BirdNET output files. It's likely that you'll want a systematic way to track and check on these results, and verify whether BirdNET detections are truly from a target species. The `birdnet_format()` --> `birdnet_verify()` workflow offers one way to keep track of your verifications. An alternative way would be to set up a SQLite database (e.g., [as used in the AMMonitor package](https://code.usgs.gov/vtcfwru/ammonitor/-/wikis/home)). Although a database solution may ultimately be the most robust way to track results through time in a long term project, this can come with a lot of start up and might not be easily extensible to your project needs. Instead, the worfklow below provides a simple way to reformat and work with BirdNET output files directly, allowing you to store your verifications there. Lastly, `birdnet_plot()` provides a flexible way to visualize a subset of detected data.
 
 ### Reformat raw BirdNET results
 
@@ -214,7 +214,7 @@ write.table(x = exampleBirdNET2,
             row.names = FALSE, quote = FALSE, sep = ',')
 ```
 
-Now, we're set up to run the function. `birdnet_format()` takes two arguments. First, the `results.directory` should point to the folder where you have stored your raw BirdNET outputs. Second, the `timezone` argument allows you to specify the timezone setting used in the audio recorder (i.e., the timezone reflected in the wave filename). **It's important to pay attention to this!** Recall that the functions described here expect wave files that follow a SITEID_YYYYMMDD_HHMMSS naming convention. In the package sample audio data, we have a wave named Rivendell_20210623_113602.wav. This means the site ID is Rivendell, and the recording was taken on June 23rd, 2021 at 11:36:02. The `timezone` argument allows us to clarify what 11:36:02 actually means. Was the recording taken in local time at your site, or was it taken in UTC? This point might seem trivial if you're just getting started with collecting data at a few sites for a single season, but if you're collecting data across many sites, over many years, with varying audio recorder equipment and varying recording settings through time, different field technicians, and potentially across timezones, you will want to keep meticulous track of your timezones so that your analyses will be accurate across time and space. If recordings were taken in local time at your study site, specify an [Olson-names-formatted character timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for the location (e.g., "America/Los_Angeles"). If recordings were taken in UTC, you can put either 'GMT' or 'UTC' (both are acceptable in R for downstream date-time formatting). 
+Now, we're set up to run the function. `birdnet_format()` takes two arguments. First, the `results.directory` should point to the folder where you have stored your raw BirdNET outputs. Second, the `timezone` argument allows you to specify the timezone setting used in the audio recorder (i.e., the timezone reflected in the wave filename). **It's important to pay attention to this!** Recall that the functions described here expect wave files that follow a SITEID_YYYYMMDD_HHMMSS naming convention. In the package sample audio data, we have a wave named Rivendell_20210623_113602.wav. This means the site ID is Rivendell, and the recording was taken on June 23rd, 2021 at 11:36:02. The `timezone` argument allows us to clarify what 11:36:02 actually means. Was the recording taken in local time at your site, or was it taken in UTC? This point might seem trivial if you're just getting started with collecting data at a few sites for a single season, but if you're collecting data across many sites, over many years, with varying audio recorder equipment and varying recording settings through time, different field technicians, and potentially across timezones (as we often do at NPS NSNSD), you will want to keep meticulous track of your timezones so that your analyses will be accurate across time and space. If recordings were taken in local time at your study site, specify an [Olson-names-formatted character timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for the location (e.g., "America/Los_Angeles"). If recordings were taken in UTC, you can put either 'GMT' or 'UTC' (both are acceptable in R for downstream date-time formatting). 
 
 Below, we point to our example results directory and specify 'GMT' (i.e., 'UTC') as the timezone, since the recordings were not taken in local time at this recorder.
 ```r
@@ -236,7 +236,7 @@ The point of all this reformatting is to make it easier to keep track of our dow
 ### Gather BirdNET results
 `birdnet_gather()` is a simple convenience function that gathers all BirdNET results from a desired folder into one user-friendly data.table / data.frame. View the helpfile for more information and code examples (`?birdnet_gather`). 
 
-The function allows you to gather either unformatted (raw) or formatted (data). For this example, we set up an example results directory and write both formatted and unformatted .txt results to it. This illustrates the type of folder and file structure `birdnet_gather()` expects to encounter.
+The function allows you to gather either unformatted (raw) or formatted data. For this example, we set up an example results directory and write both formatted and unformatted .txt results to it. This illustrates the type of folder and file structure `birdnet_gather()` expects to encounter.
 
 ```r
 # Create a BirdNET results directory for this example
@@ -356,7 +356,7 @@ ver.lib <- c('y', 'n', 'unsure')
 
 Now we're ready to use `birdnet_verify()`. This interactive function displays a spectrogram of the detected event and prompts the user to label it with one of the input options defined in the verification library. The function also optionally writes a temporary wave clip to your working directory. (Although there are options for playing a sound clip automatically from R, the behavior of these options varies across platforms/operating systems; instead of using R to play the clip, we decided it would be simpler to write a temporary wave clip file for the user). If you expect to be listening to the clips, you'll want easy access to your working directory so that you can open the wave clips up manually. 
 
-`birdnet_verify()` has several arguments. `data` takes the data.frame or data.table of detections you want to verify. `verification.library` takes a character vector of the labeling options you will be using. `audio.directory` points to the directory where your audio files live, and `results.directory` points to the directory where your formatted BirdNET CSVs are stored. `overwrite` allows you to decide whether or not any previously existing verifications should be overwritten. When FALSE, users will not be prompted to verify any detected events that already have a verification, but when TRUE, you may be overwriting previous labels. The `play` argument specifies whether or not a temporary wave file should be written to the working directory for each detection. The remaining arguments allow the user to customize how detected events should be displayed during the interactive session (see `?birdnet_verify` for details).
+`birdnet_verify()` has several arguments. `data` takes the data.frame or data.table of detections you want to verify. `verification.library` takes a character vector of the labeling options you will be using. `audio.directory` points to the directory where your audio files live, and `results.directory` points to the directory where your formatted BirdNET files are stored. `overwrite` allows you to decide whether or not any previously existing verifications should be overwritten. When FALSE, users will not be prompted to verify any detected events that already have a verification, but when TRUE, you may be overwriting previous labels. The `play` argument specifies whether or not a temporary wave file should be written to the working directory for each detection. The remaining arguments allow the user to customize how detected events should be displayed during the interactive session (see `?birdnet_verify` for details).
 ```r
 # Verify detections
 birdnet_verify(data = to.verify,
@@ -371,7 +371,7 @@ birdnet_verify(data = to.verify,
                spec.col = monitoR::gray.3())
 ```
 
-Running this example will produce an interactive output like the below image. The RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide which label to choose. In this example, we've used the `buffer` argument to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the txt or csv file, and informs us that BirdNET has a confidence level of 0.43 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
+Running this example will produce an interactive output like the below image. The RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide which label to choose. In this example, we've used the `buffer` argument to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the txt or csv file, and informs us that BirdNET has a confidence level of 0.9 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
 
 **Click image for a larger version.**
 
@@ -422,7 +422,7 @@ tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
 ```
 
-Next, we read in example data.table/data.frame for plotting. Checking the structure of this example data reveals that there are 305 rows of data in the example.
+Next, we read in example data.table/data.frame for plotting. Checking the structure of this example data reveals that there are 284 rows of data in the example.
 ```r
 # Read in example data.table/data.frame for plotting
 data(examplePlotData)
