@@ -188,10 +188,15 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
   }
 
   if(!missing(audio.files)) {
-    rec.paths <- rec.paths[rec.paths %in% audio.files]
+    rec.paths <- unique(grep(paste(audio.files,collapse = "|"),
+                            rec.paths, value = TRUE))
+
+    # This form only takes the full file path within top-level audio.directory
+    # rec.paths <- rec.paths[rec.paths %in% audio.files]
     paths.orig <- list.files(audio.directory, pattern = '.wav|.mp3',
                              recursive = TRUE,
                              ignore.case = TRUE)
+
     if(length(rec.paths) == 0) {
       stop('You have input something to the audio.files argument. We either can\'t locate audio files with names like ', audio.files[1],' in ', audio.directory, ' or you have input an unsupported audio file type (only wave and mp3 are supported by this function). Did you mean something like ', paths.orig[1], '?')
     }
@@ -285,7 +290,7 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
                         basename(audio.directory), '_', gsub(':', '', as.character(Sys.time())),
                         '.csv')
     write.csv(x = problem.files, file = prob.name, row.names = FALSE)
-    message(nrow(problem.files), ' files could not be processed. This may be due to an issue with the wave file itself, you may have had a txt or csv file with the same name open at the time of running the function, or there is an error in your BirdNET -> Python -> Reticulate setup. \nSee list of unprocessed files here: ', prob.name)
+    message(nrow(problem.files), ' files could not be processed. Possible reasons: there is an issue with the audio file itself (corrupt, too short), a txt or csv file with the same name was open at the time of running the function, you are processing audio data from an external hard drive and there is an issue with response, or there is an error in your BirdNET -> Python -> Reticulate setup. \nSee list of unprocessed files here: ', prob.name)
   }
 
   if (length(unlist(error.list)) > 0){
@@ -295,7 +300,7 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
     message('\n', unlist(unq.errs))
   }
 
-  message('\nFINISHED! Results for each audio file are saved in ', results.directory, ' with the prefix "BirdNET_"')
+  message('\nFINISHED! Results for each audio file are saved in ', results.directory, ' with the prefix "BirdNET_"\n')
 
 }
 
