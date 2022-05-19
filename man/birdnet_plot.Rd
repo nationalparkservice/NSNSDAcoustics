@@ -2,7 +2,7 @@
 % Please edit documentation in R/birdnet_plot.R
 \name{birdnet_plot}
 \alias{birdnet_plot}
-\title{Plot BirdNET detections}
+\title{Plot spectrograms of BirdNET detections}
 \usage{
 birdnet_plot(
   data,

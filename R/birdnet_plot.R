@@ -1,7 +1,7 @@
 # birdnet_plot =================================================================
 
 #' @name birdnet_plot
-#' @title Plot BirdNET detections
+#' @title Plot spectrograms of BirdNET detections
 #' @description Plot spectrograms of user-selected verified or unverified data
 #' @param data Data.table or data.frame of subsetted detections that a user would like to plot \strong{for a single species}. This allows the user precise control over which detections to plot.
 #' @param audio.directory Top-level input directory path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.
