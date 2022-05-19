@@ -3,7 +3,7 @@
 #' @name birdnet_format
 #' @title Format BirdNET outputs
 #' @description Reformats BirdNET outputs with a "recordingID" column for easier data manipulation, a "verify" column to support manual verification of detection results, and a "timezone" column to clarify the timezone setting used by the audio recorder.
-#' @param results.directory Path to directory where raw BirdNET result files have been stored
+#' @param results.directory Path to directory where raw BirdNET result files have been stored. This directory should not contain anything aside from BirdNET results, otherwise the function may have unintended behavior.
 #' @param timezone Timezone setting used in the audio recorder (e.g, "GMT"). This argument allows you to specify the timezone shown by the wave filename. If recordings were taken in local time at your study site, specify an \href{https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List}{Olson-names-formatted character timezone} for the location (e.g., "America/Los_Angeles"). If recordings were taken in GMT, you can put either "GMT" or "UTC" (both are acceptable in R for downstream date-time formatting). This argument is critical to foster clarity in data analysis through the years and across monitoring locations, because some projects may vary across time and space as to whether the standard operating procedure specifies recordings in GMT vs. local time.
 #' @return Saves a new formatted file of BirdNET results with filename prefix "BirdNET_formatted_" and suffix either "csv" or "txt", depending on input.
 #'
@@ -195,7 +195,10 @@ birdnet_format <- function(results.directory,
       }
 
       # Write formatted file
-      newname <- gsub(x = finame, pattern = 'BirdNET_', replacement = 'BirdNET_formatted_')
+      newname <- paste0(results.directory,
+                        gsub(x = basename(finame),
+                             pattern = 'BirdNET_',
+                             replacement = 'BirdNET_formatted_'))
       write.csv(x = result, file = newname, row.names = FALSE)
 
     } # end if csv
@@ -212,18 +215,9 @@ birdnet_format <- function(results.directory,
       # If txt reads correctly, format and write
       if (all(colnames(result) %in% txt.cols )) {
 
-        # Add a recordingID column for friendlier downstream data wrangling
-        result[,recordingID := basename(filepath)]
-
-        # Add a verify column to support downstream manual QA of classifications
-        result[,verify := as.character(NA)]
-
-        # Add a timezone column to foster clarity across years with varying equipment
-        # This timezone is the timestamp in the audio file name
-        result[,timezone := timezone]
-
-        # If no results, add one row of NA so that it can be clear in downstream analysis that nothing was detected
         if (nrow(result) == 0) {
+          # If no results, add one row of NA so that it can be clear in
+          # downstream analysis that nothing was detected
           row1 <- data.table(filepath = as.character(NA),
                              start = as.numeric(NA),
                              end = as.numeric(NA),
@@ -241,9 +235,21 @@ birdnet_format <- function(results.directory,
                              recordingID = gsub('txt', 'wav', fi[i]), # making an assumption that it's wav
                              verify = as.character(NA),
                              timezone = as.character(NA))
-          result <- rbind(result, row1)
-        }
+          result <- rbind(result, row1, fill = TRUE)
+        } else {
+          # If results are detected, add recordingID, verify, and timezone columns
 
+          # Add a recordingID column for friendlier downstream data wrangling
+          result[,recordingID := basename(filepath)]
+
+          # Add a verify column to support downstream manual QA of classifications
+          result[,verify := as.character(NA)]
+
+          # Add a timezone column to foster clarity across years with varying equipment
+          # This timezone is the timestamp in the audio file name
+          result[,timezone := timezone]
+
+        }
 
       } else {
 
@@ -251,7 +257,10 @@ birdnet_format <- function(results.directory,
       }
 
       # Write formatted file
-      newname <- gsub(x = finame, pattern = 'BirdNET_', replacement = 'BirdNET_formatted_')
+      newname <- paste0(results.directory,
+                        gsub(x = basename(finame),
+                             pattern = 'BirdNET_',
+                             replacement = 'BirdNET_formatted_'))
       write.table(x = result, file = newname, row.names = FALSE, quote = FALSE, sep = ',')
 
 
