@@ -66,6 +66,7 @@
 #' @seealso  \code{\link{birdnet_analyzer}}, \code{\link{birdnet_verify}}, \code{\link{birdnet_format}}
 #' @export
 #' @import data.table
+#' @importFrom tools file_ext
 #' @examples
 #' \dontrun{
 #'
@@ -119,19 +120,12 @@ birdnet_gather <- function(results.directory,
                        pattern = 'formatted',
                        invert = TRUE, value = TRUE))
 
+  # remove "problem" files
+  paths <- paths[grep(pattern = 'problem-files', x = tolower(paths), invert = TRUE)]
+  paths <- paths[grep(pattern = 'desktop.ini', x = tolower(paths), invert = TRUE)]
+
   dat <- suppressWarnings(rbindlist(lapply(paths, function(x) fread(x))))
   if (formatted == TRUE) dat[,verify := as.character(verify)]
-  if (formatted == FALSE) {
-    # If result has " in first and final columns, fix (this should only happen
-    # for some reason with the example RData. It doesn't happen with the
-    # real files... perhaps an issue with RData encoding.)
-    if(any(colnames(dat) %in% c('"Start (s)', 'Confidence"'))) {
-      colnames(dat)[1] <- 'Start (s)'
-      colnames(dat)[5] <- 'Confidence'
-      dat[,`Start (s)` := gsub('"', '', x = `Start (s)`)]
-      dat[,`Confidence` := gsub('"', '', x = `Confidence`)]
-    }
 
-  }
   return(dat)
 }
