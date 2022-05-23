@@ -27,13 +27,14 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Depends: R (>= 3.5.0), data.table, monitoR, tuneR
-Imports: reticulate, ineq, lubridate, moments, NbClust, vegan
+Imports: reticulate, ineq, ggplot2, lubridate, moments, NbClust, plotly, vegan
 Collate: 
     'PAMGuide.R'
     'PAMGuide_Meta.R'
     'Meta.R'
     'Viewer.R'
     'birdnet_analyzer.R'
+    'birdnet_barchart.R'
     'birdnet_format.R'
     'birdnet_gather.R'
     'birdnet_plot.R'

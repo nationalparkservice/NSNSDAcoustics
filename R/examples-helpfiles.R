@@ -228,3 +228,21 @@ NULL
 #'
 NULL
 
+
+#' @title exampleBarchartData
+#' @description Sample data.table / data.frame to demonstrate \code{\link{birdnet_barchart}}
+#' @format An object of class \code{data.frame} and \code{data.table} containing 17 columns.
+#' @details The exampleBarchartData object is used to demonstrate \code{\link{birdnet_barchart}}
+#' @docType data
+#' @keywords datasets
+#' @name exampleBarchartData
+#' @usage data(exampleBarchartData)
+#' @examples
+#'
+#' # Load the dataset
+#' data(exampleBarchartData)
+#'
+#' # View structure
+#' str(exampleBarchartData, max.level = 1)
+#'
+NULL

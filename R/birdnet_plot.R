@@ -17,7 +17,7 @@
 #' @details
 #' This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data produced by BirdNET.
 #'
-#' @seealso  \code{\link{birdnet_analyze}}, \code{\link{birdnet_format}}, \code{\link{birdnet_verify}}
+#' @seealso  \code{\link{birdnet_analyzer}}, \code{\link{birdnet_format}}, \code{\link{birdnet_verify}}
 #' @import monitoR tuneR
 #' @export
 #' @examples

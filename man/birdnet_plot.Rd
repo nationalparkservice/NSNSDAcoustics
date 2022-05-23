@@ -118,5 +118,5 @@ unlink(x = 'example-audio-directory', recursive = TRUE)
 
 }
 \seealso{
-\code{\link{birdnet_analyze}}, \code{\link{birdnet_format}}, \code{\link{birdnet_verify}}
+\code{\link{birdnet_analyzer}}, \code{\link{birdnet_format}}, \code{\link{birdnet_verify}}
 }
