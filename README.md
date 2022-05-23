@@ -538,6 +538,12 @@ In addition to the data object, `birdnet_barchart` has an argument called intera
 # Produce an interactive plotly barchart with interactive = TRUE
 birdnet_barchart(data = dat, interactive = TRUE)
 ```
+**Click image for a larger version.**
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/barchart-interactive.png><br>
+</p>
+
+
 Meanwhile, when interactive is set to FALSE, `birdnet_barchart` produces a ggplot-based static plot. The user also has the option to highlight certain species with the focal.species argument, which takes a character vector of common names of species to display. The focal.colors argument allows the user to specify which colors to use for which focal species. If the data object contains other species aside from the focals, all non-focal species will be plotted in black as "Other". 
 
 ```r
@@ -549,6 +555,11 @@ birdnet_barchart(data = dat,
                  focal.species = c("Pacific Wren", "Swainson's Thrush", "Varied Thrush"),
                  focal.colors = c('#00BE67', '#C77CFF', '#c51b8a'))
 ```
+**Click image for a larger version.**
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/barchart-static.png><br>
+</p>
+
 
 Generally, interactive = FALSE should be used in conjunction with the focal.species argument. If the focal.species argument is being used, a legend will also be plotted. This option provides a static plot output and the opportunity to highlight a small number of focal species and their detection activity through time. 
 
