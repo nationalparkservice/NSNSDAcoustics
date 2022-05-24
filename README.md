@@ -377,7 +377,7 @@ Running this example will produce an interactive output like the below image. Th
 **Click image for a larger version.**
 
 <p align="center">
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/ver1.png><br>
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/ver1.png alt="Illustration of outputs when using the function birdnet_verify. Left side of image shows interactive RStudio interface used for verification, right side depicts spectrogram of detected event to be verified, with a blue border showing the time boundaries of the detection."><br>
 </p>
 
 
@@ -452,7 +452,8 @@ birdnet_plot(data = plot.songs,
 ```
 **Click image for a larger version.**
 <p align="center">
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot1.png><br>
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot1.png
+     alt="Illustration of spectrogram output from birdnet_plot for Swainson's Thrush."><br>
 </p>
 
 In the next example, we plot detections for Swainson's Thrush that contain the label "call" in the verify column. We give the plot a descriptive title, use frequency limits ranging from 0.5 to 6 kHz and choose not to draw any boxes around detections. Below, we demonstrate that the `spec.col` argument allows for adjustable spectrogram colors, and that users can create their own gradients or use existing ones. A few spectrogram color options are provided with the package (e.g., gray.3()). In the example below, we input a color gradient from the [viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html) R package.
@@ -475,7 +476,8 @@ birdnet_plot(data = plot.calls,
 **Click image for a larger version.**
 
 <p align="center">
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot2.png><br>
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot2.png
+     alt="Alternative illustration of spectrogram output from birdnet_plot for Swainson's Thrush, showing the of use different color schemes and plotting parameters."><br>
 </p>
 
 In the final example, we demonstrate that `birdnet_plot()` can also be used to visualize unverified data. Below, we loop through to plot all detections for two selected species -- [Varied Thrush](https://www.allaboutbirds.org/guide/Varied_Thrush/sounds) and [Pacific-slope Flycatcher](https://www.allaboutbirds.org/guide/Pacific-slope_Flycatcher/sounds) -- where the confidence of detection is greater than or equal to 0.25. 
@@ -503,7 +505,8 @@ for (i in 1:length(sp)) {
 **Click image for a larger version.**
 
 <p align="center">
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot3.png><br>
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/plot3.png
+     alt="Illustration of the spectrogram outputs from birdnet_plot from looping through two focal species."><br>
 </p>
 
 Finally, delete all temporary files when finished. 
@@ -538,9 +541,10 @@ In addition to the data object, `birdnet_barchart` has an argument called intera
 # Produce an interactive plotly barchart with interactive = TRUE
 birdnet_barchart(data = dat, interactive = TRUE)
 ```
-**Click image for a larger version.**
+**Click image for a larger version. The figure is not interactive and merely serves as an illustration.**
 <p align="center">
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/barchart-interactive.png><br>
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/barchart-interactive.png
+     alt="Screenshot of an interactive plotly barchart that shows stacked bars of detected species through time at a monitoring location. The x axis shows date, and the y axis shows the total number of detections for that date. Hovering over individual bars shows an instance of 1420 detections of Pacific Wren on julian date 132."><br>
 </p>
 
 
@@ -557,7 +561,8 @@ birdnet_barchart(data = dat,
 ```
 **Click image for a larger version.**
 <p align="center">
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/barchart-static.png><br>
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/barchart-static.png 
+     alt="Static ggplot barchart highlighting the detections of three focal species through time at a monitoring location. The x axis shows date, and the y axis shows the total number of detections for that date."><br>
 </p>
 
 
