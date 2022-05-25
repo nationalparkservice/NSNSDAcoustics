@@ -110,6 +110,9 @@ birdnet_barchart <- function(data, julian.breaks, interactive = FALSE,
     ,day := day(date)]
   stacksp[,date.lab := paste0(day, '-', month)]
 
+  # Remove NA data from stacksp (occurs if recording has no detections)
+  stacksp <- stacksp[!is.na(common_name)]
+
   if (missing(julian.breaks)) {
     julian.range <- range(stacksp$julian.date)
     julian.breaks <- seq(from = floor(julian.range[1]/10)*10,

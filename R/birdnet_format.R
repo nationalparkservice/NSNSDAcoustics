@@ -216,6 +216,7 @@ birdnet_format <- function(results.directory,
       if (all(colnames(result) %in% txt.cols )) {
 
         if (nrow(result) == 0) {
+
           # If no results, add one row of NA so that it can be clear in
           # downstream analysis that nothing was detected
           row1 <- data.table(filepath = as.character(NA),
@@ -232,7 +233,9 @@ birdnet_format <- function(results.directory,
                              min_conf = as.numeric(NA),
                              species_list = as.character(NA),
                              model = as.character(NA),
-                             recordingID = gsub('txt', 'wav', fi[i]), # making an assumption that it's wav
+                             # making assumption that it's wav
+                             recordingID = gsub(x = gsub(x = fi[i], pattern = 'BirdNET_', replacement = ''),
+                                                pattern = '.txt', replacement = '.wav'),
                              verify = as.character(NA),
                              timezone = as.character(NA))
           result <- rbind(result, row1, fill = TRUE)
