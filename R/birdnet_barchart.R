@@ -79,6 +79,10 @@ birdnet_barchart <- function(data, julian.breaks, interactive = FALSE,
   dt[,date := as.Date(dateTimeLocal)]
   dt[,julian.date := yday(date)]
 
+  # Remove NA data from dt (occurs if recording has no detections)
+  # Want to do this now rather than later, to avoid issues with "Other" if using focals
+  dt <- dt[!is.na(common_name)]
+
   # If focal species are indicated, correct for nonfocal species
   if (!missing(focal.species)) {
     # If other species aside from focals occur in the dataset, add "Other" category
@@ -109,9 +113,6 @@ birdnet_barchart <- function(data, julian.breaks, interactive = FALSE,
   stacksp[,month := month(date, label = TRUE)][
     ,day := day(date)]
   stacksp[,date.lab := paste0(day, '-', month)]
-
-  # Remove NA data from stacksp (occurs if recording has no detections)
-  stacksp <- stacksp[!is.na(common_name)]
 
   if (missing(julian.breaks)) {
     julian.range <- range(stacksp$julian.date)
