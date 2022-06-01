@@ -67,7 +67,7 @@ To use `birdnet_analyzer()`, please first complete the following steps. The func
 
 ### (1) Install BirdNET using the "Install BirdNET from zip" instructions at [BirdNET-Analyzer -- Setup (Windows)](https://github.com/kahst/BirdNET-Analyzer#setup-windows). 
 
-Early on in the [Setup (Windows)](https://github.com/kahst/BirdNET-Analyzer#setup-windows), the instructions will encourage you to download a "fully-packaged version that does not require you to install any additional packages and can be run as-is". This is *not* the file you want, so keep scrolling until you hit a section that says "Install BirdNET from zip" and click "Download BirdNET Zip-file". Unzip that file to a desired location on your machine. This folder should have the name **BirdNET-Analyzer-main**.
+Early on in the [Setup (Windows)](https://github.com/kahst/BirdNET-Analyzer#setup-windows) section, the instructions will encourage you to download a "fully-packaged version that does not require you to install any additional packages and can be run as-is". This is *not* the file you want, so keep scrolling until you hit a section that says "Install BirdNET from zip" and click "Download BirdNET Zip-file". Unzip that file to a desired location on your machine. This folder should have the name **BirdNET-Analyzer-main**.
 
 ### (2) Download and install [Anaconda](https://www.anaconda.com/). 
 
@@ -572,8 +572,6 @@ Meanwhile, use of interactive = TRUE is meant strictly for exploratory purposes.
 
 
 ## Converting wave audio files to NVSPL tables with wave_to_nvspl
-
-**Note: function [needs to be updated](https://github.com/nationalparkservice/NSNSDAcoustics/issues/2) with PAMGuide corrigendum** 
 
 `wave_to_nvspl()` uses PAMGuide code to convert wave files into an NVSPL formatted table. NVSPL stands for NPS-Volpe Sound Pressure Level, and is the standard format used in NSNSD analyses. These are hourly files comprised of 1/3 octave data in 1-sec LEQ increments. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). 
 
