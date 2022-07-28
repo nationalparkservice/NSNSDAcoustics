@@ -27,7 +27,7 @@ Next, you can install NSNSDAcoustics using one of two options:
 
 ### (1) Option 1: Use `install_github()`:
 
-You may need to first install the latest version of devtools. Once you have devtools, you can install the latest version of NSNSDAcoustics:
+You may need to first install the latest version of devtools, and the R console may also prompt you to install Rtools (follow directions given in console message). **If you are having trouble installing devtools, make sure to disconnect from VPN.** Once you have Rtools and devtools, you can install the latest version of NSNSDAcoustics:
 
 ```r
 install.packages('devtools')
