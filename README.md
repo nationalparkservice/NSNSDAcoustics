@@ -336,7 +336,7 @@ dat <- birdnet_gather(results.directory = 'example-results-directory',
 
 # Create a random sample of three detections to verify
 set.seed(4)
-to.verify <- dat[common.name == "Swainson's Thrush"][sample(.N, 3)]
+to.verify <- dat[common_name == "Swainson's Thrush"][sample(.N, 3)]
 ```
 
 The next step is to create a "verification library" for this species; essentially, a character vector of acceptable options for your verification labels. Verifying BirdNET detections may be tricky depending on your research question, because BirdNET does not distinguish between the different types of vocalizations a bird may produce. This means the burden is on you, the verifier, to label the detection in a way that will best support you in answering your motivating research question. 
@@ -439,7 +439,7 @@ Below, we subset the `examplePlotData` object to plot detections for Swainson's 
 # Plot only detections of Swainson's Thrush verified as "song",
 # with frequency limits ranging from 0.5 to 12 kHz, gray spectrogram colors,
 # a custom title, and a gray box around each detection
-plot.songs <- examplePlotData[common.name == "Swainson's Thrush" & verify == "song"]
+plot.songs <- examplePlotData[common_name == "Swainson's Thrush" & verify == "song"]
 birdnet_plot(data = plot.songs,
              audio.directory = 'example-audio-directory',
              title = "Swainson's Thrush Songs",
@@ -464,7 +464,7 @@ library(viridis)
 # Plot only detections of Swainson's Thrush verified as "call"
 # with frequency limits ranging from 0.5 to 6 kHz,a custom title, no boxes,
 # and colors sampled from the viridis color package
-plot.calls <- examplePlotData[common.name == "Swainson's Thrush" & verify == "call"]
+plot.calls <- examplePlotData[common_name == "Swainson's Thrush" & verify == "call"]
 birdnet_plot(data = plot.calls,
              audio.directory = 'example-audio-directory',
              title = "Swainson's Thrush Calls",
@@ -488,7 +488,7 @@ In the final example, we demonstrate that `birdnet_plot()` can also be used to v
 # and gray spectrogram colors
 sp <- c('Varied Thrush', 'Pacific-slope Flycatcher')
 for (i in 1:length(sp)) {
- plot.sp <- examplePlotData[confidence >= 0.25 & common.name == sp[i]]
+ plot.sp <- examplePlotData[confidence >= 0.25 & common_name == sp[i]]
  birdnet_plot(data = plot.sp,
               audio.directory = 'example-audio-directory',
               title = paste0(sp[i], ' Detections >= 0.25'),
