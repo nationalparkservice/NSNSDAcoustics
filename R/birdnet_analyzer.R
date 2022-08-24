@@ -173,7 +173,7 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
                           "reticulate-analyze-april2022.py", sep = "/")
 
   # Get current working directory and make sure it is reset after function exits
-  #  (to deal with fact that wd must be set to BirdNET python directory to
+  #   (to deal with fact that wd must be set to BirdNET python directory to
   #   run correctly from reticulate, unless you want to modify the .py file
   #   to not use relative file paths)
   current.wd <- getwd()
@@ -273,22 +273,29 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
   # So go through and do a comparison
   audio.ext <- file_ext(recIDs[start:length(recIDs)])
   wanted.to.process <- gsub('.wav|.mp3', '', recIDs[start:length(recIDs)], ignore.case = TRUE)
-  processed <- gsub('.txt|.csv', '', gsub('BirdNET_', '', list.files(path = results.directory), ignore.case = TRUE),
-                    ignore.case = TRUE)
+  processed <- gsub('.txt|.csv', '',
+    gsub('BirdNET_', '', list.files(path = results.directory),
+         ignore.case = TRUE),
+    ignore.case = TRUE
+    )
   not.processed <- wanted.to.process[!(wanted.to.process %in% processed)]
   if(length(not.processed) > 0) {
     problem.files <-
-      data.table(recordingID =
-                   paste0(not.processed, '.', audio.ext[which(!(wanted.to.process %in% processed))]))
+      data.table(
+        recordingID =
+          paste0(not.processed, '.', audio.ext[which(!(wanted.to.process %in% processed))])
+      )
   } else {
     problem.files <- data.table(recordingID = NULL)
   }
 
   # Return names of problematic files
   if (nrow(problem.files) > 0) {
-    prob.name <- paste0(results.directory, 'BirdNET_Problem-Files_',
-                        basename(audio.directory), '_', gsub(':', '', as.character(Sys.time())),
-                        '.csv')
+    prob.name <- paste0(
+      results.directory, 'BirdNET_Problem-Files_',
+      basename(audio.directory), '_', gsub(':', '', as.character(Sys.time())),
+      '.csv'
+    )
     write.csv(x = problem.files, file = prob.name, row.names = FALSE)
     message(nrow(problem.files), ' files could not be processed. Possible reasons: there is an issue with the audio file itself (corrupt, too short), a txt or csv file with the same name was open at the time of running the function, you are processing audio data from an external hard drive and there is an issue with response, or there is an error in your BirdNET -> Python -> Reticulate setup. \nSee list of unprocessed files here: ', prob.name)
   }
