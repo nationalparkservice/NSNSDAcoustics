@@ -27,7 +27,7 @@ Next, you can install NSNSDAcoustics using one of two options:
 
 ### (1) Option 1: Use `install_github()`:
 
-You may need to first install the latest version of devtools, and the R console may also prompt you to install Rtools (follow directions given in console message). **If you are having trouble installing devtools, make sure to disconnect from VPN.** Once you have Rtools and devtools, you can install the latest version of NSNSDAcoustics:
+You may need to first install the latest version of devtools, and the R console may also prompt you to install Rtools (follow directions given in console message). If you are having trouble installing devtools, make sure to disconnect from VPN. Once you have Rtools and devtools, you can install the latest version of NSNSDAcoustics:
 
 ```r
 install.packages('devtools')
@@ -186,7 +186,7 @@ You may not want to process files through RStudio, or you may already have BirdN
 
 ## Assessing BirdNET Results
 
-If you have a large number of audio files, and plan to monitor for a long time across many locations, you may very quickly find yourself managing thousands of BirdNET output files. It's likely that you'll want a systematic way to track and check on these results, and verify whether BirdNET detections are truly from a target species. The `birdnet_format()` --> `birdnet_verify()` workflow offers one way to keep track of your verifications. An alternative way would be to set up a SQLite database (e.g., [as used in the AMMonitor package](https://code.usgs.gov/vtcfwru/ammonitor/-/wikis/home)). Although a database solution may ultimately be the most robust way to track results through time in a long term project, this can come with a lot of start up and might not be easily extensible to your project needs. Instead, the worfklow below provides a simple way to reformat and work with BirdNET output files directly, allowing you to store your verifications there. Lastly, `birdnet_plot()` provides a flexible way to visualize a subset of detected data.
+If you have a large number of audio files, and plan to monitor for a long time across many locations, you may very quickly find yourself managing thousands of BirdNET output files. It's likely that you'll want a systematic way to track and check on these results, and verify whether BirdNET detections are truly from a target species. The `birdnet_format()` --> `birdnet_verify()` workflow offers one way to keep track of your verifications. An alternative way would be to set up a SQLite database (e.g., [as used in the AMMonitor package](https://code.usgs.gov/vtcfwru/ammonitor/-/wikis/home)). Although a database solution may ultimately be the most robust way to track results through time in a long term project, this can come with a lot of start up and might not be easily extensible to your project needs. Instead, the worfklow below provides a simple way to reformat and work with BirdNET output files directly, allowing you to store your verifications there. Lastly, `birdnet_plot()` and `birdnet_barchart()` provide plotting options to visualize detected data.
 
 ### Reformat raw BirdNET results
 
