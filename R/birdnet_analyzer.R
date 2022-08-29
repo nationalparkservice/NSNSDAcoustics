@@ -55,6 +55,8 @@
 #'
 #' This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET. The example given in this function's documentation below will not run unless you have set up BirdNET-Analyzer and a conda environment as conveyed in the Description.
 #'
+#'  BirdNET-Analyzer model versions 2.1 and 2.2 are currently supported. \href{https://github.com/kahst/BirdNET-Analyzer/tree/main/checkpoints}{View information on BirdNET version history.}
+#'
 #' The function can handle .wav or .mp3 audio files. The current behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations.
 #'
 #' Internally, BirdNET-Analyzer expects a week of the year as an input. The behavior of birdnet_analyzer() is to parse the week of year from the SITEID_YYYYMMDD_HHMMSS filename using lubridate::week().
@@ -168,9 +170,21 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
     birdnet.directory <- paste0(birdnet.directory, '/')
   }
 
+  # Figure out what BirdNET-Analyzer Version we are using
+  birdnet.version <- list.files(
+    path = paste0(birdnet.directory, 'checkpoints'),
+    pattern = 'V2.'
+  )
+
   # Read in the modified analyze.py script installed with the package
-  birdnet.script <- paste(system.file(package = "NSNSDAcoustics"),
-                          "reticulate-analyze-april2022.py", sep = "/")
+  if (birdnet.version == 'V2.1') {
+    birdnet.script <- paste(system.file(package = "NSNSDAcoustics"),
+                            "reticulate-analyze-april2022.py", sep = "/")
+  }
+  if (birdnet.version == 'V2.2') {
+    birdnet.script <- paste(system.file(package = "NSNSDAcoustics"),
+                            "reticulate-analyze-v2pt2.py", sep = "/")
+  }
 
   # Get current working directory and make sure it is reset after function exits
   #  (to deal with fact that wd must be set to BirdNET python directory to
