@@ -2,7 +2,7 @@
 
 This repository provides a place for National Park Service [Natural Sounds and Night Skies Division (NSNSD)](https://www.nps.gov/orgs/1050/index.htm) staff to develop and modernize several bioacoustics workflows. 
 
-**All documentation and code is currently under development.**
+**All documentation and code is currently under development. If you encounter a problem, please submit it to [Issues](https://github.com/nationalparkservice/NSNSDAcoustics/issues). If you have a question or need that isn't covered by submitting an issue, please reach out to Cathleen Balantic (`cathleen_balantic` at `nps.gov`).**
 
 # Table of Contents
 
@@ -27,7 +27,7 @@ Next, you can install NSNSDAcoustics using one of two options:
 
 ### (1) Option 1: Use `install_github()`:
 
-You may need to first install the latest version of devtools. Once you have devtools, you can install the latest version of NSNSDAcoustics:
+You may need to first install the latest version of devtools, and the R console may also prompt you to install Rtools (follow directions given in console message). If you are having trouble installing devtools, make sure to disconnect from VPN. Once you have Rtools and devtools, you can install the latest version of NSNSDAcoustics:
 
 ```r
 install.packages('devtools')
@@ -67,7 +67,7 @@ To use `birdnet_analyzer()`, please first complete the following steps. The func
 
 ### (1) Install BirdNET using the "Install BirdNET from zip" instructions at [BirdNET-Analyzer -- Setup (Windows)](https://github.com/kahst/BirdNET-Analyzer#setup-windows). 
 
-Early on in the [Setup (Windows)](https://github.com/kahst/BirdNET-Analyzer#setup-windows), the instructions will encourage you to download a "fully-packaged version that does not require you to install any additional packages and can be run as-is". This is *not* the file you want, so keep scrolling until you hit a section that says "Install BirdNET from zip" and click "Download BirdNET Zip-file". Unzip that file to a desired location on your machine. This folder should have the name **BirdNET-Analyzer-main**.
+Early on in the [Setup (Windows)](https://github.com/kahst/BirdNET-Analyzer#setup-windows) section, the instructions will encourage you to download a "fully-packaged version that does not require you to install any additional packages and can be run as-is". This is *not* the file you want, so keep scrolling until you hit a section that says "Install BirdNET from zip" and click "Download BirdNET Zip-file". Unzip that file to a desired location on your machine. This folder should have the name **BirdNET-Analyzer-main**.
 
 ### (2) Download and install [Anaconda](https://www.anaconda.com/). 
 
@@ -186,7 +186,7 @@ You may not want to process files through RStudio, or you may already have BirdN
 
 ## Assessing BirdNET Results
 
-If you have a large number of audio files, and plan to monitor for a long time across many locations, you may very quickly find yourself managing thousands of BirdNET output files. It's likely that you'll want a systematic way to track and check on these results, and verify whether BirdNET detections are truly from a target species. The `birdnet_format()` --> `birdnet_verify()` workflow offers one way to keep track of your verifications. An alternative way would be to set up a SQLite database (e.g., [as used in the AMMonitor package](https://code.usgs.gov/vtcfwru/ammonitor/-/wikis/home)). Although a database solution may ultimately be the most robust way to track results through time in a long term project, this can come with a lot of start up and might not be easily extensible to your project needs. Instead, the worfklow below provides a simple way to reformat and work with BirdNET output files directly, allowing you to store your verifications there. Lastly, `birdnet_plot()` provides a flexible way to visualize a subset of detected data.
+If you have a large number of audio files, and plan to monitor for a long time across many locations, you may very quickly find yourself managing thousands of BirdNET output files. It's likely that you'll want a systematic way to track and check on these results, and verify whether BirdNET detections are truly from a target species. The `birdnet_format()` --> `birdnet_verify()` workflow offers one way to keep track of your verifications. An alternative way would be to set up a SQLite database (e.g., [as used in the AMMonitor package](https://code.usgs.gov/vtcfwru/ammonitor/-/wikis/home)). Although a database solution may ultimately be the most robust way to track results through time in a long term project, this can come with a lot of start up and might not be easily extensible to your project needs. Instead, the worfklow below provides a simple way to reformat and work with BirdNET output files directly, allowing you to store your verifications there. Lastly, `birdnet_plot()` and `birdnet_barchart()` provide plotting options to visualize detected data.
 
 ### Reformat raw BirdNET results
 
@@ -336,7 +336,7 @@ dat <- birdnet_gather(results.directory = 'example-results-directory',
 
 # Create a random sample of three detections to verify
 set.seed(4)
-to.verify <- dat[common.name == "Swainson's Thrush"][sample(.N, 3)]
+to.verify <- dat[common_name == "Swainson's Thrush"][sample(.N, 3)]
 ```
 
 The next step is to create a "verification library" for this species; essentially, a character vector of acceptable options for your verification labels. Verifying BirdNET detections may be tricky depending on your research question, because BirdNET does not distinguish between the different types of vocalizations a bird may produce. This means the burden is on you, the verifier, to label the detection in a way that will best support you in answering your motivating research question. 
@@ -439,7 +439,7 @@ Below, we subset the `examplePlotData` object to plot detections for Swainson's 
 # Plot only detections of Swainson's Thrush verified as "song",
 # with frequency limits ranging from 0.5 to 12 kHz, gray spectrogram colors,
 # a custom title, and a gray box around each detection
-plot.songs <- examplePlotData[common.name == "Swainson's Thrush" & verify == "song"]
+plot.songs <- examplePlotData[common_name == "Swainson's Thrush" & verify == "song"]
 birdnet_plot(data = plot.songs,
              audio.directory = 'example-audio-directory',
              title = "Swainson's Thrush Songs",
@@ -464,7 +464,7 @@ library(viridis)
 # Plot only detections of Swainson's Thrush verified as "call"
 # with frequency limits ranging from 0.5 to 6 kHz,a custom title, no boxes,
 # and colors sampled from the viridis color package
-plot.calls <- examplePlotData[common.name == "Swainson's Thrush" & verify == "call"]
+plot.calls <- examplePlotData[common_name == "Swainson's Thrush" & verify == "call"]
 birdnet_plot(data = plot.calls,
              audio.directory = 'example-audio-directory',
              title = "Swainson's Thrush Calls",
@@ -488,7 +488,7 @@ In the final example, we demonstrate that `birdnet_plot()` can also be used to v
 # and gray spectrogram colors
 sp <- c('Varied Thrush', 'Pacific-slope Flycatcher')
 for (i in 1:length(sp)) {
- plot.sp <- examplePlotData[confidence >= 0.25 & common.name == sp[i]]
+ plot.sp <- examplePlotData[confidence >= 0.25 & common_name == sp[i]]
  birdnet_plot(data = plot.sp,
               audio.directory = 'example-audio-directory',
               title = paste0(sp[i], ' Detections >= 0.25'),
@@ -572,8 +572,6 @@ Meanwhile, use of interactive = TRUE is meant strictly for exploratory purposes.
 
 
 ## Converting wave audio files to NVSPL tables with wave_to_nvspl
-
-**Note: function [needs to be updated](https://github.com/nationalparkservice/NSNSDAcoustics/issues/2) with PAMGuide corrigendum** 
 
 `wave_to_nvspl()` uses PAMGuide code to convert wave files into an NVSPL formatted table. NVSPL stands for NPS-Volpe Sound Pressure Level, and is the standard format used in NSNSD analyses. These are hourly files comprised of 1/3 octave data in 1-sec LEQ increments. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). 
 
