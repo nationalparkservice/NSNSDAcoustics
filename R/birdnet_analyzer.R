@@ -118,7 +118,7 @@
 #' # Run all audio data in a directory through BirdNET
 #' birdnet_analyzer(audio.directory = 'absolute/path/example-audio-directory',
 #'                  results.directory = 'absolute/path/example-results-directory',
-#'                  birdnet.directory = 'absolute/path/BirdNET',
+#'                  birdnet.directory = 'absolute/path/BirdNET-Analyzer-main',
 #'                  lat = 46.09924,
 #'                  lon = -123.8765)
 #'
@@ -126,7 +126,7 @@
 #' birdnet_analyzer(audio.directory = 'absolute/path/example-audio-directory',
 #'                  audio.files = 'Rivendell_20210623_113602.wav',
 #'                  results.directory = 'absolute/path/example-results-directory',
-#'                  birdnet.directory = 'absolute/path/BirdNET',
+#'                  birdnet.directory = 'absolute/path/BirdNET-Analyzer-main',
 #'                  lat = 46.09924,
 #'                  lon = -123.8765)
 #'
