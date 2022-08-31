@@ -4,7 +4,8 @@
 #' @title Plot stacked barcharts of BirdNET detections
 #' @description Plot stacked barcharts of user-selected BirdNET results by date
 #' @param data Data.table or data.frame of formatted BirdNET results that a user would like to plot. Generally, this data object may be preceded by a call to \code{\link{add_time_cols}}; all data should come from a single site and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct).
-#' @param julian.breaks Optional numeric vector of julian date plotting breaks to use on the x-axis. If omitted, will be computed automatically.
+#' @param julian.breaks Optional numeric vector of julian date plotting breaks to use on the x axis. If omitted, will be computed automatically. Example inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9, and June 29 for non-leap year data); c(130:160) would graph every single date from May 10 to June 9 on the x axis (for non-leap year data).
+#' @param y.limits Optional numeric vector to control y-axis limits (e.g., c(0, 150)). If not entered, will be generated automatically.
 #' @param interactive Default = FALSE for a static plot. If true, produces a plotly plot with interactive hover.
 #' @param focal.species Optional character vector containing the common names of species to highlight. Any species contained in the data object that are not contained in focal.species will be plotted under one color as "Other".
 #' @param focal.colors Optional character vector describing the colors that should be used for species named in the focal.species argument. Non-focal species ("Other") will be plotted in black.
@@ -49,10 +50,10 @@
 #' }
 #'
 
-birdnet_barchart <- function(data, julian.breaks, interactive = FALSE,
+birdnet_barchart <- function(data, julian.breaks, y.limits,
+                             interactive = FALSE,
                              focal.species, focal.colors)
 {
-
   # For some reason, data.table is having "side-effects" on the data object
   # So saving a backup object here that will be operated on
   dt <- copy(data)
@@ -109,24 +110,27 @@ birdnet_barchart <- function(data, julian.breaks, interactive = FALSE,
     stacksp[, common_name := factor(common_name, levels = levs, labels = labs)]
   }
 
+  # Prep human-readable date labels for julian date
   stacksp[,julian.date := yday(date)]
   stacksp[,month := month(date, label = TRUE)][
     ,day := day(date)]
   stacksp[,date.lab := paste0(day, '-', month)]
 
+  # Generate julian.breaks and y.limits if missing
   if (missing(julian.breaks)) {
     julian.range <- range(stacksp$julian.date)
     julian.breaks <- seq(from = floor(julian.range[1]/10)*10,
                          to = ceiling(julian.range[2]/10)*10, by = 20)
   }
 
+  if (missing(y.limits)) {
+    y.limits <- c(0, max(stacksp[,sum(N), by = julian.date]$V1))
+  }
+
   # Set reasonable breaks
   brks <- unique(stacksp[julian.date %in% julian.breaks,
                          c('julian.date', 'date.lab')])
   setkey(brks, julian.date)
-  # Remove leap year julians
-  # brks <- brks[date.lab %in% c('1-Mar', '20-Mar', '9-Apr', '29-Apr', '19-May',
-  #                              '8-Jun', '29-Jun')]
 
   if (missing(focal.species)) {
     alldets <- ggplot(stacksp, aes(x = julian.date, y = N, fill = common_name)) +
@@ -137,7 +141,7 @@ birdnet_barchart <- function(data, julian.breaks, interactive = FALSE,
       ylab('N BirdNET Detections') +
       scale_x_continuous(expand = c(0, 0), breaks = brks$julian.date,
                          labels = brks$date.lab) +
-      scale_y_continuous(expand = c(0, 0)) + #, limits = c(0, 3000),
+      scale_y_continuous(expand = c(0, 0), limits = y.limits) +
       #  breaks = seq(from = 0, to = 3000, by = 500)) +
       # scale_color_manual(guide = 'none') + # eliminate additional legend
       ggtitle(paste0('Count by Date - ', unique(dt$locationID))) +
@@ -152,13 +156,19 @@ birdnet_barchart <- function(data, julian.breaks, interactive = FALSE,
             strip.background = element_blank(),
             axis.title.x = element_text(size = 12),
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-
     if (interactive == TRUE) {
-      return(style(ggplotly(alldets), hoverinfo = 'text' ))
+      return(style(ggplotly(alldets) %>%
+                     layout(
+                       xaxis = list(automargin = TRUE),
+                       yaxis = list(automargin = TRUE)
+                     ),
+                   hoverinfo = 'text')
+      )
     } else {
       return(alldets)
     }
   } # end no focal species
+
 
   # If using focal species
   if(!missing(focal.species)) {
@@ -173,7 +183,7 @@ birdnet_barchart <- function(data, julian.breaks, interactive = FALSE,
       scale_fill_manual(values = focal.colors) +
       scale_x_continuous(expand = c(0, 0), breaks = brks$julian.date,
                          labels = brks$date.lab) +
-      scale_y_continuous(expand = c(0, 0)) +
+      scale_y_continuous(expand = c(0, 0), limits = y.limits) +
       ggtitle(paste0('Count by Date - ', unique(dt$locationID))) +
       theme_classic() +
       theme(axis.ticks.y = element_blank(),
@@ -188,7 +198,13 @@ birdnet_barchart <- function(data, julian.breaks, interactive = FALSE,
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
     if (interactive == TRUE) {
-      return(style(ggplotly(focs), hoveron = 'points', hoverinfo = 'text' ))
+      return(style(ggplotly(focs)  %>%
+                     layout(
+                       xaxis = list(automargin = TRUE),
+                       yaxis = list(automargin = TRUE)
+                     ),
+                   hoverinfo = 'text' )
+      )
     } else {
       return(focs)
     }

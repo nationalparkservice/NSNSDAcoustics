@@ -7,6 +7,7 @@
 birdnet_barchart(
   data,
   julian.breaks,
+  y.limits,
   interactive = FALSE,
   focal.species,
   focal.colors
@@ -15,7 +16,9 @@ birdnet_barchart(
 \arguments{
 \item{data}{Data.table or data.frame of formatted BirdNET results that a user would like to plot. Generally, this data object may be preceded by a call to \code{\link{add_time_cols}}; all data should come from a single site and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct).}
 
-\item{julian.breaks}{Optional numeric vector of julian date plotting breaks to use on the x-axis. If omitted, will be computed automatically.}
+\item{julian.breaks}{Optional numeric vector of julian date plotting breaks to use on the x axis. If omitted, will be computed automatically. Example inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9, and June 29 for non-leap year data); c(130:160) would graph every single date from May 10 to June 9 on the x axis (for non-leap year data).}
+
+\item{y.limits}{Optional numeric vector to control y-axis limits (e.g., c(0, 150)). If not entered, will be generated automatically.}
 
 \item{interactive}{Default = FALSE for a static plot. If true, produces a plotly plot with interactive hover.}
 
