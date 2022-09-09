@@ -111,7 +111,7 @@
 #' # Run nvspl_to_ai to generate acoustic indices csv for example NVSPL files
 #' nvspl_to_ai(input.directory = 'example-input-directory',
 #'             output.directory = 'example-output-directory',
-#'             project = 'example-project', plt = TRUE)
+#'             project = 'example-project')
 #'
 #' # View Results
 #' (ai.results <- read.csv(list.files(path = 'example-output-directory',
