@@ -157,12 +157,7 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
             axis.title.x = element_text(size = 12),
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
     if (interactive == TRUE) {
-      return(style(ggplotly(alldets) %>%
-                     layout(
-                       xaxis = list(automargin = TRUE),
-                       yaxis = list(automargin = TRUE)
-                     ),
-                   hoverinfo = 'text')
+      return(style(ggplotly(alldets), hoverinfo = 'text')
       )
     } else {
       return(alldets)
@@ -198,12 +193,7 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
     if (interactive == TRUE) {
-      return(style(ggplotly(focs)  %>%
-                     layout(
-                       xaxis = list(automargin = TRUE),
-                       yaxis = list(automargin = TRUE)
-                     ),
-                   hoverinfo = 'text' )
+      return(style(ggplotly(focs), hoverinfo = 'text' )
       )
     } else {
       return(focs)
