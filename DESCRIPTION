@@ -43,4 +43,5 @@ Collate:
     'examples-helpfiles.R'
     'helpers.R'
     'nvspl_to_ai.R'
+    'plot_audio_summary.R'
     'wave_to_nvspl.R'

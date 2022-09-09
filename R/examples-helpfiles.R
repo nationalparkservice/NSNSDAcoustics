@@ -246,3 +246,23 @@ NULL
 #' str(exampleBarchartData, max.level = 1)
 #'
 NULL
+
+
+#' @title exampleAI
+#' @description Sample data.frame to demonstrate \code{\link{plot_audio_summary}}
+#' @format An object of class \code{data.frame} containing 60 columns.
+#' @details The exampleAI object is used to demonstrate \code{\link{plot_audio_summary}}
+#' @seealso \code{\link{plot_audio_summary}}, \code{\link{nvspl_to_ai}}
+#' @docType data
+#' @keywords datasets
+#' @name exampleAI
+#' @usage data(exampleAI)
+#' @examples
+#'
+#' # Load the dataset
+#' data(exampleAI)
+#'
+#' # View structure
+#' str(exampleAI, max.level = 1)
+#'
+NULL
