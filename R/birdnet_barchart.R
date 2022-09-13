@@ -124,7 +124,7 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
   }
 
   if (missing(y.limits)) {
-    y.limits <- c(0, max(stacksp[,sum(N), by = julian.date]$V1))
+    y.limits <- c(0, max(stacksp[,sum(N), by = c('year', 'julian.date')]$V1))
   }
 
   # Set reasonable breaks
