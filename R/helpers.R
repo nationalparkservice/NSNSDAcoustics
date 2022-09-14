@@ -107,12 +107,138 @@ add_time_cols <- function(dt,
 }
 
 
+# readable_julian_breaks =======================================================
+
+#' @name readable_julian_breaks
+#' @title Create human-readable labels for julian dates
+#' @description Create human-readable labels for julian dates, to be used downstream in plots. Particularly useful for generating plots that compare multiple years of data in one graph, especially when dealing with leap years (see Details).
+#' @param data A data.frame or data.table that must contain a column of class "POSIXct" "POSIXt".
+#' @param posix.column Character name of the "POSIXct" "POSIXt" column in 'data'.
+#' @param format Character string containing your desired date label components; any options in c('%d', '%m', '%b', '%B', '%y', '%Y'). For example, c('%Y', '%m', '%d) used with sep = '-' results in labels like: '2022-01-28'. See Details. Do not use '%y' or '%Y' options if data contains multiple years.
+#' @param sep Character value used to separate options in format. Any value may be used, but common uses would be options in c(' ', '-', '/').
+#' @param timestep Integer specifying the number of days that should be spaced between each label. For example, a value of 14 means labels will occur every two weeks.
+#' @param juilan.breaks Optional integer vector specifying the values of julian dates to use; will override timestep argument.
+#' @return A data.table with two columns: julian.date (integer) and date.lab (character) which can be used downstream in ggplot with the scale_x_continuous() element to customize human-readable dates on the x-axis.
+#' @details
+#'
+#' Note: to accommodate multi-year datasets that contain leap years (and thus, differing julian dates for the same human-readable date label), the behavior of this function is to remove leap year labels from the output data for clean plotting.
+#'
+#' The format argument accepts any of the following options:
+#'
+#' \strong{Format Option Code:	Value}
+#' \itemize{
+#' \item{\strong{%d}: Day of month (integer).}
+#' \item{\strong{%m}: Month (integer).}
+#' \item{\strong{%b}: Month (abbreviated character).}
+#' \item{\strong{%B}: Month (full name character).}
+#' \item{\strong{%y}: Year (2 digit integer).}
+#' \item{\strong{%Y}: Year (4 digit integer).}
+#' }
+#'
+#' @import data.table
+#' @importFrom lubridate day month yday year
+#' @importFrom stringr str_extract
+#' @export
+#' @examples
+#' \dontrun{
+#'
+#' # Read in example data
+#' data(exampleAI)
+#'
+#' exampleAI <- data.table(exampleAI)
+#'
+#' # Add a posix date time column
+#' exampleAI[,dateTime := lubridate::ymd_hms(
+#'      paste0(Date,' ', Hr, ':', Min, ':', Sec),
+#'      tz = 'America/Anchorage')
+#' ]
+#'
+#' # Add year and julian.date columns
+#' exampleAI[, Year := factor(lubridate::year(dateTime))]
+#' exampleAI[,julian.date := lubridate::yday(dateTime)]
+#'
+#' # Create human-readable julian breaks
+#' brks <- readable_julian_breaks(
+#'   data = exampleAI,
+#'   posix.column = 'dateTime',
+#'   format = c('%B', '%d'),
+#'   sep = ' ',
+#'   timestep = 30
+#'   )
+#'
+#' # Example plot of using breaks with human-readable data across years
+#' # WARNING: May take a moment to plot the following
+#' ggplot(exampleAI, aes(julian.date, ACIoutI, col = Year, group = Year)) +
+#'  geom_smooth(method = 'loess', aes(fill = Year)) +
+#'  scale_x_continuous(expand = c(0, 0),
+#'                     breaks = brks$julian.date,
+#'                     labels = brks$date.lab) +
+#'  xlab('Date') +
+#'  ylab('Acoustic Complexity Index') +
+#'  theme(axis.text.x = element_text(angle = 90))
+#'
+#' }
+
+
+# see date formats:
+# https://www.stat.berkeley.edu/~s133/dates.html
+
+readable_julian_breaks <- function(
+    data,
+    posix.column,
+    format,
+    sep,
+    timestep,     # number of days (integer) between each label
+    julian.breaks # optional if want to customize
+)
+{
+  data <- data.table(data)
+  data[,julian.date := yday(get(posix.column))]
+  format.opts <- c('%d', '%m', '%b', '%B', '%y', '%Y')
+
+  if (any(!(format %in% format.opts))) {
+    stop('In format arugment, please input any combination of the following options: "c(\'%d\', \'%m\', \'%b\', \'%B\', \'%y\', \'%Y\')". See ?readable_julian_breaks for examples.' )
+  }
+
+  data[,`%d` := day(get(posix.column))][
+    ,`%m` := month(get(posix.column), label = FALSE)][
+      ,`%b` := month(get(posix.column), label = TRUE, abbr = TRUE)][
+        ,`%B` := month(get(posix.column), label = TRUE, abbr = FALSE)][
+          ,`%Y` := year(get(posix.column))][
+            ,`%y` := stringr::str_extract(`%Y`, '(?<=^..).*$')]
+  data[, date.lab := do.call(paste, c(.SD, sep = sep)), .SDcols = format]
+
+  if (missing(julian.breaks)) {
+    julian.range <- range(data$julian.date)
+    julian.breaks <- seq(from = floor(julian.range[1]/10)*10,
+                         to = ceiling(julian.range[2]/10)*10,
+                         by = timestep)
+  }
+
+  brks <- unique(data[julian.date %in% julian.breaks,
+                      c('julian.date', 'date.lab')])
+  setkey(brks, julian.date)
+
+  # To accommodate leap years and avoid overlapping labels,
+  # Only keep the SECOND occurrence of each julian date
+  # (first occurrence would be the leap year label, which is likely less common)
+  N <- brks[,.N, julian.date]
+  brks <- merge(x = brks, y = N, by = 'julian.date', all.x = TRUE)
+  brks[match(unique(brks$julian.date), brks$julian.date), match := TRUE]
+  brks <- brks[match == TRUE]
+  brks[,c('N', 'match') := NULL]
+
+  return(brks)
+}
+
+
+
 # normdBA ======================================================================
 # Used within NVSPL_To_AI -- internal pkg function
 normdBA <- function (x) { (x-(-10)) / (80 - (-10)) }
 
 
-# # spectrogram colors from monitoR ==============================================
+# # spectrogram colors from monitoR =============================================
 # # Colors are defined as:
 # gray.1 <- function(n = 30) gray(seq(1, 0, length.out = n))
 # gray.2 <- function(n = 30) gray(1-seq(0, 1, length.out = n)^2)
