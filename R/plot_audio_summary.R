@@ -18,7 +18,7 @@
 #' @details
 #' This function was developed by the National Park Service Natural Sounds and Night Skies Division. It is intended to provide exploratory plotting that summarizes the total number of hours collected by date and by season in a park bioacoustics project.
 #'
-#' Using the acoustic.index.fp is desired over the audio.directory path. If computing audio hour totals directly from the audio.directory argument, totals are estimated based on the sample.rate.hz, bit.rate, bit.depth, and channels provided by the user or in the defaults for these arguments; thus, if an audio directory contains data with varying sample rates used over the years, the estimate provided from the audio directory may not be accurate. The function does NOT read every audio file to compute total values because this would be computationally prohibitive; instead, if using audio.directory, it assumes the user has done their due diligence inputting values for sample.rate.hz, bit.rate, bit.depth, and channels.
+#' Using the acoustic.index.fp is desired over the audio.directory path. If computing audio hour totals directly from the audio.directory argument, totals are estimated based on the sample.rate.hz, bit.rate, bit.depth, and channels provided by the user or in the defaults for these arguments; thus, if an audio directory contains data with varying sample rates used over the years, the estimate provided from the audio directory may not be accurate. The function does NOT read every audio file to compute total values because this would be computationally prohibitive; instead, if using audio.directory, it assumes the user has done their due diligence inputting values for sample.rate.hz, bit.rate, bit.depth, and channels. If recordings occur over multiple hours and audio.directory is used, the plot.hours graphic will only display that data were collected over the hour specified in the file name, which may not give a correct estimate.
 #'
 #' @seealso  \code{\link{wave_to_nvspl}}, \code{\link{nvspl_to_ai}}
 #' @import data.table ggplot2 lubridate
@@ -289,6 +289,10 @@ plot_audio_summary <- function(audio.directory,
           axis.title.x = element_text(size = 12))
 
   plots <- list(plot.dates = plot.dates, plot.hours = plot.hours)
+
+  message('If you are having trouble outputting the plots, make sure to store this output to an object (e.g., g <- plot_audio_summary(your inputs here). Then you can access the two plots via g$plot.dates and g$plot.hours. See ?plot_audio_summary for examples.')
+
+  return(plots)
 
 }
 
