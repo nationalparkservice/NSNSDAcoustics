@@ -125,7 +125,13 @@ birdnet_gather <- function(results.directory,
   paths <- paths[grep(pattern = 'desktop.ini', x = tolower(paths), invert = TRUE)]
 
   dat <- suppressWarnings(rbindlist(lapply(paths, function(x) fread(x))))
-  if (formatted == TRUE) dat[,verify := as.character(verify)]
+  if (formatted == TRUE) {
+
+    if(!('verify' %in% colnames(dat))) {
+      stop('Your data appear to be unformatted. Did you mean to set "formatted = FALSE" instead? See ?birdnet_gather for details.')
+    }
+    dat[,verify := as.character(verify)]
+  }
 
   return(dat)
 }

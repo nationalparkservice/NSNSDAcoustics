@@ -138,7 +138,7 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
       geom_bar(position = "stack", stat = "identity") +
       facet_wrap(~year) +
       xlab('Date') +
-      ylab('N BirdNET Detections') +
+      ylab('N') +
       scale_x_continuous(expand = c(0, 0), breaks = brks$julian.date,
                          labels = brks$date.lab) +
       scale_y_continuous(expand = c(0, 0), limits = y.limits) +
