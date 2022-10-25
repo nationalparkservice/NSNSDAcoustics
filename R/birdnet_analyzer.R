@@ -12,16 +12,12 @@
 #' @param ovlp Overlap in seconds between extracted spectrograms. Values from 0.0 to 2.9. Default = 0.0.
 #' @param sens Detection sensitivity; higher values result in higher sensitivity. Values from 0.5 to 1.5. Default = 1.0.
 #' @param min.conf Minimum confidence threshold. Values from 0.01 to 0.99. Default = 0.1.
-#' @param rtype Specifies output format. BirdNET-Analyzer provides several options, but the only ones available in this function are 'r' or 'csv'. Default = 'r'. \strong{For downstream data processing, 'r' is strongly preferred.} The 'csv' option exists for dealing with outputs from the now deprecated \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite} (and it's accompanying R function, \code{\link{birdnet_run}}).
 #' @param threads Number of CPU threads.
 #' @param batchsize Number of samples to process at the same time. Defaults to 1.
 #' @param locale Locale for translated species common names. Values in c('af', 'de', 'it', ...). Defaults to 'en'.
 #' @param sf.thresh Minimum species occurrence frequency threshold for location filter. Values in c(0.01, 0.99). Defaults to 0.03.
 
-#' @return Saves either a txt or csv file of results for each audio file in results.directory. Files have prefix "BirdNET_".
-#'
-#'
-#' If rtype = 'r', outputs a .txt file containing the following columns:
+#' @return Saves a txt file of results for each audio file in results.directory. Files have prefix "BirdNET_". Files contain the following columns:
 #'
 #' \itemize{
 #' \item{\strong{filepath}: Filepath for the processed audio file.}
@@ -39,17 +35,6 @@
 #' \item{\strong{species_list}: Species list used.}
 #' \item{\strong{model}: BirdNET model used.}
 #' }
-#'
-#' If rtype = 'csv', outputs a .csv containing the following columns:
-#'
-#' \itemize{
-#' \item{\strong{Start (s)}: Start time of detection in seconds.}
-#' \item{\strong{End (s)}: End time of detection in seconds.}
-#' \item{\strong{Scientific name}: Species scientific name.}
-#' \item{\strong{Common name}: Species common name.}
-#' \item{\strong{Confidence}: BirdNET's confidence level in this detection ranging from 0 (least confident) to 1 (most confident).}
-#' }
-#'
 #'
 #' @details
 #'
@@ -149,8 +134,25 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
                              threads = 4,
                              batchsize = 1,
                              locale = 'en',
-                             rtype = 'r', # or csv
                              sf.thresh = 0.03) {
+
+  # # # Set up for profiling
+  audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory'
+  results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-results-directory'
+  birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/BirdNET-Analyzer-main/'
+  lat = 46.09924
+  lon = -123.8765
+  start = 1
+  ovlp = 0.0
+  sens = 1.0
+  min.conf = 0.1
+  threads = 4
+  batchsize = 1
+  locale = 'en'
+  sf.thresh = 0.03
+
+
+
 
   if (!requireNamespace("reticulate", quietly = TRUE)) {
     stop(
@@ -203,7 +205,7 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
 
   if(!missing(audio.files)) {
     rec.paths <- unique(grep(paste(audio.files,collapse = "|"),
-                            rec.paths, value = TRUE))
+                             rec.paths, value = TRUE))
 
     # This form only takes the full file path within top-level audio.directory
     # rec.paths <- rec.paths[rec.paths %in% audio.files]
@@ -216,112 +218,203 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
     }
   }
 
-  i.strings <- paste0(audio.directory, rec.paths) # absolute paths to recs
-  recIDs <- basename(rec.paths)
+    i.strings <- paste0(audio.directory, rec.paths) # absolute paths to recs
+    recIDs <- basename(rec.paths)
 
-  # Identify recording week
-  wk <- week(as.Date(unlist(lapply(strsplit(x = recIDs, split = '_'), '[[', 2)),
-                     format = '%Y%m%d'))
+    # Identify recording week
+    wk <- week(as.Date(unlist(lapply(strsplit(x = recIDs, split = '_'), '[[', 2)),
+                       format = '%Y%m%d'))
 
-  if (rtype == 'r') rext <- '.txt'
-  if (rtype == 'csv') rext <- '.csv'
+    rtype <- 'r'
+    if (rtype == 'r') rext <- '.txt'
 
-  # File path for results
-  result.fp <- paste0(results.directory, 'BirdNET_',
-                      unlist(lapply(strsplit(x = recIDs, split = '.',
-                                             fixed = TRUE),
-                                    '[[', 1)),
-                      rext)
+    # File path for results
+    result.fp <- paste0(results.directory, 'BirdNET_',
+                        unlist(lapply(strsplit(x = recIDs, split = '.',
+                                               fixed = TRUE),
+                                      '[[', 1)),
+                        rext)
 
-  # Loop through wav files to process through BirdNET
-  error.list <- list()
-  for (i in start:length(recIDs)) {
-    # First, check to see if the file is an mp3.
-    # If it is, since I can't get my python libraries to process mp3, we are
-    # going to convert it to a temporary wav file, and process that instead
-    message('Working on ', i, ' of ', length(recIDs), ': ', recIDs[i], '\n')
-    file <- i.strings[i]
-    is.mp3 <- grepl('.mp3', file, ignore.case = TRUE)
+    # Loop through wav files to process through BirdNET
+    error.list <- list()
 
-    if (is.mp3) {
-      message('This is an mp3. Converting to wave...')
-      r <- readMP3(file)  ## MP3 file in working directory
-      temp.file <- paste0(audio.directory, 'temp-',
-                          gsub('.mp3', '.wav', recIDs[i], ignore.case = TRUE))
-      writeWave(r, temp.file, extensible = FALSE)
-      file <- temp.file
-      message('Done converting temporary wave file.')
+
+    # IF USING REGULAR FOR LOOP
+    for (i in start:length(recIDs)) {
+      # First, check to see if the file is an mp3.
+      # If it is, since I can't get my python libraries to process mp3, we are
+      # going to convert it to a temporary wav file, and process that instead
+      message('Working on ', i, ' of ', length(recIDs), ': ', recIDs[i], '\n')
+      file <- i.strings[i]
+      is.mp3 <- grepl('.mp3', file, ignore.case = TRUE)
+
+      if (is.mp3) {
+        message('This is an mp3. Converting to wave...')
+        r <- readMP3(file)  ## MP3 file in working directory
+        temp.file <- paste0(audio.directory, 'temp-',
+                            gsub('.mp3', '.wav', recIDs[i],
+                                 ignore.case = TRUE))
+        writeWave(r, temp.file, extensible = FALSE)
+        file <- temp.file
+        message('Done converting temporary wave file.')
+      }
+
+      setwd(birdnet.directory)
+      py_run_string(paste0("args_i = '", file, "'"))
+      py_run_string(paste0("args_o = '", result.fp[i], "'"))
+      py_run_string(paste0("args_lat = ", lat))
+      py_run_string(paste0("args_lon = ", lon)) # slist ignored if lat long provided
+      py_run_string(paste0("args_week = ", wk[i]))
+      py_run_string(paste0("args_sensitivity = ", sens))
+      py_run_string(paste0("args_min_conf = ", min.conf))
+      py_run_string(paste0("args_overlap = ", ovlp))
+      py_run_string(paste0("args_rtype = '", rtype, "'"))
+      py_run_string(paste0("args_threads = ", threads))
+      py_run_string(paste0("args_batchsize = ", batchsize))
+      py_run_string(paste0("args_locale = '", locale, "'"))
+      py_run_string(paste0("args_sf_thresh = ", sf.thresh))
+
+      catch.error <- tryCatch(
+        source_python(birdnet.script),
+        error = function(e) e
+      )
+
+      if (inherits(catch.error, 'error')) {
+        message('There is a problem with ', recIDs[i], '; skipping to next\n')
+        error.list[[i]] <- catch.error
+        if(exists('temp.file')) unlink(temp.file) # remove temporary wav if needed
+        next
+      } # end trycatch
+      if (exists('temp.file')) unlink(temp.file) # remove temporary wav if needed
+    }  # end for loop
+
+
+
+    # IF USING FOREACH (parallel)
+    # NOTE: this will not work, foreach doesn't work with reticulate
+    if (parallel) {
+      parallel::detectCores()
+
+      n.cores <- parallel::detectCores() - 1
+
+      #create the cluster
+      my.cluster <- parallel::makeCluster(
+        n.cores,
+        type = "PSOCK"
+      )
+
+      #check cluster definition (optional)
+      print(my.cluster)
+
+      #register it to be used by %dopar%
+      doParallel::registerDoParallel(cl = my.cluster)
+
+      #check if it is registered (optional)
+      foreach::getDoParRegistered()
+
+      #how many workers are available? (optional)
+      foreach::getDoParWorkers()
+
+
+      foreach(i = start:length(recIDs)) %dopar% {
+        # First, check to see if the file is an mp3.
+        # If it is, since I can't get my python libraries to process mp3, we are
+        # going to convert it to a temporary wav file, and process that instead
+        message('Working on ', i, ' of ', length(recIDs), ': ', recIDs[i], '\n')
+        file <- i.strings[i]
+        is.mp3 <- grepl('.mp3', file, ignore.case = TRUE)
+
+        if (is.mp3) {
+          message('This is an mp3. Converting to wave...')
+          r <- readMP3(file)  ## MP3 file in working directory
+          temp.file <- paste0(audio.directory, 'temp-',
+                              gsub('.mp3', '.wav', recIDs[i],
+                                   ignore.case = TRUE))
+          writeWave(r, temp.file, extensible = FALSE)
+          file <- temp.file
+          message('Done converting temporary wave file.')
+        }
+
+        setwd(birdnet.directory)
+        py_run_string(paste0("args_i = '", file, "'"))
+        py_run_string(paste0("args_o = '", result.fp[i], "'"))
+        py_run_string(paste0("args_lat = ", lat))
+        py_run_string(paste0("args_lon = ", lon)) # slist ignored if lat long provided
+        py_run_string(paste0("args_week = ", wk[i]))
+        py_run_string(paste0("args_sensitivity = ", sens))
+        py_run_string(paste0("args_min_conf = ", min.conf))
+        py_run_string(paste0("args_overlap = ", ovlp))
+        py_run_string(paste0("args_rtype = '", rtype, "'"))
+        py_run_string(paste0("args_threads = ", threads))
+        py_run_string(paste0("args_batchsize = ", batchsize))
+        py_run_string(paste0("args_locale = '", locale, "'"))
+        py_run_string(paste0("args_sf_thresh = ", sf.thresh))
+
+        catch.error <- tryCatch(
+          source_python(birdnet.script),
+          error = function(e) e
+        )
+
+        if (inherits(catch.error, 'error')) {
+          message('There is a problem with ', recIDs[i], '; skipping to next\n')
+          error.list[[i]] <- catch.error
+          if(exists('temp.file')) unlink(temp.file) # remove temporary wav if needed
+          next
+        } # end trycatch
+        if (exists('temp.file')) unlink(temp.file) # remove temporary wav if needed
+      }  # end foreach
+
+
+      parallel::stopCluster(cl = my.cluster)
+
+    } # end if parallel
+
+
+
+
+    # tryCatch does not always catch the errors due to how error handling
+    # seems to have changed from BirdNET-Lite to BirdNET-Analyzer
+    # So go through and do a comparison
+    audio.ext <- file_ext(recIDs[start:length(recIDs)])
+    wanted.to.process <- gsub('.wav|.mp3', '', recIDs[start:length(recIDs)], ignore.case = TRUE)
+    processed <- gsub('.txt|.csv', '',
+                      gsub('BirdNET_', '', list.files(path = results.directory),
+                           ignore.case = TRUE),
+                      ignore.case = TRUE
+    )
+    not.processed <- wanted.to.process[!(wanted.to.process %in% processed)]
+    if(length(not.processed) > 0) {
+      problem.files <-
+        data.table(
+          recordingID =
+            paste0(not.processed, '.', audio.ext[which(!(wanted.to.process %in% processed))])
+        )
+    } else {
+      problem.files <- data.table(recordingID = NULL)
     }
 
-    setwd(birdnet.directory)
-    py_run_string(paste0("args_i = '", file, "'"))
-    py_run_string(paste0("args_o = '", result.fp[i], "'"))
-    py_run_string(paste0("args_lat = ", lat))
-    py_run_string(paste0("args_lon = ", lon)) # slist ignored if lat long provided
-    py_run_string(paste0("args_week = ", wk[i]))
-    py_run_string(paste0("args_sensitivity = ", sens))
-    py_run_string(paste0("args_min_conf = ", min.conf))
-    py_run_string(paste0("args_overlap = ", ovlp))
-    py_run_string(paste0("args_rtype = '", rtype, "'"))
-    py_run_string(paste0("args_threads = ", threads))
-    py_run_string(paste0("args_batchsize = ", batchsize))
-    py_run_string(paste0("args_locale = '", locale, "'"))
-    py_run_string(paste0("args_sf_thresh = ", sf.thresh))
-
-    catch.error <- tryCatch(
-      source_python(birdnet.script),
-      error = function(e) e
-    )
-
-    if (inherits(catch.error, 'error')) {
-      message('There is a problem with ', recIDs[i], '; skipping to next\n')
-      error.list[[i]] <- catch.error
-      if(exists('temp.file')) unlink(temp.file) # remove temporary wav if needed
-      next
-    } # end trycatch
-    if (exists('temp.file')) unlink(temp.file) # remove temporary wav if needed
-  }
-
-  # tryCatch does not always catch the errors due to how error handling
-  # seems to have changed from BirdNET-Lite to BirdNET-Analyzer
-  # So go through and do a comparison
-  audio.ext <- file_ext(recIDs[start:length(recIDs)])
-  wanted.to.process <- gsub('.wav|.mp3', '', recIDs[start:length(recIDs)], ignore.case = TRUE)
-  processed <- gsub('.txt|.csv', '',
-    gsub('BirdNET_', '', list.files(path = results.directory),
-         ignore.case = TRUE),
-    ignore.case = TRUE
-    )
-  not.processed <- wanted.to.process[!(wanted.to.process %in% processed)]
-  if(length(not.processed) > 0) {
-    problem.files <-
-      data.table(
-        recordingID =
-          paste0(not.processed, '.', audio.ext[which(!(wanted.to.process %in% processed))])
+    # Return names of problematic files
+    if (nrow(problem.files) > 0) {
+      prob.name <- paste0(
+        results.directory, 'BirdNET_Problem-Files_',
+        basename(audio.directory), '_', gsub(':', '', as.character(Sys.time())),
+        '.csv'
       )
-  } else {
-    problem.files <- data.table(recordingID = NULL)
-  }
+      write.csv(x = problem.files, file = prob.name, row.names = FALSE)
+      message(nrow(problem.files), ' files could not be processed. Possible reasons: there is an issue with the audio file itself (corrupt, too short), a txt or csv file with the same name was open at the time of running the function, you are processing audio data from an external hard drive and there is an issue with response, or there is an error in your BirdNET -> Python -> Reticulate setup. \nSee list of unprocessed files here: ', prob.name)
+    }
 
-  # Return names of problematic files
-  if (nrow(problem.files) > 0) {
-    prob.name <- paste0(
-      results.directory, 'BirdNET_Problem-Files_',
-      basename(audio.directory), '_', gsub(':', '', as.character(Sys.time())),
-      '.csv'
-    )
-    write.csv(x = problem.files, file = prob.name, row.names = FALSE)
-    message(nrow(problem.files), ' files could not be processed. Possible reasons: there is an issue with the audio file itself (corrupt, too short), a txt or csv file with the same name was open at the time of running the function, you are processing audio data from an external hard drive and there is an issue with response, or there is an error in your BirdNET -> Python -> Reticulate setup. \nSee list of unprocessed files here: ', prob.name)
-  }
+    if (length(unlist(error.list)) > 0){
+      # Return only unique errors
+      unq.errs <- unique(error.list)
+      message('\nReturning error list...')
+      message('\n', unlist(unq.errs))
+    }
 
-  if (length(unlist(error.list)) > 0){
-    # Return only unique errors
-    unq.errs <- unique(error.list)
-    message('\nReturning error list...')
-    message('\n', unlist(unq.errs))
-  }
+    message('\nFINISHED! Results for each audio file are saved in ', results.directory, ' with the prefix "BirdNET_"\n')
 
-  message('\nFINISHED! Results for each audio file are saved in ', results.directory, ' with the prefix "BirdNET_"\n')
+
+ # })  # end profiler
 
 }
 

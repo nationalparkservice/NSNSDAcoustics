@@ -134,30 +134,15 @@ birdnet_verify <- function(data,
   ext.type <- unique(file_ext(list.files(results.directory)))
   if (length(ext.type) != 1) stop('Multiple file extension types found in folder. Please make sure results are all txt or all csv. Do not mix file types.')
 
-  if (ext.type == 'csv') {
-    if(length(unique(data$common.name)) > 1) {
-      stop("Please input data for one species at a time. You have input a dataset with ", length(unique(data$common.name)), " species.")
-    }
-  }
-
-  if (ext.type == 'txt') {
-    if(length(unique(data$common_name)) > 1) {
-      stop("Please input data for one species at a time. You have input a dataset with ", length(unique(data$common_name)), " species.")
-    }
+  if(length(unique(data$common_name)) > 1) {
+    stop("Please input data for one species at a time. You have input a dataset with ", length(unique(data$common_name)), " species.")
   }
 
   # Create composite key to track results
   results <- birdnet_gather(results.directory = results.directory)
 
-  if (ext.type == 'csv') {
-    results[,composite.key := paste(recordingID, start.s, end.s, common.name, sep = '-')]
-    data[,composite.key := paste(recordingID, start.s, end.s, common.name, sep = '-')]
-  }
-
-  if (ext.type == 'txt') {
-    results[,composite.key := paste(recordingID, start, end, common_name, sep = '-')]
-    data[,composite.key := paste(recordingID, start, end, common_name, sep = '-')]
-  }
+  results[,composite.key := paste(recordingID, start, end, common_name, sep = '-')]
+  data[,composite.key := paste(recordingID, start, end, common_name, sep = '-')]
 
   # Subset the results
   all.focal <- results[composite.key %in% data$composite.key]
@@ -187,11 +172,11 @@ birdnet_verify <- function(data,
   counter <- 0
   verify.list <- list()
   for (w in 1:length(wav.paths)) {
-
-    finame <- paste0(results.directory,
-                     list.files(results.directory,
-                                pattern = paste0('_formatted_',
-                                                 gsub('.wav', '', rec.ids[w]))))
+    this.wav <- list.files(
+      path = results.directory,
+      pattern = gsub('.wav', '', rec.ids[w]),
+      full.names = TRUE)
+    finame <- this.wav[grep(pattern = '_formatted_', x = this.wav)]
     verify <- all.focal.verify[recordingID == rec.ids[w]]
     ask <- FALSE
     oldask <- par(ask = par("ask"))
@@ -204,15 +189,8 @@ birdnet_verify <- function(data,
       counter <- counter + 1
       x <- "x"
 
-      if (ext.type == 'csv') {
-        t.start <- max(verify[i,start.s] - buffer, 0)
-        t.end <- verify[i,end.s] + buffer # works even if end.s exceeds rec length
-      }
-
-      if (ext.type == 'txt') {
-        t.start <- max(verify[i,start] - buffer, 0)
-        t.end <- verify[i,end] + buffer # works even if end.s exceeds rec length
-      }
+      t.start <- max(verify[i,start] - buffer, 0)
+      t.end <- verify[i,end] + buffer # works even if end.s exceeds rec length
 
       wav <- tuneR::readWave(wav.paths[w], from = t.start, to = t.end,
                              units = 'seconds')
@@ -239,16 +217,8 @@ birdnet_verify <- function(data,
                           round(verify$confidence[i], 2), ']'))
 
       # Add a buffer box around the 3 second clip
-      if (ext.type == 'csv') {
-        xleft <- trec[which.min(abs(true.times.in.rec - verify[i,start.s]))]
-        xright <- trec[which.min(abs(true.times.in.rec - verify[i,end.s]))]
-      }
-
-      if (ext.type == 'txt') {
-        xleft <- trec[which.min(abs(true.times.in.rec - verify[i,start]))]
-        xright <- trec[which.min(abs(true.times.in.rec - verify[i,end]))]
-      }
-
+      xleft <- trec[which.min(abs(true.times.in.rec - verify[i,start]))]
+      xright <- trec[which.min(abs(true.times.in.rec - verify[i,end]))]
       ylwr <- min(frec)
       yupr <- max(frec)
       polygon(x = c(xleft, xleft, xright, xright),
@@ -259,28 +229,15 @@ birdnet_verify <- function(data,
 
       # Write a temporary audio clip for this annotation, if desired
       if (play) {
-        if (ext.type == 'csv') {
-          fn <- paste0(getwd(), '/', 'temp-', verify$recordingID[i],
-                       '-', verify$start.s[i])
+        fn <- paste0(getwd(), '/', 'temp-', verify$recordingID[i],
+                     '-', verify$start[i])
 
-          fn <- paste0(getwd(),
-                       '/temp-',
-                       gsub(pattern = '.wav',
-                            replacement = '',
-                            x = paste0(verify[i,c('recordingID', 'start.s', 'common.name')],
-                                       collapse = '-')), '.wav')
-        }
-        if (ext.type == 'txt') {
-          fn <- paste0(getwd(), '/', 'temp-', verify$recordingID[i],
-                       '-', verify$start[i])
-
-          fn <- paste0(getwd(),
-                       '/temp-',
-                       gsub(pattern = '.wav',
-                            replacement = '',
-                            x = paste0(verify[i,c('recordingID', 'start', 'common_name')],
-                                       collapse = '-')), '.wav')
-        }
+        fn <- paste0(getwd(),
+                     '/temp-',
+                     gsub(pattern = '.wav',
+                          replacement = '',
+                          x = paste0(verify[i,c('recordingID', 'start', 'common_name')],
+                                     collapse = '-')), '.wav')
 
 
         # hacky work around -- write to working directory as a temporary file,
@@ -302,9 +259,7 @@ birdnet_verify <- function(data,
                    ".\n"))
 
         cat(paste0("\n", i, ". Showing user input verification library options for ",
-                   ifelse(test = ext.type == 'txt',
-                          yes = verify[i]$common_name,
-                          no = verify[i]$common.name),
+                   verify[i]$common_name,
                    ': ', paste0(verification.library, collapse = ', '),
                    "\n Enter an option in ", paste0(verification.library, collapse = ', '), ", s to skip, or q to exit this recording (q will exit and save any verifications you have already completed for this recording). If you have many recordings and wish to escape out of the function completely, press 'Esc': "))
 
@@ -363,7 +318,7 @@ birdnet_verify <- function(data,
 
     cat("\n")
 
-    # Update verification labels in BirdNET_formatted_ results csv:
+    # Update verification labels in BirdNET_formatted_ results file:
     update.composite <- verify$composite.key
 
     # If quit before the end of a recording, update labels for anything verified

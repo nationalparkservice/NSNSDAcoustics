@@ -58,6 +58,11 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
   # So saving a backup object here that will be operated on
   dt <- copy(data)
 
+  # Check for only one locationID
+  if (length(unique(dt$locationID)) != 1) {
+    stop(paste0('The data object contains more than one locationID: ', paste0(unique(dat$locationID), collapse = ', '), '. Please input a data object that contains only one locationID.'))
+  }
+
   # Check for plotly
   if (interactive == TRUE) {
     if (!requireNamespace("plotly", quietly = TRUE)) {
@@ -112,8 +117,8 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
 
   # Prep human-readable date labels for julian date
   stacksp[,julian.date := yday(date)]
-  stacksp[,month := month(date, label = TRUE)][
-    ,day := day(date)]
+  stacksp[,month := lubridate::month(date, label = TRUE)][
+    ,day := lubridate::day(date)]
   stacksp[,date.lab := paste0(day, '-', month)]
 
   # Generate julian.breaks and y.limits if missing
@@ -130,6 +135,21 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
   # Set reasonable breaks
   brks <- unique(stacksp[julian.date %in% julian.breaks,
                          c('julian.date', 'date.lab')])
+
+  # If any julian.breaks specified by user are not present in brks
+  # due to zero detections for that day, add them back in
+  missing.jul <- julian.breaks[!(julian.breaks %in% brks$julian.date)]
+  if (length(missing.jul) != 0) {
+    missing.dates <- data.table(julian.date = missing.jul)
+    missing.dates[,date := as.Date(julian.date,
+                                   origin = floor_date(stacksp$date[1],
+                                                       unit = 'years'))]
+    missing.dates[,month := lubridate::month(date, label = TRUE)][
+      ,day := lubridate::day(date)]
+    missing.dates[,date.lab := paste(day, month, sep = '-')]
+    brks <- rbind(brks, missing.dates[,c('julian.date', 'date.lab')])
+  }
+
   setkey(brks, julian.date)
 
   if (missing(focal.species)) {
@@ -139,7 +159,8 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
       facet_wrap(~year) +
       xlab('Date') +
       ylab('N') +
-      scale_x_continuous(expand = c(0, 0), breaks = brks$julian.date,
+      scale_x_continuous(expand = c(0, 0),
+                         breaks = brks$julian.date,
                          labels = brks$date.lab) +
       scale_y_continuous(expand = c(0, 0), limits = y.limits) +
       #  breaks = seq(from = 0, to = 3000, by = 500)) +
@@ -173,7 +194,7 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
       geom_bar(position = "stack", stat = "identity") +
       facet_wrap(~year) +
       xlab('Date') +
-      ylab('N BirdNET Detections') +
+      ylab('N') +
       scale_color_manual(values = focal.colors, guide = 'none') + # eliminate extra legend
       scale_fill_manual(values = focal.colors) +
       scale_x_continuous(expand = c(0, 0), breaks = brks$julian.date,
