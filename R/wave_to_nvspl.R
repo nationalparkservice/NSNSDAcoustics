@@ -289,7 +289,15 @@ wave_to_nvspl <- function(input.directory,
 
         # remove the folder with files for each WAV file
         unlink(PAMfiles2)
-        unlink(PAMdirFiles, recursive = TRUE)
+
+        if (length(list.files(PAMdirFiles, pattern = 'wav|WAV') > 0)) {
+          # Look in this folder. If there are any wave files, we shouldn't be deleting.
+          # Need to find a more robust way to rewrite this code so that it doesn't
+          # accidentally find a top-level audio directory and delete it again...
+          stop('Files for this day are too short or there is another problem.')
+        } else {
+          unlink(PAMdirFiles, recursive = TRUE) # this is the problem line.
+        }
 
         ## (4) EXTRACT PARAMS--------------------------------------------------------------
         aid <- conk[1,1]
