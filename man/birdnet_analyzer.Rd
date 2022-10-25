@@ -18,7 +18,6 @@ birdnet_analyzer(
   threads = 4,
   batchsize = 1,
   locale = "en",
-  rtype = "r",
   sf.thresh = 0.03
 )
 }
@@ -49,14 +48,10 @@ birdnet_analyzer(
 
 \item{locale}{Locale for translated species common names. Values in c('af', 'de', 'it', ...). Defaults to 'en'.}
 
-\item{rtype}{Specifies output format. BirdNET-Analyzer provides several options, but the only ones available in this function are 'r' or 'csv'. Default = 'r'. \strong{For downstream data processing, 'r' is strongly preferred.} The 'csv' option exists for dealing with outputs from the now deprecated \href{https://github.com/kahst/BirdNET-Lite}{BirdNET-Lite} (and it's accompanying R function, \code{\link{birdnet_run}}).}
-
 \item{sf.thresh}{Minimum species occurrence frequency threshold for location filter. Values in c(0.01, 0.99). Defaults to 0.03.}
 }
 \value{
-Saves either a txt or csv file of results for each audio file in results.directory. Files have prefix "BirdNET_".
-
-If rtype = 'r', outputs a .txt file containing the following columns:
+Saves a txt file of results for each audio file in results.directory. Files have prefix "BirdNET_". Files contain the following columns:
 
 \itemize{
 \item{\strong{filepath}: Filepath for the processed audio file.}
@@ -73,16 +68,6 @@ If rtype = 'r', outputs a .txt file containing the following columns:
 \item{\strong{min_conf}: Minimum confidence input used.}
 \item{\strong{species_list}: Species list used.}
 \item{\strong{model}: BirdNET model used.}
-}
-
-If rtype = 'csv', outputs a .csv containing the following columns:
-
-\itemize{
-\item{\strong{Start (s)}: Start time of detection in seconds.}
-\item{\strong{End (s)}: End time of detection in seconds.}
-\item{\strong{Scientific name}: Species scientific name.}
-\item{\strong{Common name}: Species common name.}
-\item{\strong{Confidence}: BirdNET's confidence level in this detection ranging from 0 (least confident) to 1 (most confident).}
 }
 }
 \description{
