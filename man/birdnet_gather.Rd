@@ -53,33 +53,35 @@ dir.create('example-results-directory')
 # Write examples of formatted BirdNET outputs to example results directory
 data(exampleFormatted1)
 write.table(x = exampleFormatted1,
-            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
+            file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 
 data(exampleFormatted2)
 write.table(x = exampleFormatted2,
-            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.txt',
+            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 
 # Write examples of raw BirdNET outputs to example results directory
 data(exampleBirdNET1)
 write.table(x = exampleBirdNET1,
-            file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.txt',
+            file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 data(exampleBirdNET2)
 write.table(x = exampleBirdNET2,
-            file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.txt',
+            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 
 # Gather formatted BirdNET results
 formatted.results <- birdnet_gather(
                              results.directory = 'example-results-directory',
-                             formatted = TRUE)
+                             formatted = TRUE
+                             )
 
 # Gather unformatted (raw) BirdNET results
 raw.results <- birdnet_gather(
                        results.directory = 'example-results-directory',
-                       formatted = FALSE)
+                       formatted = FALSE
+                       )
 
 # Delete all temporary example files when finished
 unlink(x = 'example-results-directory', recursive = TRUE)

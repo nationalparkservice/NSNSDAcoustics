@@ -110,7 +110,7 @@ NULL
 #' # Write examples of raw BirdNET txt outputs to example results directory to
 #' # mimic BirdNET output format
 #' write.table(x = exampleBirdNET1,
-#'           file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.txt',
+#'           file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
 #'           row.names = FALSE, quote = FALSE, sep = ',')
 #'
 #' # Delete all temporary example files when finished
@@ -140,7 +140,7 @@ NULL
 #' # Write examples of raw BirdNET txt outputs to example results directory to
 #' # mimic BirdNET output format
 #' write.table(x = exampleBirdNET2,
-#'           file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.txt',
+#'           file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
 #'           row.names = FALSE, quote = FALSE, sep = ',')
 #'
 #' # Delete all temporary example files when finished
@@ -171,7 +171,7 @@ NULL
 #' # Write examples of formatted BirdNET outputs to example results directory
 #' # to mimic output format of birdnet_format
 #' write.table(x = exampleFormatted1,
-#'             file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
+#'             file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
 #'             row.names = FALSE, quote = FALSE, sep = ',')
 #'
 #' # Delete all temporary example files when finished
@@ -201,7 +201,7 @@ NULL
 #' # Write examples of formatted BirdNET outputs to example results directory
 #' # to mimic output format of birdnet_format
 #' write.table(x = exampleFormatted2,
-#'             file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.txt',
+#'             file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
 #'             row.names = FALSE, quote = FALSE, sep = ',')
 #'
 #' # Delete all temporary example files when finished
