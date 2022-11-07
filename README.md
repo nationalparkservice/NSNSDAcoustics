@@ -2,7 +2,7 @@
 
 This repository provides a place for National Park Service [Natural Sounds and Night Skies Division (NSNSD)](https://www.nps.gov/orgs/1050/index.htm) staff to develop and modernize several bioacoustics workflows. 
 
-**All documentation and code is actively currently under development. There is currently no official release of this package and code may change. If you encounter a problem, please submit it to [Issues](https://github.com/nationalparkservice/NSNSDAcoustics/issues). If you have a question or need that isn't covered by submitting an issue, please reach out to Cathleen Balantic (`cathleen_balantic` at `nps.gov`).**
+**All documentation and code is actively under development. There is currently no official release of this package and code may change. If you encounter a problem, please submit it to [Issues](https://github.com/nationalparkservice/NSNSDAcoustics/issues). If you have a question or need that isn't covered by submitting an issue, please reach out to Cathleen Balantic (`cathleen_balantic` at `nps.gov`).**
 
 # Table of Contents
 
@@ -95,10 +95,9 @@ If you don't do this, `birdnet_analyzer()` will throw errors telling you that it
 Here are few tips for using this function: 
 
 * The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. If this is not the case for your files (e.g., AudioMoth files do not come with a SiteID), you'll need to do some preprocessing.
-* Cornell's underlying BirdNET-Analyzer software gives several options for file output types, but the only two implemented in this function are 'r' or 'csv'. **The 'r' option is strongly preferred for all downstream workflows and outputs a txt file.** The 'csv' option produces a csv file with simple columns, and is retained only to handle outputs from the now deprecated BirdNET-Lite. See `?birdnet_analyzer` for output column details. 
+* Cornell's underlying BirdNET-Analyzer software gives several options for file output types, but the only one implemented in this function is 'r'. See `?birdnet_analyzer` for output column details. 
 * The function can handle either .wav or .mp3 audio file types. The current internal behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations, but might be necessary for Windows 10 if you followed the above instructions.
 * The function expects absolute paths for all directory arguments in `birdnet_analyzer()`. This is necessary due to the way RStudio is communicating with the underlying Python code. 
-* Note that BirdNET's option to input a customized species list has not been implemented.
 
 Below, we'll walk through the documentation and example helpfiles for `birdnet_analyzer()`. Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
 
