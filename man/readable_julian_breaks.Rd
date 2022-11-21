@@ -18,7 +18,7 @@ readable_julian_breaks(
 
 \item{posix.column}{Character name of the "POSIXct" "POSIXt" column in 'data'.}
 
-\item{format}{Character string containing your desired date label components; any options in c('\%d', '\%m', '\%b', '\%B', '\%y', '\%Y'). For example, c('\%Y', '\%m', '\%d) used with sep = '-' results in labels like: '2022-01-28'. See Details. Do not use '\%y' or '\%Y' options if data contains multiple years.}
+\item{format}{Character string containing your desired date label components; any options in c('\%d', '\%m', '\%b', '\%B', '\%y', '\%Y'). For example, c('\%Y', '\%m', '\%d') used with sep = '-' results in labels like: '2022-01-28'. See Details. Do not use '\%y' or '\%Y' options if data contains multiple years.}
 
 \item{sep}{Character value used to separate options in format. Any value may be used, but common uses would be options in c(' ', '-', '/').}
 

@@ -114,7 +114,7 @@ add_time_cols <- function(dt,
 #' @description Create human-readable labels for julian dates, to be used downstream in plots. Particularly useful for generating plots that compare multiple years of data in one graph, especially when dealing with leap years (see Details).
 #' @param data A data.frame or data.table that must contain a column of class "POSIXct" "POSIXt".
 #' @param posix.column Character name of the "POSIXct" "POSIXt" column in 'data'.
-#' @param format Character string containing your desired date label components; any options in c('%d', '%m', '%b', '%B', '%y', '%Y'). For example, c('%Y', '%m', '%d) used with sep = '-' results in labels like: '2022-01-28'. See Details. Do not use '%y' or '%Y' options if data contains multiple years.
+#' @param format Character string containing your desired date label components; any options in c('%d', '%m', '%b', '%B', '%y', '%Y'). For example, c('%Y', '%m', '%d') used with sep = '-' results in labels like: '2022-01-28'. See Details. Do not use '%y' or '%Y' options if data contains multiple years.
 #' @param sep Character value used to separate options in format. Any value may be used, but common uses would be options in c(' ', '-', '/').
 #' @param timestep Integer specifying the number of days that should be spaced between each label. For example, a value of 14 means labels will occur every two weeks.
 #' @param juilan.breaks Optional integer vector specifying the values of julian dates to use; will override timestep argument.
@@ -278,18 +278,62 @@ birdnet_audio_embed <- function(
   locid <- locationID
   one.res <- results[common_name == common.name
                      & confidence >= confidence.threshold
-                     & locationID == locid][
+                     & locationID %in% c(locid, paste0('temp-', locid))][
                        sample(.N, size = 1, replace = FALSE)]
+
+  if(nrow(one.res) == 0) {
+    stop('No results for this input combination. Check your inputs or try a lower confidence.threshold.')
+  }
 
   # Get the date of the detection (fine to leave in UTC since these are just examples
   # and we only need the date)
   one.res <- add_time_cols(one.res, tz.recorder = 'UTC', tz.local = 'UTC')
   one.res[,date := as.Date(dateTimeLocal)]
+
+
+  # Figure out if we are dealing with wave vs. mp3 vs. a temporary wave
+
+  # If this was processed as a temporary wave, that temp- wave no longer exists
+  # and we need to find the underlying mp3 file name:
+  if (grepl(pattern = 'temp-', x = one.res$filepath, ignore.case = FALSE)) {
+    og.res <- one.res
+    one.res$filepath <- gsub(pattern = '.wav|.WAV',
+                             replacement = '.mp3',
+                             x = one.res$filepath)
+    one.res$filepath <- gsub(pattern = 'temp-',
+                             replacement = '',
+                             x = one.res$filepath)
+    one.res$recordingID <- gsub(pattern = '.wav|.WAV',
+                             replacement = '.mp3',
+                             x = one.res$recordingID)
+    one.res$recordingID <- gsub(pattern = 'temp-',
+                             replacement = '',
+                             x = one.res$recordingID)
+  }
+
   full.pth <- paste0(audio.directory, one.res$recordingID)
-  wav <- readWave(filename = full.pth,
-                  from = one.res$start,
-                  to = one.res$end,
-                  units = 'seconds')
+
+  # If original format is wave, we can read in based on the seconds
+  if (grepl(pattern = '.wav|.WAV', x = one.res$recordingID)) {
+    wav <- readWave(filename = full.pth,
+                    from = one.res$start,
+                    to = one.res$end,
+                    units = 'seconds')
+  }
+
+  # If original mp3, we unfortunately have to read in the entire mp3 file and convert it to wave
+  # which takes a while if dealing with hour long files, and may crash R
+  # if you are dealing with longer files than that.
+  # (unless you want to install the third party software for dealing with mp3s in R --> mp3splt
+  # and since IT rejected my application to have overrides to install audio software,
+  # I either have to deal with asking IT for help to install this, which they will
+  # probably just reject, or just read in the whole mp3 file. So I am going with the latter
+  # and just dealing with a slow solution.
+  if (grepl(pattern = '.mp3|.MP3', x = one.res$recordingID)) {
+
+    wav <- readMP3(filename = full.pth)
+    wav <- monitoR::cutWave(wav, from = one.res$start, to = one.res$end)
+  }
 
   # Create a directory for clips if needed
   if (!dir.exists('embed-audio')) {
