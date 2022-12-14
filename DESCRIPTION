@@ -27,7 +27,7 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Depends: R (>= 3.5.0), data.table, monitoR, tuneR
-Imports: reticulate, ineq, ggplot2, lubridate, moments, NbClust, plotly, vegan
+Imports: ineq, iNEXT, ggplot2, lubridate, moments, NbClust, plotly, reticulate, stringr, vegan
 Collate: 
     'PAMGuide.R'
     'PAMGuide_Meta.R'
