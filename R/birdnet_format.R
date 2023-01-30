@@ -142,6 +142,8 @@ birdnet_format <- function(results.directory,
         # Add a recordingID column for friendlier downstream data wrangling
         recID <- gsub(x = gsub(x = fi[i], pattern = 'BirdNET_|.BirdNET.results', replacement = ''),
                       pattern = '.csv', replacement = '.wav')
+        # recID <- basename(result$filepath)[i] # this should be more robust than previous...
+        # but doesn't work if there are no results for the file. Annoying. =/
         result[,recordingID := recID]
 
         # Add a verify column to support downstream manual QA of classifications

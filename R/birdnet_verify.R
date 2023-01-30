@@ -177,9 +177,22 @@ birdnet_verify <- function(data,
   wav.paths <- unique(grep(paste(rec.ids,collapse="|"),
                            all.wav, value = TRUE))
 
+  # Correct for potential .wav/.WAV issue with audiomoth
+  if (length(wav.paths) == 0) {
+    correct.audio.moth <- gsub(x = rec.ids,
+                               pattern = '.wav',
+                               replacement = '.WAV',
+                               ignore.case = FALSE)
+    wav.paths <- unique(grep(paste(correct.audio.moth,
+                                   collapse="|"),
+                             all.wav, value = TRUE))
+  }
+
   # Figure out which frequency bins to use
   # Unfortunately it is hard to deal with mp3 in R without installing 3rd party software, so we have to do this the hard/slow way (see ?monitoR::readMP3)
   check.file <- wav.paths[1]
+
+
   if (file_ext(check.file) == 'mp3') {
 
     message('It looks like there may be mp3 files in this audio folder, so we\'re checking on a few parameters. Thank you for your patience. NOTE: R and Windows, together, are not the best at handling mp3 files. If you need to use mp3 files instead of wave, then for a much speedier BirdNET validation workflow, we suggest running BirdNET directly from the command line and then using segments.py for validation as described here: https://github.com/kahst/BirdNET-Analyzer/')

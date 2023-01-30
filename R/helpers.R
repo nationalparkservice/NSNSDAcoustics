@@ -344,8 +344,18 @@ birdnet_audio_embed <- function(
 
   # Create a wav file for this clip
   pth <- paste0('./embed-audio/',
-                paste(gsub(pattern = "'", replacement = '', x = common.name),
-                      one.res$start, one.res$end, one.res$recordingID, sep = '-'))
+                paste(gsub(pattern = "'",
+                           replacement = '',
+                           x = common.name),
+                      one.res$start,
+                      one.res$end,
+                      one.res$recordingID,
+                      sep = '-'))
+
+  # Make sure the wave we create has a lowercase extension
+  # (so that embed_audio recognizes it)
+  pth <- gsub(pattern = '.WAV', replacement = '.wav',
+              ignore.case = FALSE, x = pth)
   writeWave(wav, filename = pth)
   viewSpec(wav, main = paste0(locationID, ' ', common.name, ' (', one.res$date, ')'))
   embed_audio(src = pth, type = 'wav')
