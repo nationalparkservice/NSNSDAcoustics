@@ -77,7 +77,7 @@ Check the image below to make sure you're installing the correct version:
 
 ### (2) Download and install [Anaconda](https://www.anaconda.com/). 
 
-BirdNET-Analyzer runs on Python, and installing Anaconda will position you for the streamlined setup and dependency management necessary to run BirdNET-Analyzer from R.
+BirdNET-Analyzer runs on Python, and installing Anaconda will position you for the streamlined setup and dependency management necessary to run BirdNET-Analyzer from R. You should not need elevated privileges to do this; use the default installation option of "Just Me". (You may run into challenges with this workflow if you install as administrator.)
 
 ### (3) Set up a conda environment for BirdNET-Analyzer
 
