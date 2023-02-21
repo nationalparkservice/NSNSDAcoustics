@@ -68,9 +68,16 @@ If you prefer to use `birdnet_analyzer()`, please first complete the following s
 
 Early on in the [Setup (Windows)](https://github.com/kahst/BirdNET-Analyzer#setup-windows) section, the instructions will encourage you to download a "fully-packaged version that does not require you to install any additional packages and can be run as-is". This is *not* the file you want, so keep scrolling until you hit a section that says "Install BirdNET from zip" and click "Download BirdNET Zip-file". Unzip that file to a desired location on your machine. This folder should have the name **BirdNET-Analyzer-main**.
 
+Check the image below to make sure you're installing the correct version: 
+
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/BirdNET-install-link.png alt="Version of BirdNET you should install if you want to run BirdNET from RStudio."><br>
+</p>
+
+
 ### (2) Download and install [Anaconda](https://www.anaconda.com/). 
 
-BirdNET-Analyzer runs on Python, and installing Anaconda will position you for the streamlined setup and dependency management necessary to run BirdNET-Analyzer from R.
+BirdNET-Analyzer runs on Python, and installing Anaconda will position you for the streamlined setup and dependency management necessary to run BirdNET-Analyzer from R. You should not need elevated privileges to do this; use the default installation option of "Just Me". (You may run into challenges with this workflow if you install as administrator.)
 
 ### (3) Set up a conda environment for BirdNET-Analyzer
 
@@ -85,6 +92,13 @@ conda install -n pybirdanalyze tensorflow
 ```
 
 Make sure you know where your pybirdanalyze conda environment lives. It might have a path name like: C:\\Users\\Username\\Anaconda3\\envs\\pybirdanalyze
+
+The contents of your conda folder should look something like this: 
+
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/BirdNET-conda-folder.png alt="The contents of your conda folder should look something like this."><br>
+</p>
+
 
 ### (4) Copy the "checkpoints" folder and "eBird_taxonomy_codes_2021E.json" file from BirdNET-Analyze-main into your BirdNET conda environment folder.
 
