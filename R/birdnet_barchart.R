@@ -4,7 +4,7 @@
 #' @title Plot stacked barcharts of BirdNET detections
 #' @description Plot stacked barcharts of user-selected BirdNET results by date
 #' @param data Data.table or data.frame of formatted BirdNET results that a user would like to plot. Generally, this data object may be preceded by a call to \code{\link{add_time_cols}}; all data should come from a single site and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct).
-#' @param julian.breaks Optional numeric vector of julian date plotting breaks to use on the x axis. If omitted, will be computed automatically. Example inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9, and June 29 for non-leap year data); c(130:160) would graph every single date from May 10 to June 9 on the x axis (for non-leap year data).
+#' @param julian.breaks Optional numeric vector of julian date plotting breaks to use on the x axis. If omitted, will be computed automatically. Example inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9, and June 29 for non-leap year data); c(130:160) would graph every single date from May 10 to June 9 on the x axis (for non-leap year data). See also \code{\link{readable_julian_breaks}}.
 #' @param y.limits Optional numeric vector to control y-axis limits (e.g., c(0, 150)). If not entered, will be generated automatically.
 #' @param interactive Default = FALSE for a static plot. If true, produces a plotly plot with interactive hover.
 #' @param focal.species Optional character vector containing the common names of species to highlight. Any species contained in the data object that are not contained in focal.species will be plotted under one color as "Other".
@@ -60,7 +60,7 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
 
   # Check for only one locationID
   if (length(unique(dt$locationID)) != 1) {
-    stop(paste0('The data object contains more than one locationID: ', paste0(unique(dat$locationID), collapse = ', '), '. Please input a data object that contains only one locationID.'))
+    stop(paste0('The data object contains more than one locationID: ', paste0(unique(dt$locationID), collapse = ', '), '. Please input a data object that contains only one locationID.'))
   }
 
   # Check for plotly

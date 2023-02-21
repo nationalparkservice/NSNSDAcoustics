@@ -17,7 +17,7 @@ add_time_cols(
 
 \item{recording.id.col}{Column name that contains recordingID with format 'NAME_YYYYMMDD_HHMMSS.wav'. Default = 'recordingID'.}
 
-\item{tz.recorder}{Olsen names timezone used by the audio recorder during data collection. For example, you may have collected data using a Wildlife Acoustics SM4, and instead of setting a local time, UTC/GMT likely may have been used. Note that 'UTC' and 'GMT' are synonymous and both acceptable for this function argument. This argument accounts for the fact that recordings may have been taken in UTC. The tz.local argument then allows us to convert the times to local times that will make sense for analysis.}
+\item{tz.recorder}{Olsen names timezone used by the audio recorder during data collection. For example, you may have collected data using a Wildlife Acoustics SM4, and may have used UTC/GMT instead of setting a local time. Note that 'UTC' and 'GMT' are synonymous and both acceptable for this function argument. This argument accounts for the fact that recordings may have been taken in UTC. The tz.local argument then allows us to convert the times to local times that will make sense for analysis.}
 
 \item{tz.local}{Olsen names timezone for local time at the monitoring location (e.g., 'America/Anchorage').}
 
