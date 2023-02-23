@@ -4,7 +4,7 @@
 #' @title Plot stacked barcharts of BirdNET detections
 #' @description Plot stacked barcharts of user-selected BirdNET results by date
 #' @param data Data.table or data.frame of formatted BirdNET results that a user would like to plot. Generally, this data object may be preceded by a call to \code{\link{add_time_cols}}; all data should come from a single site and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct).
-#' @param julian.breaks Optional numeric vector of julian date plotting breaks to use on the x axis. If omitted, will be computed automatically. Example inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9, and June 29 for non-leap year data); c(130:160) would graph every single date from May 10 to June 9 on the x axis (for non-leap year data). See also \code{\link{readable_julian_breaks}}.
+#' @param julian.breaks Optional numeric vector of julian date plotting breaks to use on the x axis. If omitted, will be computed automatically. Example inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9, and June 29 for non-leap year data); c(130:160) would graph every single date from May 10 to June 9 on the x axis (for non-leap year data). See also \code{\link{readable_julian_breaks}}. Please start with 1 for the first day of the year rather than 0.
 #' @param y.limits Optional numeric vector to control y-axis limits (e.g., c(0, 150)). If not entered, will be generated automatically.
 #' @param interactive Default = FALSE for a static plot. If true, produces a plotly plot with interactive hover.
 #' @param focal.species Optional character vector containing the common names of species to highlight. Any species contained in the data object that are not contained in focal.species will be plotted under one color as "Other".
@@ -86,7 +86,7 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
   dt[,julian.date := yday(date)]
 
   # Remove NA data from dt (occurs if recording has no detections)
-  # Want to do this now rather than later, to avoid issues with "Other" if using focals
+  # Do now rather than later, to avoid issues with "Other" if using focals
   dt <- dt[!is.na(common_name)]
 
   # If focal species are indicated, correct for nonfocal species
@@ -150,20 +150,37 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
     brks <- rbind(brks, missing.dates[,c('julian.date', 'date.lab')])
   }
 
-  setkey(brks, julian.date)
+  # Create a dummy x axis to accommodate the circularity of julian dates
+  # (allows for reasonable/pretty x-axis that only looks at winter dates
+  # spanning from e.g. julian date 330:365 and 1:20)
+  brks.start.x <- data.table(
+    julian.date = c(julian.breaks[1]:365, 1:(julian.breaks[1] - 1)),
+    x.scale = 1:365
+  )
 
+  # Join brks to stacksp
+  stacksp <- merge(stacksp, brks.start.x, by = 'julian.date', all.x = TRUE)
+  brks <- merge(brks, brks.start.x, by = 'julian.date', all.x = TRUE)
+  setkey(brks, x.scale)
+
+  # In case of leap years, keep only the first instance of a julian date
+  brks <- brks[match(unique(brks$julian.date), brks$julian.date),]
+
+  # Generate plots that don't use focal species arg
   if (missing(focal.species)) {
-    alldets <- ggplot(stacksp, aes(x = julian.date, y = N, fill = common_name)) +
-      # ^^ add color = common.name to aes() to eliminate artefact white space between some bars
+    alldets <- ggplot(stacksp, aes(x = x.scale, y = N,
+                                   fill = common_name)) +
+      # ^^ add color = common_name to aes() to eliminate artefact white space between some bars
+      # (although I like these in interactive mode with lots of species)
       geom_bar(position = "stack", stat = "identity") +
       facet_wrap(~year) +
       xlab('Date') +
       ylab('N') +
       scale_x_continuous(expand = c(0, 0),
-                         breaks = brks$julian.date,
-                         labels = brks$date.lab) +
+                         breaks = brks$x.scale,
+                         labels = brks$date.lab,
+                         limits = range(brks$x.scale)) +
       scale_y_continuous(expand = c(0, 0), limits = y.limits) +
-      #  breaks = seq(from = 0, to = 3000, by = 500)) +
       # scale_color_manual(guide = 'none') + # eliminate additional legend
       ggtitle(paste0('Count by Date - ', unique(dt$locationID))) +
       theme_classic() +
@@ -178,8 +195,21 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
             axis.title.x = element_text(size = 12),
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
     if (interactive == TRUE) {
-      return(style(ggplotly(alldets), hoverinfo = 'text')
-      )
+
+      return(
+
+          # Not displaying correctly =/
+          # style(
+          #   ggplotly(alldets),
+          #   hoverinfo = 'text',
+          #   hovertext = paste('Date:', stacksp$date.lab, '<br>',
+          #                     'Species:', stacksp$common_name, '<br>',
+          #                     'N:', stacksp$N, '<br>')
+          # )
+
+          style(ggplotly(alldets, tooltip = c('fill', 'y', 'text')), hoverinfo = 'text')
+        )
+
     } else {
       return(alldets)
     }
@@ -188,7 +218,8 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
 
   # If using focal species
   if(!missing(focal.species)) {
-    focs <- ggplot(stacksp, aes(x = julian.date, y = N,
+
+    focs <- ggplot(stacksp, aes(x = x.scale, y = N,
                                 fill = common_name, color = common_name)) +
       # ^^ add color = common.name to aes() to eliminate artefact white space between some bars
       geom_bar(position = "stack", stat = "identity") +
@@ -197,25 +228,43 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
       ylab('N') +
       scale_color_manual(values = focal.colors, guide = 'none') + # eliminate extra legend
       scale_fill_manual(values = focal.colors) +
-      scale_x_continuous(expand = c(0, 0), breaks = brks$julian.date,
-                         labels = brks$date.lab) +
+      scale_x_continuous(expand = c(0, 0),
+                         breaks = brks$x.scale,
+                         labels = brks$date.lab,
+                         limits = range(brks$x.scale)) +
       scale_y_continuous(expand = c(0, 0), limits = y.limits) +
       ggtitle(paste0('Count by Date - ', unique(dt$locationID))) +
+      labs(fill = 'Species') +
       theme_classic() +
       theme(axis.ticks.y = element_blank(),
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
             axis.line = element_line(color = 'black'),
             plot.title = element_text(hjust = 0.5, size = 12),
+            legend.position = 'bottom',
+            # ^^ note: legend.position will not be respected by ggplotly style:
+            #    https://github.com/plotly/plotly.R/issues/1049
             legend.text = element_text(size = 12),
-            legend.title = element_blank(),
             strip.background = element_blank(),
             axis.title.x = element_text(size = 12),
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
     if (interactive == TRUE) {
-      return(style(ggplotly(focs), hoverinfo = 'text' )
+
+      return(
+
+        # Not displaying correctly =/
+        # style(
+        #   ggplotly(focs),
+        #   hoverinfo = 'text',
+        #   hovertext = paste('Date:', stacksp$date.lab, '<br>',
+        #                     'Species:', stacksp$common_name, '<br>',
+        #                     'N:', stacksp$N, '<br>')
+        # )
+
+        style(ggplotly(focs, tooltip = c('color', 'y', 'text')), hoverinfo = 'text')
       )
+
     } else {
       return(focs)
     }
