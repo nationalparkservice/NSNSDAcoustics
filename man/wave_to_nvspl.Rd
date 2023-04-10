@@ -6,6 +6,7 @@
 \usage{
 wave_to_nvspl(
   input.directory,
+  results.directory,
   data.directory = TRUE,
   test.file = FALSE,
   project,
@@ -21,7 +22,9 @@ wave_to_nvspl(
 )
 }
 \arguments{
-\item{input.directory}{Top-level input directory path to audio files to be processed. e.g. E:/AUDIO. Audio files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav. For nonstandard file patterns (NOT TESTED), use the filext and filpat arguments.}
+\item{input.directory}{Top-level input directory path to audio files to be processed. e.g. E:/AUDIO. Audio files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav. For nonstandard file patterns, use the filext and filpat arguments (NOT TESTED).}
+
+\item{results.directory}{OPTIONAL character path stating where NVSPL .txt files should be placed. If omitted, NVSPL directory will be created automatically within input directory.}
 
 \item{data.directory}{Logical flag to specify whether audio files are housed in 'Data' subdirectories}
 

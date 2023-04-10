@@ -2,7 +2,8 @@
 #' @name wave_to_nvspl
 #' @title Calibrate and convert wave files into NVSPL formatted table
 #' @description This function uses PAMGuide code to convert wave files into an NVSPL formatted table. These are hourly files comprised of 1/3 octave data in 1-sec LEQ increments. PAMGuide was developed by \href{https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330}{Merchant et al. 2015}. The suggested workflow for this function is to first set test.file = TRUE to test that your workflow has been accurately parameterized. Next, to batch process NVSPLs, run with test.file = FALSE.
-#' @param input.directory Top-level input directory path to audio files to be processed. e.g. E:/AUDIO. Audio files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav. For nonstandard file patterns (NOT TESTED), use the filext and filpat arguments.
+#' @param input.directory Top-level input directory path to audio files to be processed. e.g. E:/AUDIO. Audio files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav. For nonstandard file patterns, use the filext and filpat arguments (NOT TESTED).
+#' @param results.directory OPTIONAL character path stating where NVSPL .txt files should be placed. If omitted, NVSPL directory will be created automatically within input directory.
 #' @param data.directory Logical flag to specify whether audio files are housed in 'Data' subdirectories
 #' @param test.file Logical flag for whether to test a file. If TRUE, tests a single file and produces plots and diagnostic outputs. If FALSE, processes entire audio dataset indicated by input.directory.
 #' @param project File name for your project (e.g., 'GLBAPhenology2019').
@@ -120,6 +121,7 @@
 # need to overhaul NVSPL file in general?
 
 wave_to_nvspl <- function(input.directory,
+                          results.directory,
                           data.directory = TRUE,
                           test.file = FALSE,
                           project,
@@ -251,8 +253,16 @@ wave_to_nvspl <- function(input.directory,
       filename = paste(site, filext, sep="")
 
       ## create NVSPL OUTPUT directory
-      NVSPLdir = paste(WAVDirs[ff], "NVSPL",sep="\\")
-      dir.create(NVSPLdir,showWarnings=F,recursive=T)
+
+      if(!missing(results.directory)) {
+        # if (grepl("\\/$", results.directory) == FALSE) {
+        #   results.directory <- paste0(results.directory, '/')
+          NVSPLdir <- results.directory
+      } else {
+        NVSPLdir = paste(WAVDirs[ff], "NVSPL",sep="\\")
+      }
+
+      dir.create(NVSPLdir,showWarnings = TRUE, recursive = TRUE)
       message('\nNVSPL directory created in: ', NVSPLdir, '\n')
 
       ## LOOP through the unique days- calibrate then convert to NVSPL format
