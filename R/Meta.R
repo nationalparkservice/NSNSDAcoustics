@@ -57,7 +57,7 @@ Meta <- function(...,atype='TOL',plottype='Both',envi='Air',
   fullfile = files[1]
 
   #get names of WAV files in target folder
-  fIN <- readWave(fullfile,header = TRUE)
+  fIN <- readWave(fullfile, header = TRUE)
   Fs = fIN[[1]]					#get sampling frequency of files in from selected file
   nf = length(files)		#number of files
   cat('No. of WAV files in selected directory: ',nf,'\n')

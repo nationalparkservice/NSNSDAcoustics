@@ -262,14 +262,13 @@ wave_to_nvspl <- function(input.directory,
         NVSPLdir = paste(WAVDirs[ff], "NVSPL",sep="\\")
       }
 
-      dir.create(NVSPLdir,showWarnings = TRUE, recursive = TRUE)
-      message('\nNVSPL directory created in: ', NVSPLdir, '\n')
+      dir.create(NVSPLdir, showWarnings = FALSE, recursive = TRUE)
+      message('\nNVSPL directory is located in: ', NVSPLdir, '\n')
 
       ## LOOP through the unique days- calibrate then convert to NVSPL format
       cnt = 0
       for(d in (dys) )  # d = dys[1] # for testing
       {
-
         cnt = cnt + 1
         cat('##################################################')
         cat('Processing DIRECTORY ', ff, " of ", length(WAVDirs), " for DAY", cnt, ' of ', length(dys), '\n' )
@@ -280,11 +279,28 @@ wave_to_nvspl <- function(input.directory,
         filenms = paste(WAVDirs[ff], "\\", udaylist, sep="")
 
         ## (2) RUN PAMGUIDE-------------------------------------------------------------
-        Meta(atype = 'TOL', timestring = filename,
-             r=0, outwrite=1, plottype = "None", calib=1,
-             envi=enviset, ctype="TS", Mh=mhset, G=Gset,
-             vADC=vADCset,
-             filenms = filenms)
+
+       # Preempt breakage on corrupt files (typically, files that are too short)
+        catch.error <- tryCatch(
+          Meta(atype = 'TOL',
+               timestring = filename,
+               r = 0,
+               outwrite = 1,
+               plottype = "None",
+               calib  =1,
+               envi = enviset,
+               ctype = "TS",
+               Mh = mhset,
+               G = Gset,
+               vADC = vADCset,
+               filenms = filenms),
+          error = function(e) e
+        )
+
+        if (inherits(catch.error, 'error')) {
+          message('\nThere is a problem with an audio file; skipping to next\n')
+          next
+        } # end trycatch
 
         ## (3) READ IN file created by PAMGUIDE------------------------------------------
         PAMfiles = list.files(WAVDirs[ff], pattern = "Conk.*.csv",
