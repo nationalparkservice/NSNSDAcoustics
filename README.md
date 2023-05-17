@@ -7,7 +7,7 @@ This repository provides a place for National Park Service [Natural Sounds and N
 # Table of Contents
 
 - **[Installing NSNSDAcoustics](#installing-nsnsdacoustics)**
-- **[Running BirdNET from RStudio with birdnet_analyzer](#running-birdnet-from-rstudio-with-birdnet_analyzer)**: Go here if you want to use RStudio to process .wav or .mp3 audio files through [BirdNET](https://birdnet.cornell.edu/). Requires some setup. **Note: Our current preferred workflow is to run BirdNET from a Windows command prompt instead of using birdnet_analyzer(). You can still use every other function in this package if you specify rtype = 'r'.**
+- **[Running BirdNET from RStudio with birdnet_analyzer](#running-birdnet-from-rstudio-with-birdnet_analyzer)**: Go here if you want to use RStudio to process .wav or .mp3 audio files through [BirdNET](https://birdnet.cornell.edu/). Requires some setup. **Note to NPS staff: Due to upcoming internal software/tech changes, birdnet_analyzer() will be deprecated in summer 2023. Our current preferred workflow is to run BirdNET from a Windows command prompt instead of using birdnet_analyzer(). You can still use every other function in this package if you specify rtype = 'r'.**
 - **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET outputs in hand from rtype = 'r', and want to use R to wrangle, visualize, and verify the results.
   * **[Reformat raw BirdNET results](#reformat-raw-birdnet-results)**
   * **[Gather BirdNET results](#gather-birdnet-results)**
@@ -57,6 +57,8 @@ NSNSDAcoustics depends on the R package `data.table`, which enables fast queryin
 
 
 ## Running BirdNET from RStudio with birdnet_analyzer
+
+**Note to NPS staff: Due to upcoming internal software/tech changes, we plan to deprecate birdnet_analyzer() in summer 2023. Please plan on running BirdNET directly from a Windows command prompt in the future. You will still be able to use every other function in this package if you specify rtype = 'r' in the command prompt. Stay tuned for updates or contact Cathleen Balantic (`cathleen_balantic` at `nps.gov`) with questions.**
 
 [BirdNET](https://birdnet.cornell.edu/) is a bird sound recognition program developed by the [Cornell Center for Conservation Bioacoustics](https://www.birds.cornell.edu/ccb/). The [BirdNET-Analyzer Github repository](https://github.com/kahst/BirdNET-Analyzer) provides a promising free tool for processing large volumes of audio data relatively quickly and understanding something about which avian species are present.
 
