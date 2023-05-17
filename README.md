@@ -202,7 +202,7 @@ You may not want to process files through RStudio, or you may already have BirdN
 
 ### (6) Keep BirdNET Updated (...if you wish)
 
-[The BirdNET-Analyzer model is periodically updated](https://github.com/kahst/BirdNET-Analyzer/tree/main/checkpoints). NSNSDAcoustics supports V2.1 and V2.2. If you have previously been running V2.1 through NSNSDAcoustics, and want to update to V2.2, you will need to redo steps 1, 3, and 4 above. Preliminary investigation suggests that V2.1 and V2.2 produce different results, so if you are intending to apply an updated model to new incoming audio and then compare those results to older audio that was processed with an older BirdNET-Analyzer model, beware that this may change results and inference.
+[The BirdNET-Analyzer model is periodically updated](https://github.com/kahst/BirdNET-Analyzer/tree/main/checkpoints). NSNSDAcoustics supports V2.1 and V2.2. If you have previously been running V2.1 through NSNSDAcoustics, and want to update to V2.2, you will need to redo steps 1, 3, and 4 above. Preliminary investigation suggests that V2.1 and V2.2 produce different results, so if you are intending to apply an updated model to new incoming audio and then compare those results to older audio that was processed with an older BirdNET-Analyzer model, beware that this may change results and inference. V2.3 is not currently supported in this workflow because [future versions of Tensorflow will no longer be supported by native Windows](https://www.tensorflow.org/install/pip#windows-native) and the birdnet_analyzer() function will be deprecated in 2023.  
 
 ## Assessing BirdNET Results
 
