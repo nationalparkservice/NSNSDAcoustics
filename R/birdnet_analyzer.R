@@ -172,22 +172,12 @@ birdnet_analyzer <- function(audio.directory,   # absolute path for now
   # Read in the modified analyze.py script installed with the package
   if (birdnet.version == 'V2.1') {
     birdnet.script <- paste(system.file(package = "NSNSDAcoustics"),
-                            "reticulate-analyze-v2pt1.py", sep = "/")
+                            "reticulate-analyze-april2022.py", sep = "/")
   }
   if (birdnet.version == 'V2.2') {
     birdnet.script <- paste(system.file(package = "NSNSDAcoustics"),
                             "reticulate-analyze-v2pt2.py", sep = "/")
   }
-
-  # if (birdnet.version == 'V2.3') {
-  #   birdnet.script <- paste(system.file(package = "NSNSDAcoustics"),
-  #                           "reticulate-analyze-v2pt3.py", sep = "/")
-  # }
-
-
-  #browser()
-
-  birdnet.script <- 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/inst/reticulate-analyze-v2pt3.py'
 
   # Get current working directory and make sure it is reset after function exits
   #   (to deal with fact that wd must be set to BirdNET python directory to
