@@ -7,14 +7,12 @@
 birdnet_gather(results.directory, formatted = TRUE)
 }
 \arguments{
-\item{results.directory}{Path to directory where raw BirdNET results have been stored.}
+\item{results.directory}{Path to directory where raw csv or txt BirdNET results using rtype = "r" have been stored.}
 
 \item{formatted}{Logical indicating whether to gather formatted (see \code{\link{birdnet_format}}) or unformatted (raw) BirdNET results. Default = TRUE. When FALSE, the function will gather only unformatted (raw) results.}
 }
 \value{
 Returns a data.frame/data.table.
-
-When input filetype is txt based on rtype = 'r', the following outputs are returned.
 
 If formatted = TRUE:
 
@@ -39,29 +37,6 @@ If formatted = TRUE:
 }
 
 When formatted = FALSE, it returns the same columns without the recordingID, verify, and timezone columns.
-
-When working with CSV files, the following ouptuts are returned.
-
-If formatted = TRUE:
-\itemize{
-\item{\strong{recordingID}: Recording identifier for the file, e.g., SITE_YYYYMMDD_HHMMSS.wav.}
-\item{\strong{start.s}: Start time of detection in seconds }
-\item{\strong{end.s}: End time of detection in seconds.}
-\item{\strong{scientific.name}: Species scientific name.}
-\item{\strong{common.name}: Species common name.}
-\item{\strong{confidence}: BirdNET's confidence level in this detection ranging from 0 (least confident) to 1 (most confident).}
-\item{\strong{verify}: A column into which verifications may be populated. When initially created, will be NA. After verifications are conducted, will contain items from a user-specified verification library (see \code{\link{birdnet_verify}})}
-\item{\strong{timezone}: Timezone setting used in the audio recorder }
-}
-
-If formatted = FALSE:
-\itemize{
-\item{\strong{Start (s)}: Start time of detection in seconds.}
-\item{\strong{End (s)}: End time of detection in seconds.}
-\item{\strong{Scientific name}: Species scientific name.}
-\item{\strong{Common name}: Species common name.}
-\item{\strong{Confidence}: BirdNET's confidence level in this detection ranging from 0 (least confident) to 1 (most confident).}
-}
 }
 \description{
 Gather all BirdNET results from a desired folder into one user-friendly data.table / data.frame.
@@ -78,33 +53,35 @@ dir.create('example-results-directory')
 # Write examples of formatted BirdNET outputs to example results directory
 data(exampleFormatted1)
 write.table(x = exampleFormatted1,
-            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
+            file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 
 data(exampleFormatted2)
 write.table(x = exampleFormatted2,
-            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.txt',
+            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 
 # Write examples of raw BirdNET outputs to example results directory
 data(exampleBirdNET1)
 write.table(x = exampleBirdNET1,
-            file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.txt',
+            file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 data(exampleBirdNET2)
 write.table(x = exampleBirdNET2,
-            file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.txt',
+            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 
 # Gather formatted BirdNET results
 formatted.results <- birdnet_gather(
                              results.directory = 'example-results-directory',
-                             formatted = TRUE)
+                             formatted = TRUE
+                             )
 
 # Gather unformatted (raw) BirdNET results
 raw.results <- birdnet_gather(
                        results.directory = 'example-results-directory',
-                       formatted = FALSE)
+                       formatted = FALSE
+                       )
 
 # Delete all temporary example files when finished
 unlink(x = 'example-results-directory', recursive = TRUE)

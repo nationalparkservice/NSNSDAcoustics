@@ -119,6 +119,7 @@ save(exampleScores, file = 'data/exampleScores.RData')
 # birdnet_analyzer =============================================================
 
 library(NSNSDAcoustics)
+library(tools)
 
 # Set up python/reticulate
 Sys.setenv(RETICULATE_PYTHON = "C:/Users/cbalantic/Anaconda3/envs/pybirdanalyze/python.exe")
@@ -141,28 +142,45 @@ tuneR::writeWave(object = exampleAudio1,
 tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
 
-# Run audio data through BirdNET
-source("C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/R/birdnet_analyzer.R")
+# Run audio data through BirdNET using week + lat longs
+# source("C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/R/birdnet_analyzer.R")
 birdnet_analyzer(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
                  results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-results-directory', # must use absolute path!
                  birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/BirdNET-Analyzer-main/',
+                 use.week = TRUE,
                  lat = 46.09924,
                  lon = -123.8765)
 
-
-# Run audio data through BirdNET
-source("C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/R/birdnet_analyzer.R")
+# Testing lat longs but use.week = FALSE
 birdnet_analyzer(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
                  results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-results-directory', # must use absolute path!
-                 audio.files = "newhampshire_20210626_092000.ogg",
                  birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/BirdNET-Analyzer-main/',
+                 use.week = FALSE,
                  lat = 46.09924,
                  lon = -123.8765)
 
+# Testing species list, use.week = FALSE
+birdnet_analyzer(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
+                 results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-results-directory', # must use absolute path!
+                 birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/BirdNET-Analyzer-main/',
+                 use.week = FALSE,
+                 slist = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/data-raw/sp-list.txt')
 
 
-birdnet.files <- list.files('./data-raw/', pattern = 'BirdNET_Rivendell_', full.names = TRUE)
-birdnet.files <- birdnet.files[grep('.txt', birdnet.files)]
+# Testing LL = -1
+birdnet_analyzer(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
+                 results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-results-directory', # must use absolute path!
+                 birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/BirdNET-Analyzer-main/',
+                 use.week = FALSE,
+                 lat = -1,
+                 lon = -1)
+
+
+
+
+
+birdnet.files <- list.files('./data-raw/', pattern = '.BirdNET.results.csv', full.names = TRUE)
+#birdnet.files <- birdnet.files[grep('.txt', birdnet.files)]
 exampleBirdNET1 <- fread(file = birdnet.files[1], header = TRUE)
 exampleBirdNET2 <- fread(file = birdnet.files[2], header = TRUE)
 
@@ -185,12 +203,12 @@ dir.create('example-results-directory')
 # Write examples of raw BirdNET CSV outputs to example results directory
 data(exampleBirdNET1)
 write.table(x = exampleBirdNET1,
-            file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.txt',
+            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 
 data(exampleBirdNET2)
 write.table(x = exampleBirdNET2,
-            file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.txt',
+            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 
 # Run birdnet_format:
@@ -272,8 +290,43 @@ save(examplePlotData, file = 'data/examplePlotData.RData')
 unlink(x = 'example-audio-directory', recursive = TRUE)
 unlink(x = 'example-results-directory', recursive = TRUE)
 
+# data for birdnet_barchart ====================================================
 
-# debugging birdnet format ====================================================
+results.dir <- 'C:/Users/cbalantic/OneDrive - DOI/BirdNET-guidance/birdnet-sandbox/Results/LEWI/BirdNET-analyzer-results'
+
+# Gather up results
+res <- birdnet_gather(results.directory = results.dir, formatted = TRUE)
+
+# Change the column content to be Rivendell
+res[,filepath := gsub(pattern = 'CLAT/LEWICLAT', replacement = 'Rivendell', x = filepath)]
+res[,recordingID := gsub(pattern = 'LEWICLAT', replacement = 'Rivendell', x = recordingID)]
+res[,c('lat', 'lon') := .(NA, NA)]
+
+exampleBarchartData <- res[grep('Rivendell', x = filepath)]
+
+#Save as RData
+save(exampleBarchartData, file = 'data/exampleBarchartData.RData')
+
+
+
+data <- add_time_cols(dt = data,
+                     tz.recorder = 'America/Los_angeles',
+                     tz.local = 'America/Los_angeles')
+
+
+out <- birdnet_barchart(data = test, interactive = TRUE)
+
+
+# Testing focal species/ focal colors
+birdnet_barchart(data = test,
+                 interactive = FALSE,
+                 focal.species = c("Pacific Wren", "Swainson's Thrush"),
+                 focal.colors = c('#00BE67', '#C77CFF'))
+
+
+
+
+# debugging birdnet format BirdNET_ find and replace ===========================
 
 # Fixing the "BirdNET_" find and replace issue -- if a folder also has this name,
 # it will be replaced and have the wrong folder path
@@ -321,35 +374,135 @@ birdnet_format(results.directory = 'BirdNET_results',
                timezone = 'GMT')
 
 
-# data for birdnet_barchart ====================================================
 
-results.dir <- 'C:/Users/cbalantic/OneDrive - DOI/BirdNET-guidance/birdnet-sandbox/Results/LEWI/BirdNET-analyzer-results'
+# debugging birdnet_format & birdnet_barchart NA issue =========================
 
-# Gather up results
-res <- birdnet_gather(results.directory = results.dir, formatted = TRUE)
+# needed to make sure "BirdNET_" was not getting appended into the recordingID when there were no results
 
-# Change the column content to be Rivendell
-res[,filepath := gsub(pattern = 'CLAT/LEWICLAT', replacement = 'Rivendell', x = filepath)]
-res[,recordingID := gsub(pattern = 'LEWICLAT', replacement = 'Rivendell', x = recordingID)]
-res[,c('lat', 'lon') := .(NA, NA)]
+# Create a BirdNET results directory for this example
+dir.create('BirdNET_results')
 
-exampleBarchartData <- res[grep('Rivendell', x = filepath)]
+# Copy result-free txt file into the folder
+file.copy(from = 'C:/Users/cbalantic/OneDrive - DOI/BirdNET-guidance/birdnet-sandbox/Results/ROMO/BirdNET-Analyzer-No-2019-CCT-CCC-HSPC/BirdNET_HSPT_20210606_024004.txt',
+          to = './BirdNET_results/BirdNET_HSPT_20210606_024004.txt')
+file.copy(from = 'C:/Users/cbalantic/OneDrive - DOI/BirdNET-guidance/birdnet-sandbox/Results/ROMO/BirdNET-Analyzer-No-2019-CCT-CCC-HSPC/BirdNET_HSPT_20210606_025004.txt',
+          to = './BirdNET_results/BirdNET_HSPT_20210606_025004.txt')
+
+birdnet_format(results.directory = 'BirdNET_results', timezone = 'UTC')
+
+dat <- birdnet_gather(results.directory = 'BirdNET_results', formatted = TRUE)
+dat <- add_time_cols(dt = dat, tz.recorder = 'UTC', tz.local = 'America/Denver')
+birdnet_barchart(data = dat, interactive = FALSE,
+                 focal.species = c('American Robin', 'Willow Flycatcher', 'Cordilleran Flycatcher'),
+                 focal.colors = c('blue', 'red', 'orange'))
+
+birdnet_barchart(data = dat, interactive = FALSE,
+                 focal.species = c('American Robin', 'Willow Flycatcher', 'Cordilleran Flycatcher'),
+                 focal.colors = c('blue', 'red', 'orange'))
+
+# TESTING BIRDNET v2.2 =========================================================
+
+# August 2022
+
+library(NSNSDAcoustics)
+
+# Set up python/reticulate
+Sys.setenv(RETICULATE_PYTHON = "C:/Users/cbalantic/Anaconda3/envs/pybirdanalyze2pt2/python.exe")
+library(reticulate) # call AFTER Sys.setenv
+use_condaenv(condaenv = "pybirdanalyze2pt2", required = TRUE)
+
+# Create an audio directory for this example
+dir.create('example-audio-directory')
+
+# Create a results directory for this example
+dir.create('example-results-directory')
+
+# Read in example wave files
+data(exampleAudio1)
+data(exampleAudio2)
+
+# Write example waves to example audio directory
+tuneR::writeWave(object = exampleAudio1,
+                 filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
+tuneR::writeWave(object = exampleAudio2,
+                 filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+
+# Run audio data through BirdNET
+source("C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/R/birdnet_analyzer.R")
+library(tools)
+birdnet_analyzer(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
+                 results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-results-directory', # must use absolute path!
+                 birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/BirdNET-Analyzer-main-2pt2/',
+                 lat = 46.09924,
+                 lon = -123.8765)
+
+v22 <- rbindlist(lapply(list.files('example-results-directory', full.names = TRUE), function(x) fread(x)))
+
+data(exampleBirdNET1)
+data(exampleBirdNET2)
+v21 <- rbind(exampleBirdNET1, exampleBirdNET2)
+
+v21[,mean(confidence), by = c('common_name')]
+v22[,mean(confidence), by = c('common_name')] # wtf... there are NO varied thrush in this at all? Wtf?
+
+v21[,.N, by = c('common_name')]
+v22[,.N, by = c('common_name')]
+
+# TESTING BIRDNET v2.3 =========================================================
+# April 2023
+library(NSNSDAcoustics)
+source("C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/R/birdnet_analyzer.R")
+
+# Set up python/reticulate
+Sys.setenv(RETICULATE_PYTHON = "C:/Users/cbalantic/Anaconda3/envs/pybirdanalyze2pt3/python.exe")
+library(reticulate) # call AFTER Sys.setenv
+use_condaenv(condaenv = "pybirdanalyze2pt3", required = TRUE)
+
+# Create an audio directory for this example
+dir.create('example-audio-directory')
+
+# Create a results directory for this example
+dir.create('example-results-directory')
+
+# Read in example wave files
+data(exampleAudio1)
+data(exampleAudio2)
+
+# Write example waves to example audio directory
+tuneR::writeWave(object = exampleAudio1,
+                 filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
+tuneR::writeWave(object = exampleAudio2,
+                 filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+
+# Run audio data through BirdNET
+source("C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/R/birdnet_analyzer.R")
+library(tools)
+birdnet_analyzer(audio.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-audio-directory', # must use absolute path!
+                 results.directory = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/example-results-directory', # must use absolute path!
+                 birdnet.directory = 'C:/Users/cbalantic/OneDrive - DOI/BirdNET-Analyzer-main-2pt3/',
+                 lat = 46.09924,
+                 lon = -123.8765,
+                 use.week = FALSE)
+
+v23 <- rbindlist(lapply(list.files('example-results-directory', full.names = TRUE), function(x) fread(x)))
+
+data(exampleBirdNET1)
+data(exampleBirdNET2)
+v21 <- rbind(exampleBirdNET1, exampleBirdNET2)
+
+v21[,mean(confidence), by = c('common_name')]
+v22[,mean(confidence), by = c('common_name')] # wtf... there are NO varied thrush in this at all? Wtf?
+
+v21[,.N, by = c('common_name')]
+v22[,.N, by = c('common_name')]
+
+unlink('example-audio-directory')
+unlink('example-results-directory')
+
+# Sample data to generate acoustic index file ==================================
+
+
+exampleAI <- read.csv('data-raw/Rivendell_10mins_NVSPL_AcousticIndexStartatBegin_2012to2021_Created2022-04-21.csv')
 
 #Save as RData
-save(exampleBarchartData, file = 'data/exampleBarchartData.RData')
-
-
-
-data <- add_time_cols(dt = data,
-                     tz.recorder = 'America/Los_angeles',
-                     tz.local = 'America/Los_angeles')
-
-
-out <- birdnet_barchart(data = test, interactive = TRUE)
-
-
-# Testing focal species/ focal colors
-birdnet_barchart(data = test,
-                 interactive = FALSE,
-                 focal.species = c("Pacific Wren", "Swainson's Thrush"),
-                 focal.colors = c('#00BE67', '#C77CFF'))
+save(exampleAI, file = 'data/exampleAI.RData')

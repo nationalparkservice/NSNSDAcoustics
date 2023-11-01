@@ -110,7 +110,7 @@ NULL
 #' # Write examples of raw BirdNET txt outputs to example results directory to
 #' # mimic BirdNET output format
 #' write.table(x = exampleBirdNET1,
-#'           file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.txt',
+#'           file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
 #'           row.names = FALSE, quote = FALSE, sep = ',')
 #'
 #' # Delete all temporary example files when finished
@@ -140,7 +140,7 @@ NULL
 #' # Write examples of raw BirdNET txt outputs to example results directory to
 #' # mimic BirdNET output format
 #' write.table(x = exampleBirdNET2,
-#'           file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.txt',
+#'           file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
 #'           row.names = FALSE, quote = FALSE, sep = ',')
 #'
 #' # Delete all temporary example files when finished
@@ -171,7 +171,7 @@ NULL
 #' # Write examples of formatted BirdNET outputs to example results directory
 #' # to mimic output format of birdnet_format
 #' write.table(x = exampleFormatted1,
-#'             file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
+#'             file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
 #'             row.names = FALSE, quote = FALSE, sep = ',')
 #'
 #' # Delete all temporary example files when finished
@@ -201,7 +201,7 @@ NULL
 #' # Write examples of formatted BirdNET outputs to example results directory
 #' # to mimic output format of birdnet_format
 #' write.table(x = exampleFormatted2,
-#'             file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.txt',
+#'             file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
 #'             row.names = FALSE, quote = FALSE, sep = ',')
 #'
 #' # Delete all temporary example files when finished
@@ -244,5 +244,25 @@ NULL
 #'
 #' # View structure
 #' str(exampleBarchartData, max.level = 1)
+#'
+NULL
+
+
+#' @title exampleAI
+#' @description Sample data.frame to demonstrate \code{\link{plot_audio_summary}}
+#' @format An object of class \code{data.frame} containing 60 columns.
+#' @details The exampleAI object is used to demonstrate \code{\link{plot_audio_summary}}
+#' @seealso \code{\link{plot_audio_summary}}, \code{\link{nvspl_to_ai}}
+#' @docType data
+#' @keywords datasets
+#' @name exampleAI
+#' @usage data(exampleAI)
+#' @examples
+#'
+#' # Load the dataset
+#' data(exampleAI)
+#'
+#' # View structure
+#' str(exampleAI, max.level = 1)
 #'
 NULL

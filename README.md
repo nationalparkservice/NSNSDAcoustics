@@ -2,13 +2,13 @@
 
 This repository provides a place for National Park Service [Natural Sounds and Night Skies Division (NSNSD)](https://www.nps.gov/orgs/1050/index.htm) staff to develop and modernize several bioacoustics workflows. 
 
-**All documentation and code is currently under development.**
+**All documentation and code is actively under development. There is currently no official release of this package and code may change. If you encounter a problem, please submit it to [Issues](https://github.com/nationalparkservice/NSNSDAcoustics/issues). If you have a question or need that isn't covered by submitting an issue, please reach out to Cathleen Balantic (`cathleen_balantic` at `nps.gov`).**
 
 # Table of Contents
 
 - **[Installing NSNSDAcoustics](#installing-nsnsdacoustics)**
-- **[Running BirdNET from RStudio with birdnet_analyzer](#running-birdnet-from-rstudio-with-birdnet_analyzer)**: Go here if you want to use RStudio to process .wav or .mp3 audio files through [BirdNET](https://birdnet.cornell.edu/). Requires some setup. 
-- **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET 'r' or 'csv' type outputs in hand and want to use R to wrangle, visualize, and verify the results.
+- **[Running BirdNET from RStudio with birdnet_analyzer](#running-birdnet-from-rstudio-with-birdnet_analyzer)**: Go here if you want to use RStudio to process .wav or .mp3 audio files through [BirdNET](https://birdnet.cornell.edu/). Requires some setup. **Note to NPS staff: Due to upcoming internal software/tech changes, birdnet_analyzer() will be deprecated in summer 2023. Our current preferred workflow is to run BirdNET from a Windows command prompt instead of using birdnet_analyzer() -- contact `cathleen_balantic` at `nps.gov` for assistance on getting set up. You can still use every other function in this package if you specify rtype = 'r'..**
+- **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET outputs in hand from rtype = 'r', and want to use R to wrangle, visualize, and verify the results.
   * **[Reformat raw BirdNET results](#reformat-raw-birdnet-results)**
   * **[Gather BirdNET results](#gather-birdnet-results)**
   * **[Verify BirdNET results](#verify-birdnet-results)**
@@ -27,7 +27,7 @@ Next, you can install NSNSDAcoustics using one of two options:
 
 ### (1) Option 1: Use `install_github()`:
 
-You may need to first install the latest version of devtools. Once you have devtools, you can install the latest version of NSNSDAcoustics:
+You may need to first install the latest version of devtools, and the R console may also prompt you to install Rtools (follow directions given in console message). If you are having trouble installing devtools, make sure to disconnect from VPN. Once you have Rtools and devtools, you can install the latest version of NSNSDAcoustics:
 
 ```r
 install.packages('devtools')
@@ -58,20 +58,28 @@ NSNSDAcoustics depends on the R package `data.table`, which enables fast queryin
 
 ## Running BirdNET from RStudio with birdnet_analyzer
 
+**Note to NPS staff: Due to upcoming internal software/tech changes, we plan to deprecate birdnet_analyzer() in summer 2023. Please plan on running BirdNET directly from a Windows command prompt in the future. You will still be able to use every other function in this package if you specify rtype = 'r' in the command prompt. Stay tuned for updates or contact Cathleen Balantic (`cathleen_balantic` at `nps.gov`) with questions.**
+
 [BirdNET](https://birdnet.cornell.edu/) is a bird sound recognition program developed by the [Cornell Center for Conservation Bioacoustics](https://www.birds.cornell.edu/ccb/). The [BirdNET-Analyzer Github repository](https://github.com/kahst/BirdNET-Analyzer) provides a promising free tool for processing large volumes of audio data relatively quickly and understanding something about which avian species are present.
 
-To process audio files through BirdNET, `birdnet_analyzer()` uses the [reticulate](https://rstudio.github.io/reticulate/) package to run Python from RStudio. **This function was developed for Windows 10 and has not been tested on other systems.**
+As an R user, you may prefer to run BirdNET directly from RStudio. To process audio files through BirdNET with RStudio, `birdnet_analyzer()` uses the [reticulate](https://rstudio.github.io/reticulate/) package to run Python from RStudio. **This function was developed for Windows 10 and has not been tested on other systems.** P.S.: As an alternative to `birdnet_analyzer()`, you may find that you prefer to run BirdNET directly from the command line, as described at the [BirdNET-Analyzer Github repository](https://github.com/kahst/BirdNET-Analyzer). This may be faster since you will be able to specify multiple threads, which likely won't work via R due to the way Python and R interact. If you choose to run BirdNET from the command line instead of from `birdnet_analyzer()`, you will still be able to use other functions in this package to gather and visualize BirdNET results, **so long as you have specified --rtype "r"**.
 
-To use `birdnet_analyzer()`, please first complete the following steps. The function will not work otherwise. 
-
+If you prefer to use `birdnet_analyzer()`, please first complete the following steps. The function will not work otherwise. 
 
 ### (1) Install BirdNET using the "Install BirdNET from zip" instructions at [BirdNET-Analyzer -- Setup (Windows)](https://github.com/kahst/BirdNET-Analyzer#setup-windows). 
 
-Early on in the [Setup (Windows)](https://github.com/kahst/BirdNET-Analyzer#setup-windows), the instructions will encourage you to download a "fully-packaged version that does not require you to install any additional packages and can be run as-is". This is *not* the file you want, so keep scrolling until you hit a section that says "Install BirdNET from zip" and click "Download BirdNET Zip-file". Unzip that file to a desired location on your machine. This folder should have the name **BirdNET-Analyzer-main**.
+Early on in the [Setup (Windows)](https://github.com/kahst/BirdNET-Analyzer#setup-windows) section, the instructions will encourage you to download a "fully-packaged version that does not require you to install any additional packages and can be run as-is". This is *not* the file you want, so keep scrolling until you hit a section that says "Install BirdNET from zip" and click "Download BirdNET Zip-file". Unzip that file to a desired location on your machine. This folder should have the name **BirdNET-Analyzer-main**.
+
+Check the image below to make sure you're installing the correct version: 
+
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/BirdNET-install-link.png alt="Version of BirdNET you should install if you want to run BirdNET from RStudio."><br>
+</p>
+
 
 ### (2) Download and install [Anaconda](https://www.anaconda.com/). 
 
-BirdNET-Analyzer runs on Python, and installing Anaconda will position you for the streamlined setup and dependency management necessary to run BirdNET-Analyzer from R.
+BirdNET-Analyzer runs on Python, and installing Anaconda will position you for the streamlined setup and dependency management necessary to run BirdNET-Analyzer from R. You should not need elevated privileges to do this; use the default installation option of "Just Me". (You may run into challenges with this workflow if you install as administrator.)
 
 ### (3) Set up a conda environment for BirdNET-Analyzer
 
@@ -87,6 +95,13 @@ conda install -n pybirdanalyze tensorflow
 
 Make sure you know where your pybirdanalyze conda environment lives. It might have a path name like: C:\\Users\\Username\\Anaconda3\\envs\\pybirdanalyze
 
+The contents of your conda folder should look something like this: 
+
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/BirdNET-conda-folder.png alt="The contents of your conda folder should look something like this."><br>
+</p>
+
+
 ### (4) Copy the "checkpoints" folder and "eBird_taxonomy_codes_2021E.json" file from BirdNET-Analyze-main into your BirdNET conda environment folder.
 
 If you don't do this, `birdnet_analyzer()` will throw errors telling you that it can't find these files. 
@@ -96,10 +111,9 @@ If you don't do this, `birdnet_analyzer()` will throw errors telling you that it
 Here are few tips for using this function: 
 
 * The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. If this is not the case for your files (e.g., AudioMoth files do not come with a SiteID), you'll need to do some preprocessing.
-* Cornell's underlying BirdNET-Analyzer software gives several options for file output types, but the only two implemented in this function are 'r' or 'csv'. **The 'r' option is strongly preferred for all downstream workflows and outputs a txt file.** The 'csv' option produces a csv file with simple columns, and is retained only to handle outputs from the now deprecated BirdNET-Lite. See `?birdnet_analyzer` for output column details. 
+* Cornell's underlying BirdNET-Analyzer software gives several options for file output types, but the only one implemented in this function is 'r'. See `?birdnet_analyzer` for output column details. 
 * The function can handle either .wav or .mp3 audio file types. The current internal behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations, but might be necessary for Windows 10 if you followed the above instructions.
 * The function expects absolute paths for all directory arguments in `birdnet_analyzer()`. This is necessary due to the way RStudio is communicating with the underlying Python code. 
-* Note that BirdNET's option to input a customized species list has not been implemented.
 
 Below, we'll walk through the documentation and example helpfiles for `birdnet_analyzer()`. Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
 
@@ -112,18 +126,18 @@ Note: if you don't want to go to the trouble of installing and setting up BirdNE
 # To view example outputs of raw txt BirdNET results, write to working directory
 data(exampleBirdNET1)
 write.table(x = exampleBirdNET1,
-            file = 'BirdNET_Rivendell_20210623_113602.txt',
+            file = 'Rivendell_20210623_113602.BirdNET.results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
-
 data(exampleBirdNET2)
 write.table(x = exampleBirdNET2,
-            file = 'BirdNET_Rivendell_20210623_114602.txt',
+            file = 'Rivendell_20210623_114602.BirdNET.results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 ```
 
 If you **do** want to run BirdNET from R, the following pseudocode provides an outline for how to implement `birdnet_analyzer()`. Because this function uses external programs, the examples below will not be modifiable to run for you unless you have followed the setup instructions above.
 
 First, before even calling in the reticulate package, you need to use `Sys.setenv(RETICULATE_PYTHON = )` to point to your conda python.exe path. Your conda python.exe path may look something like this: "C:/Users/Username/Anaconda3/envs/pybirdanalyze/python.exe". You'll then invoke `use_condaenv()` to tell conda to use the pybirdanalyze conda environment. 
+
 ```r
 # Must set environment BEFORE calling in the reticulate package
 Sys.setenv(RETICULATE_PYTHON = "C:/Your/Python/Path/Here/python.exe")
@@ -152,14 +166,15 @@ tuneR::writeWave(object = exampleAudio2,
                  filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
 ```
 
-Once the example files are set up, we're ready to process audio files through BirdNET. `birdnet_analyzer()` has several arguments. `audio.directory` takes a character string with the absolute path to audio files that should be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS with a wav or mp3 extension. `birdnet_analyzer()`'s default behavior is to process every file in the audio.directory through BirdNET. However, if the user only wants to process specific files, they can pass in a character vector to the argument `audio.files` **or** use the `start` argument to specify a file number to start with. Next, `results.directory` takes an absolute path to the directory where you would like your BirdNET results to be stored. `birdnet.directory` takes the absolute path to the directory where you have installed BirdNET on your machine. The remaining arguments allow you to customize the processing experience. `lat` and `lon` take numeric values of the latitude and longitude of the recording location, respecitvely. It is highly recommended to input latitude and longitude values, but these can be ignored by setting the argument value to -1. See helpfile or [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer) documentation for details. 
+Once the example files are set up, we're ready to process audio files through BirdNET. `birdnet_analyzer()` has several arguments. `audio.directory` takes a character string with the absolute path to audio files that should be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS with a wav or mp3 extension. `birdnet_analyzer()`'s default behavior is to process every file in the audio.directory through BirdNET. However, if the user only wants to process specific files, they can pass in a character vector to the argument `audio.files` **or** use the `start` argument to specify a file number to start with. Next, `results.directory` takes an absolute path to the directory where you would like your BirdNET results to be stored. `birdnet.directory` takes the absolute path to the directory where you have installed BirdNET on your machine. The remaining arguments allow you to customize the processing experience. `use.week`	is a logical flag for whether to use week of year in the prediction. If use.week = TRUE, the behavior of `birdnet_analyzer()` is to parse the week of year from the SITEID_YYYYMMDD_HHMMSS filename using lubridate::week(). If FALSE, birdnet_analyzer() will not consider the week of the year when making predictions. `lat` and `lon` take numeric values of the latitude and longitude of the recording location, respectively. You can ignore latitude and longitude values by setting the argument value to -1. A customized species list can be used with the `slist` argument. Please consult the helpfile or [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer) documentation for details. 
 
 In the below example, once you modify the directory paths, `birdnet_analyzer()` will process all example audio files in the folder, with user-input values for lat and lon, and default values for remaining arguments:
 ```r
 # Run all audio data in a directory through BirdNET
 birdnet_analyzer(audio.directory = 'absolute/path/example-audio-directory',
                  results.directory = 'absolute/path/example-results-directory',
-                 birdnet.directory = 'absolute/path/BirdNET',
+                 birdnet.directory = 'absolute/path/BirdNET-Analyzer-main',
+                 use.week = TRUE,
                  lat = 46.09924,
                  lon = -123.8765)
 ```
@@ -170,7 +185,8 @@ For cases in which we only want to process selected audio files, we can use the 
 birdnet_analyzer(audio.directory = 'absolute/path/example-audio-directory',
                  audio.files = 'Rivendell_20210623_113602.wav',
                  results.directory = 'absolute/path/example-results-directory',
-                 birdnet.directory = 'absolute/path/BirdNET',
+                 birdnet.directory = 'absolute/path/BirdNET-Analyzer-main',
+                 use.week = TRUE,
                  lat = 46.09924,
                  lon = -123.8765)
 ```             
@@ -184,9 +200,13 @@ unlink(x = 'example-results-directory', recursive = TRUE)
 
 You may not want to process files through RStudio, or you may already have BirdNET-Analyzer txt or csv results in hand that you would like to begin analyzing, in which case you can skip ahead to the next functions. 
 
+### (6) Keep BirdNET Updated (...if you wish)
+
+[The BirdNET-Analyzer model is periodically updated](https://github.com/kahst/BirdNET-Analyzer/tree/main/checkpoints). NSNSDAcoustics supports V2.1 and V2.2. If you have previously been running V2.1 through NSNSDAcoustics, and want to update to V2.2, you will need to redo steps 1, 3, and 4 above. Preliminary investigation suggests that V2.1 and V2.2 produce different results, so if you are intending to apply an updated model to new incoming audio and then compare those results to older audio that was processed with an older BirdNET-Analyzer model, beware that this may change results and inference.
+
 ## Assessing BirdNET Results
 
-If you have a large number of audio files, and plan to monitor for a long time across many locations, you may very quickly find yourself managing thousands of BirdNET output files. It's likely that you'll want a systematic way to track and check on these results, and verify whether BirdNET detections are truly from a target species. The `birdnet_format()` --> `birdnet_verify()` workflow offers one way to keep track of your verifications. An alternative way would be to set up a SQLite database (e.g., [as used in the AMMonitor package](https://code.usgs.gov/vtcfwru/ammonitor/-/wikis/home)). Although a database solution may ultimately be the most robust way to track results through time in a long term project, this can come with a lot of start up and might not be easily extensible to your project needs. Instead, the worfklow below provides a simple way to reformat and work with BirdNET output files directly, allowing you to store your verifications there. Lastly, `birdnet_plot()` provides a flexible way to visualize a subset of detected data.
+If you have a large number of audio files, and plan to monitor for a long time across many locations, you may very quickly find yourself managing thousands of BirdNET output files. It's likely that you'll want a systematic way to track and check on these results, and verify whether BirdNET detections are truly from a target species. The `birdnet_format()` --> `birdnet_verify()` workflow offers one way to keep track of your verifications. An alternative way would be to set up a SQLite database (e.g., [as used in the AMMonitor package](https://code.usgs.gov/vtcfwru/ammonitor/-/wikis/home)). Although a database solution may ultimately be the most robust way to track results through time in a long term project, this can come with a lot of start up and might not be easily extensible to your project needs. Instead, the worfklow below provides a simple way to reformat and work with BirdNET output files directly, allowing you to store your verifications there. Lastly, `birdnet_plot()` and `birdnet_barchart()` provide plotting options to visualize detected data.
 
 ### Reformat raw BirdNET results
 
@@ -206,12 +226,11 @@ dir.create('example-results-directory')
 # Write examples of raw BirdNET outputs to example results directory
 data(exampleBirdNET1)
 write.table(x = exampleBirdNET1,
-            file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.txt',
+            file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
-
 data(exampleBirdNET2)
 write.table(x = exampleBirdNET2,
-            file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.txt',
+            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 ```
 
@@ -246,24 +265,24 @@ dir.create('example-results-directory')
 # Write examples of formatted BirdNET outputs to example results directory
 data(exampleFormatted1)
 write.table(x = exampleFormatted1,
-            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
+            file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 
 data(exampleFormatted2)
 write.table(x = exampleFormatted2,
-            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.txt',
+            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 
 # Write examples of raw BirdNET outputs to example results directory
 data(exampleBirdNET1)
 write.table(x = exampleBirdNET1,
-            file = 'example-results-directory/BirdNET_Rivendell_20210623_113602.txt',
+            file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
-
 data(exampleBirdNET2)
 write.table(x = exampleBirdNET2,
-            file = 'example-results-directory/BirdNET_Rivendell_20210623_114602.txt',
+            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
+
 ```
 
 `birdnet_gather()` takes two arguments: `results.directory` (the file path to the directory where BirdNET results are stored) and `formatted`, a logical indicating whether formatted results should be gathered. If TRUE, formatted results are gathered. If FALSE, unformatted (raw) BirdNET results are gathered. Both options are demonstrated below. 
@@ -271,12 +290,14 @@ write.table(x = exampleBirdNET2,
 # Gather formatted BirdNET results
 formatted.results <- birdnet_gather(
                              results.directory = 'example-results-directory',
-                             formatted = TRUE)
+                             formatted = TRUE
+                             )
 
 # Gather unformatted (raw) BirdNET results
 raw.results <- birdnet_gather(
                        results.directory = 'example-results-directory',
-                       formatted = FALSE)
+                       formatted = FALSE
+                       )
 ```
 
 Finally, we delete all example files when finished. 
@@ -317,12 +338,11 @@ dir.create('example-results-directory')
 # Write examples of formatted BirdNET outputs to example results directory
 data(exampleFormatted1)
 write.table(x = exampleFormatted1,
-            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
+            file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
-            
 data(exampleFormatted2)
 write.table(x = exampleFormatted2,
-            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.txt',
+            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 ```
 
@@ -336,7 +356,7 @@ dat <- birdnet_gather(results.directory = 'example-results-directory',
 
 # Create a random sample of three detections to verify
 set.seed(4)
-to.verify <- dat[common.name == "Swainson's Thrush"][sample(.N, 3)]
+to.verify <- dat[common_name == "Swainson's Thrush"][sample(.N, 3)]
 ```
 
 The next step is to create a "verification library" for this species; essentially, a character vector of acceptable options for your verification labels. Verifying BirdNET detections may be tricky depending on your research question, because BirdNET does not distinguish between the different types of vocalizations a bird may produce. This means the burden is on you, the verifier, to label the detection in a way that will best support you in answering your motivating research question. 
@@ -439,7 +459,7 @@ Below, we subset the `examplePlotData` object to plot detections for Swainson's 
 # Plot only detections of Swainson's Thrush verified as "song",
 # with frequency limits ranging from 0.5 to 12 kHz, gray spectrogram colors,
 # a custom title, and a gray box around each detection
-plot.songs <- examplePlotData[common.name == "Swainson's Thrush" & verify == "song"]
+plot.songs <- examplePlotData[common_name == "Swainson's Thrush" & verify == "song"]
 birdnet_plot(data = plot.songs,
              audio.directory = 'example-audio-directory',
              title = "Swainson's Thrush Songs",
@@ -464,7 +484,7 @@ library(viridis)
 # Plot only detections of Swainson's Thrush verified as "call"
 # with frequency limits ranging from 0.5 to 6 kHz,a custom title, no boxes,
 # and colors sampled from the viridis color package
-plot.calls <- examplePlotData[common.name == "Swainson's Thrush" & verify == "call"]
+plot.calls <- examplePlotData[common_name == "Swainson's Thrush" & verify == "call"]
 birdnet_plot(data = plot.calls,
              audio.directory = 'example-audio-directory',
              title = "Swainson's Thrush Calls",
@@ -488,7 +508,7 @@ In the final example, we demonstrate that `birdnet_plot()` can also be used to v
 # and gray spectrogram colors
 sp <- c('Varied Thrush', 'Pacific-slope Flycatcher')
 for (i in 1:length(sp)) {
- plot.sp <- examplePlotData[confidence >= 0.25 & common.name == sp[i]]
+ plot.sp <- examplePlotData[confidence >= 0.25 & common_name == sp[i]]
  birdnet_plot(data = plot.sp,
               audio.directory = 'example-audio-directory',
               title = paste0(sp[i], ' Detections >= 0.25'),
@@ -572,8 +592,6 @@ Meanwhile, use of interactive = TRUE is meant strictly for exploratory purposes.
 
 
 ## Converting wave audio files to NVSPL tables with wave_to_nvspl
-
-**Note: function [needs to be updated](https://github.com/nationalparkservice/NSNSDAcoustics/issues/2) with PAMGuide corrigendum** 
 
 `wave_to_nvspl()` uses PAMGuide code to convert wave files into an NVSPL formatted table. NVSPL stands for NPS-Volpe Sound Pressure Level, and is the standard format used in NSNSD analyses. These are hourly files comprised of 1/3 octave data in 1-sec LEQ increments. PAMGuide was developed by [Nathan D. Merchant et al. 2015](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12330). 
 

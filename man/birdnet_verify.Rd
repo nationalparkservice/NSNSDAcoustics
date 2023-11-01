@@ -48,6 +48,8 @@ Interactive function that produces spectrograms and wave clips enabling a user t
 This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data using BirdNET. The "data" argument allows the user precise control over which detections to verify (e.g., a user could input only detections that exceed a desired confidence threshold, or only detections that have been identified for verification using a stratified sampling scheme).
 
 Spectrograms show 3-second segment detected by BirdNET. Title of spectrogram indicates the recordingID of the file name, the start and end times of the detection in seconds, the species detection, and the confidence level of the detection from 0 to 1.
+
+MP3 files create issues in R unless you install 3rd party software (see ?monitoR::readMP3 for details), so this function will operate very slowly on MP3 files since they have to be converted to wave first. For a faster way to deal with verification of MP3 files, consider using the segments.py routine from the command line, as described at the \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer Github page}.
 }
 \examples{
 \dontrun{
@@ -71,11 +73,11 @@ dir.create('example-results-directory')
 # Write examples of formatted BirdNET outputs to example results directory
 data(exampleFormatted1)
 write.table(x = exampleFormatted1,
-            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_113602.txt',
+            file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 data(exampleFormatted2)
 write.table(x = exampleFormatted2,
-            file = 'example-results-directory/BirdNET_formatted_Rivendell_20210623_114602.txt',
+            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
             row.names = FALSE, quote = FALSE, sep = ',')
 
 # Gather formatted BirdNET results

@@ -1,7 +1,7 @@
 Package: NSNSDAcoustics
 Title: Streamline National Park Service Bioacoustics Analysis
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R:
     c(person(given = "Cathleen",
            family = "Balantic",
            role = c("aut", "cre"),
@@ -10,25 +10,25 @@ Authors@R:
     person(given = "Damon",
            family = "Joyce",
            role = "aut",
-           email = "damon_joyce@nps.gov"), 
+           email = "damon_joyce@nps.gov"),
     person(given = "Megan F.",
            family = "McKenna",
            role = "aut",
            comment = c(ORCID = "0000-0003-3475-0785")))
-Description: This package facilitates streamlined bioacoustics analysis developed 
-    for and by the National Park Service (NPS) Natural Sounds and Night Skies 
+Description: This package facilitates streamlined bioacoustics analysis developed
+    for and by the National Park Service (NPS) Natural Sounds and Night Skies
     Division (NSNSD). Workflows include processing, analyzing, and verifying data
-    produced by BirdNET, converting wave files to NVSPL tables, and converting 
+    produced by BirdNET, converting wave files to NVSPL tables, and converting
     NVSPL tables into acoustic indices.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Depends: R (>= 3.5.0), data.table, monitoR, tuneR
-Imports: reticulate, ineq, ggplot2, lubridate, moments, NbClust, plotly, vegan
-Collate: 
+Imports: ineq, iNEXT, ggplot2, lubridate, moments, NbClust, plotly, reticulate, stringr, vegan
+Collate:
     'PAMGuide.R'
     'PAMGuide_Meta.R'
     'Meta.R'
@@ -37,10 +37,13 @@ Collate:
     'birdnet_barchart.R'
     'birdnet_format.R'
     'birdnet_gather.R'
+    'birdnet_heatmap.R'
+    'birdnet_iNEXT.R'
     'birdnet_plot.R'
     'birdnet_run.R'
     'birdnet_verify.R'
     'examples-helpfiles.R'
     'helpers.R'
     'nvspl_to_ai.R'
+    'plot_audio_summary.R'
     'wave_to_nvspl.R'
