@@ -196,7 +196,7 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
 
             # Avoid overlapping x-axis labels in the event of multi-year data
-            panel.spacing.x = unit(4, "mm"))
+            panel.spacing.x = unit(5, "mm"))
 
     if (interactive == TRUE) {
 
@@ -244,7 +244,7 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
 
             # Avoid overlapping x-axis labels in the event of multi-year data
-            panel.spacing.x = unit(4, "mm"))
+            panel.spacing.x = unit(5, "mm"))
 
     if (interactive == TRUE) {
 
