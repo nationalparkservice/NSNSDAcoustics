@@ -124,6 +124,7 @@ birdnet_format <- function(results.directory,
 
   message('Formatting ', length(fi), ' files in ', results.directory, '...')
   for (i in 1:length(fi)) {
+
     message(i)
     finame <- paste0(results.directory, fi[i])
 
@@ -140,10 +141,21 @@ birdnet_format <- function(results.directory,
                 'species_list', 'model'))) {
 
         # Add a recordingID column for friendlier downstream data wrangling
-        recID <- gsub(x = gsub(x = fi[i], pattern = 'BirdNET_|.BirdNET.results', replacement = ''),
-                      pattern = '.csv', replacement = '.wav')
-        # recID <- basename(result$filepath)[i] # this should be more robust than previous...
-        # but doesn't work if there are no results for the file. Annoying. =/
+        catch.error <- tryCatch(
+          recID <- basename(unique(result$filepath)), # this is more robust than guessing
+          # but doesn't work if there are no results for the file. Annoying. =/,
+          error = function(e) e
+        )
+
+        if (inherits(catch.error, 'error')) {
+          # Guess on the recID being wave if there are no results in the file
+          recID <- gsub(x = gsub(x = fi[i],
+                                 pattern = 'BirdNET_|.BirdNET.results',
+                                 replacement = ''),
+                        pattern = '.csv',
+                        replacement = '.wav')
+        } # end trycatch
+
         result[,recordingID := recID]
 
         # Add a verify column to support downstream manual QA of classifications
@@ -197,6 +209,9 @@ birdnet_format <- function(results.directory,
 
     } # end if csv
 
+
+    # .txt type is deprecated from earlier version of BirdNET and shouldn't
+    # typically be encountered.
     if (ext.type == 'txt') {
 
       result <- suppressWarnings(

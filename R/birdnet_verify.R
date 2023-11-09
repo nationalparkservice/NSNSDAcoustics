@@ -133,7 +133,7 @@ birdnet_verify <- function(data,
   message('Gathering all results in results.directory...')
 
   # Check ext_type
-  ext.type <- unique(file_ext(list.files(results.directory)))
+  ext.type <- unique(file_ext(list.files(results.directory, recursive = TRUE)))
   if (length(ext.type) != 1) stop('Multiple file extension types found in folder. Please make sure results are all txt or all csv. Do not mix file types.')
 
   if(length(unique(data$common_name)) > 1) {
@@ -142,7 +142,6 @@ birdnet_verify <- function(data,
 
   # Create composite key to track results
   results <- birdnet_gather(results.directory = results.directory)
-
   results[,composite.key := paste(recordingID, start, end, common_name, sep = '-')]
   data[,composite.key := paste(recordingID, start, end, common_name, sep = '-')]
 
@@ -219,7 +218,8 @@ birdnet_verify <- function(data,
     this.wav <- list.files(
       path = results.directory,
       pattern = gsub('.wav|.mp3', '', gsub(pattern = 'temp-', '', og.rec.ids[w])),
-      full.names = TRUE)
+      full.names = TRUE,
+      recursive = TRUE)
     finame <- this.wav[grep(pattern = '_formatted_', x = this.wav)]
     verify <- all.focal.verify[recordingID == og.rec.ids[w]]
     ask <- FALSE
@@ -239,7 +239,6 @@ birdnet_verify <- function(data,
       wav.paths[w] <- temp.file
       message('Done converting temporary wave file.')
     }
-
 
     for (i in 1:verify[,.N]) {
 

@@ -91,7 +91,8 @@ birdnet_gather <- function(results.directory,
   ifelse(formatted == TRUE,
          paths <- list.files(path = results.directory,
                              pattern = 'formatted',
-                             full.names = TRUE),
+                             full.names = TRUE,
+                             recursive = TRUE),
          paths <- grep(list.files(path = results.directory, full.names = TRUE),
                        pattern = 'formatted',
                        invert = TRUE, value = TRUE))
@@ -101,6 +102,11 @@ birdnet_gather <- function(results.directory,
   paths <- paths[grep(pattern = 'desktop.ini', x = tolower(paths), invert = TRUE)]
 
   dat <- suppressWarnings(rbindlist(lapply(paths, function(x) fread(x))))
+
+  if (length(dat) == 0) {
+    stop('Not finding data in this results.directory -- are you sure the path is correct?')
+  }
+
   if (formatted == TRUE) {
 
     if(!('verify' %in% colnames(dat))) {
