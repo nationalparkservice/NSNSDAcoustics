@@ -2,7 +2,7 @@
 % Please edit documentation in R/birdnet_iNEXT.R, R/helpers.R
 \name{birdnet_iNEXT}
 \alias{birdnet_iNEXT}
-\title{ADD TITLE}
+\title{UNDER DEVELOPMENT}
 \usage{
 birdnet_iNEXT(data, confidence.threshold = 0, n.detections = 1)
 
@@ -18,9 +18,9 @@ birdnet_iNEXT(data, confidence.threshold = 0, n.detections = 1)
 \value{
 DESCRIBE...  additional columns:
 \itemize{
-\item{\strong{stuff}: tbd }
-\item{\strong{stuff}: tbd }
-\item{\strong{stuff}: tbd }
+\item{\strong{insert col name here}: tbd }
+\item{\strong{insert col name here}: tbd }
+\item{\strong{insert col name here}: tbd }
 }
 
 DESCRIBE...  additional columns:
@@ -36,7 +36,7 @@ TBD
 TBD
 }
 \details{
-This function was developed by the National Park Service Natural Sounds and Night Skies Division Scientists in Parks intern Kayley Dillon to support species biodiversity characterization in bioacoustics projects.
+This function was developed by the National Park Service Natural Sounds and Night Skies Division to support species biodiversity characterization in bioacoustics projects. This function is under development.
 
 This function was developed by the National Park Service Natural Sounds and Night Skies Division Scientists in Parks intern Kayley Dillon to support species biodiversity characterization in bioacoustics projects.
 }
@@ -62,8 +62,7 @@ result <- birdnet_iNEXT(
 # We can use this result to plot species rarefaction curves
 # Possibly just script this instead of functionizing
 
-# Not sure if this should be "sized-based" vs "coverage-based"
-# Size-based looks more right
+# Choose "sized-based" vs "coverage-based"
 size.based <- data.table(
   Days = result$iNextEst$size_based$t,
   Richness = result$iNextEst$size_based$qD,
@@ -88,9 +87,9 @@ size.based[,Filter := 'Size']
 
 dat <- rbind(cov.based, size.based)
 
-# Okay, so the richness values are essentially the same;
+# Richness values are essentially the same;
 # it's the confidence values that are different
-# size.based conf ranges will be much tigher -- why?
+# size.based conf ranges will be much tighter
 
 # Separate out by method
 interp <- dat[Method == 'Rarefaction']
@@ -104,7 +103,7 @@ interp$Filter <- factor(interp$Filter, levels = levs)
 extrap$Filter <- factor(extrap$Filter, levels = levs)
 obs$Filter <- factor(obs$Filter, levels = levs)
 
-## Graph ####
+# Graph Results
 ggplot() +
  facet_grid(cols = vars(Filter), scales = "free_x") +
  geom_ribbon(dat, mapping =
