@@ -93,7 +93,9 @@ birdnet_gather <- function(results.directory,
                              pattern = 'formatted',
                              full.names = TRUE,
                              recursive = TRUE),
-         paths <- grep(list.files(path = results.directory, full.names = TRUE),
+         paths <- grep(list.files(path = results.directory,
+                                  full.names = TRUE,
+                                  recursive = TRUE),
                        pattern = 'formatted',
                        invert = TRUE, value = TRUE))
 
