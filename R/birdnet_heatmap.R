@@ -117,10 +117,13 @@ birdnet_heatmap <- function(
   dtn <- dts[,.N, by = c('date', 'locationID')]
 
   # Add in dates that were sampled but which had 0 dets
-  dets.0 <- data.table(date = dates.sampled[!(dates.sampled %in% dtn$date)],
-                       locationID = locid,
-                       N = 0)
-  dtn <- rbind(dtn, dets.0)
+  zero.dates <- dates.sampled[!(dates.sampled %in% dtn$date)]
+  if (length(zero.dates) != 0) {
+    dets.0 <- data.table(date = dates.sampled[!(dates.sampled %in% dtn$date)],
+                         locationID = locid,
+                         N = 0)
+    dtn <- rbind(dtn, dets.0)
+  }
   dtn <- dtn[order(date)]
   dtn[,year :=  year(date)]
   dtn[,julian.date := yday(date)]
@@ -130,6 +133,8 @@ birdnet_heatmap <- function(
   mx <- max(dtn$N, na.rm = TRUE)
   color.breaks <- pretty(c(0, seq(from = 1, to = mx, by = mx/5)))
   u.lim <- max(color.breaks)
+
+  dtn <- dtn[!is.na(year)]
 
   # Plot
   g <- ggplot(dtn,
