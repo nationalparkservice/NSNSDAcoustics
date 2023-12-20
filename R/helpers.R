@@ -256,6 +256,7 @@ birdnet_audio_embed <- function(
     results,
     audio.directory,
     locationID,
+    recording.id.col,
     common.name,
     confidence.threshold,
     year
@@ -287,7 +288,10 @@ birdnet_audio_embed <- function(
 
   # Get the date of the detection (fine to leave in UTC since these are just examples
   # and we only need the date)
-  one.res <- add_time_cols(one.res, tz.recorder = 'UTC', tz.local = 'UTC')
+  one.res <- add_time_cols(one.res,
+                           recording.id.col = recording.id.col,
+                           tz.recorder = 'UTC',
+                           tz.local = 'UTC')
   one.res[,date := as.Date(dateTimeLocal)]
 
 
