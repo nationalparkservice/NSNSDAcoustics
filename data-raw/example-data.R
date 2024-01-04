@@ -21,7 +21,7 @@
 # save(exampleAudio1, file = 'data/exampleAudio1.RData')
 #
 # exampleAudio2 <- readWave(filename = './data-raw/Rivendell_20210715_115702.wav')
-# save(exampleAudio2, file = 'data/exampleAudio2.RData')
+# save(exampleAudio2, file = 'data/exampleAudio2.RData')data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAWElEQVR42mNgGPTAxsZmJsVqQApgmGw1yApwKcQiT7phRBuCzzCSDSHGMKINIeDNmWQlA2IigKJwIssQkHdINgxfmBBtGDEBS3KCxBc7pMQgMYE5c/AXPwAwSX4lV3pTWwAAAABJRU5ErkJggg==
 
 
 # Nevermind. NVSPL code wants 10 minute timesteps. Have to commit the larger file I guess.
@@ -506,3 +506,43 @@ exampleAI <- read.csv('data-raw/Rivendell_10mins_NVSPL_AcousticIndexStartatBegin
 
 #Save as RData
 save(exampleAI, file = 'data/exampleAI.RData')
+
+
+
+# Example for demonstrating system() wrapper in readme =========================
+
+birdnet.path <- 'C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe'
+audio.folders <- c(paste0('D:/', 'AUDIO_', 1:3))
+result.folders <- c(paste0('D:/', 'RESULTS_', 1:3))
+species.list.path <- 'D:/species_list.txt'
+num.threads <- 7
+
+# Generate a single command to loop through several folders:
+all.commands <- paste0(
+  '"', birdnet.path,
+  '" --i "', audio.folders,
+  '" --o "', result.folders,
+  '" --lat -1 --lon -1 --week -1 --slist ',
+  species.list.path, ' --rtype "r" --threads ',
+  num.threads, ' --min_conf 0.01 --sensitivity 1.5')
+
+# Test that one command runs
+# system(all.commands[1])
+
+# Loop through all commands (i.e., all audio folders)
+for (i in 1:length(all.commands)) {
+  cat('\n \n This is folder', i, 'of', length(all.commands), '\n \n')
+  system(all.commands[i])
+}
+
+
+# # Collapse into one command and concatenate for Windows prompt
+# one.command <- paste(all.commands, collapse = " & ")
+#
+# cmds <- list(one.command = one.command,
+#              all.commands = all.commands)
+
+# `"C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe"
+# --i "D:/AUDIO" --o "D:/RESULTS" --lat -1 --lon -1
+# --week -1 --slist D:/species_list.txt --rtype "r"
+# --min_conf 0.1 --sensitivity 1 --threads 4`
