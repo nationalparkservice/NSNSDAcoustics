@@ -108,7 +108,6 @@ birdnet_verify <- function(data,
 {
 
   # TO DO-- a better way to "break" instead of esc?
-
   if(missing(verification.library)) {
     stop('Please input verification.library argument. See ?birdnet_verify.')
   }
@@ -217,7 +216,7 @@ birdnet_verify <- function(data,
   for (w in 1:length(wav.paths)) {
     this.wav <- list.files(
       path = results.directory,
-      pattern = gsub('.wav|.mp3', '', gsub(pattern = 'temp-', '', og.rec.ids[w])),
+      pattern = gsub('.wav|.mp3|.WAV', '', gsub(pattern = 'temp-', '', og.rec.ids[w])),
       full.names = TRUE,
       recursive = TRUE)
     finame <- this.wav[grep(pattern = '_formatted_', x = this.wav)]
