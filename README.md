@@ -7,7 +7,7 @@ This repository provides a place for National Park Service [Natural Sounds and N
 # Table of Contents
 
 - **[Installing NSNSDAcoustics](#installing-nsnsdacoustics)**
-- **[Running BirdNET from RStudio with birdnet_analyzer](#running-birdnet-from-rstudio-with-birdnet_analyzer)**: Go here if you want to use RStudio to process .wav or .mp3 audio files through [BirdNET](https://birdnet.cornell.edu/). Requires some setup. **Note to NPS staff: Due to upcoming internal software/tech changes, birdnet_analyzer() will be deprecated in summer 2023. Our current preferred workflow is to run BirdNET from a Windows command prompt instead of using birdnet_analyzer() -- contact `cathleen_balantic` at `nps.gov` for assistance on getting set up with this. You can still use every other function in this package if you specify rtype = 'r'.**
+- **[Running BirdNET from RStudio](#running-birdnet-from-rstudio)**: Go here if you want to use your Windows machine to process files through RStudio [BirdNET-Analyzer]([https://birdnet.cornell.edu/](https://github.com/kahst/BirdNET-Analyzer)). Requires some setup. 
 - **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET outputs in hand from rtype = 'r', and want to use R to wrangle, visualize, and verify the results.
   * **[Reformat raw BirdNET results](#reformat-raw-birdnet-results)**
   * **[Gather BirdNET results](#gather-birdnet-results)**
@@ -57,153 +57,83 @@ help(package = 'NSNSDAcoustics')
 NSNSDAcoustics depends on the R package `data.table`, which enables fast querying and manipulation of large data.frames. If you are an R user but have never used `data.table` syntax before, some of the example code may look unfamiliar. Don't fret -- `data.table` object types are also  `data.frames`. If you get frustrated trying to work with them, you can always convert to a regular `data.frame` to deal with a more familiar object type.
 
 
-## Running BirdNET from RStudio with birdnet_analyzer
+## Running BirdNET from RStudio
 
-**Note to NPS staff: Due to upcoming internal software/tech changes, we plan to deprecate birdnet_analyzer() in summer 2023. Please plan on running BirdNET directly from a Windows command prompt in the future. You will still be able to use every other function in this package if you specify rtype = 'r' in the command prompt. Stay tuned for updates or contact Cathleen Balantic (`cathleen_balantic` at `nps.gov`) with questions.**
+**This worfklow was developed for Windows 10 and BirdNET-Analyzer V2.4. It has not been tested on other systems.** 
 
 [BirdNET](https://birdnet.cornell.edu/) is a bird sound recognition program developed by the [Cornell Center for Conservation Bioacoustics](https://www.birds.cornell.edu/ccb/). The [BirdNET-Analyzer Github repository](https://github.com/kahst/BirdNET-Analyzer) provides a promising free tool for processing large volumes of audio data relatively quickly and understanding something about which avian species are present.
 
-As an R user, you may prefer to run BirdNET directly from RStudio. To process audio files through BirdNET with RStudio, `birdnet_analyzer()` uses the [reticulate](https://rstudio.github.io/reticulate/) package to run Python from RStudio. **This function was developed for Windows 10 and has not been tested on other systems.** P.S.: As an alternative to `birdnet_analyzer()`, you may find that you prefer to run BirdNET directly from the command line, as described at the [BirdNET-Analyzer Github repository](https://github.com/kahst/BirdNET-Analyzer). This may be faster since you will be able to specify multiple threads, which likely won't work via R due to the way Python and R interact. If you choose to run BirdNET from the command line instead of from `birdnet_analyzer()`, you will still be able to use other functions in this package to gather and visualize BirdNET results, **so long as you have specified --rtype "r"**.
+### (1) Step 1. [Download the fully packaged BirdNET Analyzer for Windows and follow the directions](https://github.com/kahst/BirdNET-Analyzer?tab=readme-ov-file#setup-windows). 
 
-If you prefer to use `birdnet_analyzer()`, please first complete the following steps. The function will not work otherwise. 
-
-### (1) Install BirdNET using the "Install BirdNET from zip" instructions at [BirdNET-Analyzer -- Setup (Windows)](https://github.com/kahst/BirdNET-Analyzer#setup-windows). 
-
-Early on in the [Setup (Windows)](https://github.com/kahst/BirdNET-Analyzer#setup-windows) section, the instructions will encourage you to download a "fully-packaged version that does not require you to install any additional packages and can be run as-is". This is *not* the file you want, so keep scrolling until you hit a section that says "Install BirdNET from zip" and click "Download BirdNET Zip-file". Unzip that file to a desired location on your machine. This folder should have the name **BirdNET-Analyzer-main**.
-
-Check the image below to make sure you're installing the correct version: 
+Download the link shown in this screenshot and follow the directions: 
 
 <p align="center">
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/BirdNET-install-link.png alt="Version of BirdNET you should install if you want to run BirdNET from RStudio."><br>
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/birdnet24install.png alt="Image showing which BirdNET link to click and download."><br>
+</p>
+
+If you are working on a machine where you do not have admin privileges, you may not be able to unblock the software and will need to pursue a workaround. NPS staff please reach out to Cathleen Balantic (`cathleen_balantic` at `nps.gov`) with questions.
+
+### (2) Step 2. Familiarize yourself with the [command line arguments listed in BirdNET-Analyzer's documentation](https://github.com/kahst/BirdNET-Analyzer?tab=readme-ov-file#71-usage-cli).
+
+These command line arguments are the building blocks needed to construct a statement that tells BirdNET where to find your audio (--i), where to place result files (--o), what detection sensitivity to use (--sensitivity), where to find a species list if you are using one (--slist), how many CPU threads to use (--threads), what type of result to produce (--rtype) and much more. **To use the functions in this package, you will need to specify --rtype 'r'.** Once you understand the command line arguments, you are ready to try using BirdNET from the Windows command line. 
+
+### (3) Step 3. Test your BirdNET Installation. 
+
+Test that BirdNET is functional by opening up a Windows Command Prompt (see below image). Look to the lower lefthand side of your screen and locate the Windows search bar. Type Command Prompt and click the app.  
+
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/command-prompt.png alt="Image showing how to locate and open the Windows command prompt."><br>
 </p>
 
 
-### (2) Download and install [Anaconda](https://www.anaconda.com/). 
+Next, you can construct a statement for the command prompt. Your statement might look something like the following example, or it might include additional command line arguments: 
 
-BirdNET-Analyzer runs on Python, and installing Anaconda will position you for the streamlined setup and dependency management necessary to run BirdNET-Analyzer from R. You should not need elevated privileges to do this; use the default installation option of "Just Me". (You may run into challenges with this workflow if you install as administrator.)
+`"C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe" --i "D:/AUDIO" --o "D:/RESULTS" --lat -1 --lon -1 --week -1 --slist "D:/species_list.txt" --rtype "r" --min_conf 0.1 --sensitivity 1 --threads 4`
 
-### (3) Set up a conda environment for BirdNET-Analyzer
+Please edit this example to reflect file paths and folder names on your machine, and then modify, omit, or include command line arguments as desired, and give it a try. 
 
-Python setup and package dependency management is a little different from what you might be used to as an R user. In this workflow, you will use something called a conda environment to manage and isolate the package dependencies needed to run BirdNET-Analyzer from R. Learn more about conda environments [here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) and [here](https://towardsdatascience.com/a-guide-to-conda-environments-bc6180fc533).
+You might see the message 'WARNING:tensorflow:AutoGraph is not available in this environment' but this is not a cause for concern. If BirdNET-Analyzer is working and writing results to your results folder, you were successful in getting everything installed. 
 
-Set up your BirdNET conda environment by opening up an Anaconda prompt. In the Windows search bar, type and click “Anaconda Prompt (Anaconda3)”. Run the following commands to install all the necessary packages you’ll need to run BirdNET within your conda environment. Below, we are creating a conda environment named "pybirdanalyze", and then installing necessary packages to it. 
+### (4) Step 4. Run BirdNET from RStudio.
 
-```python
-conda create --name pybirdanalyze
-conda install -n pybirdanalyze -c conda-forge librosa numpy=1.20
-conda install -n pybirdanalyze tensorflow 
-```
+If you are processing many terabytes, years, and/or locations of data through BirdNET, you might have dozens or hundreds of audio folders. The prospect of constructing command line statements by hand for each folder may sound daunting and tedious. You may find yourself wishing that you could loop through all of your folders and access BirdNET-Analyzer directly from R. Fortunately, this is possible via R's `system()` function.
 
-Make sure you know where your pybirdanalyze conda environment lives. It might have a path name like: C:\\Users\\Username\\Anaconda3\\envs\\pybirdanalyze
-
-The contents of your conda folder should look something like this: 
-
-<p align="center">
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/BirdNET-conda-folder.png alt="The contents of your conda folder should look something like this."><br>
-</p>
-
-
-### (4) Copy the "checkpoints" folder and "eBird_taxonomy_codes_2021E.json" file from BirdNET-Analyze-main into your BirdNET conda environment folder.
-
-If you don't do this, `birdnet_analyzer()` will throw errors telling you that it can't find these files. 
-
-### (5) Process audio data using `birdnet_analyzer()`. 
-
-Here are few tips for using this function: 
-
-* The function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. If this is not the case for your files (e.g., AudioMoth files do not come with a SiteID), you'll need to do some preprocessing.
-* Cornell's underlying BirdNET-Analyzer software gives several options for file output types, but the only one implemented in this function is 'r'. See `?birdnet_analyzer` for output column details. 
-* The function can handle either .wav or .mp3 audio file types. The current internal behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations, but might be necessary for Windows 10 if you followed the above instructions.
-* The function expects absolute paths for all directory arguments in `birdnet_analyzer()`. This is necessary due to the way RStudio is communicating with the underlying Python code. 
-
-Below, we'll walk through the documentation and example helpfiles for `birdnet_analyzer()`. Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
+For example, let's say you have several audio folders: D:/AUDIO_1, D:/AUDIO_2, and D:/AUDIO_3. You might have created corresponding results folders: D:/RESULTS_1, D:/RESULTS_2, and D:/RESULTS_3. You can use R to automate the construction of command line statements for each folder, and use a loop to wrap those statements in `system()`. This allows you to run BirdNET-Analyzer directly from RStudio. The following pseudocode is an example that can be edited for your own purposes. 
 
 ```r
-?birdnet_analyzer
+
+# Initialize important variables such as your BirdNET analyzer path, folders, and other command line arguments:
+birdnet.path <- 'C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe'
+audio.folders <- c(paste0('D:/', 'AUDIO_', 1:3))
+result.folders <- c(paste0('D:/', 'RESULTS_', 1:3))
+species.list.path <- 'D:/species_list.txt'
+num.threads <- 7
+
+# Generate a single command to loop through several folders:
+## NOTE: be mindful of your quotations when editing!
+all.commands <- paste0(
+  '"', birdnet.path,
+  '" --i "', audio.folders,
+  '" --o "', result.folders,
+  '" --lat -1 --lon -1 --week -1 --slist ',
+  species.list.path, ' --rtype "r" --threads ',
+  num.threads, ' --min_conf 0.01 --sensitivity 1.5')
+
+# Test that one command runs
+# system(all.commands[1])
+
+# Loop through all commands (i.e., all audio folders) and send them to BirdNET-Analyzer
+for (i in 1:length(all.commands)) {
+  cat('\n \n This is folder', i, 'of', length(all.commands), '\n \n')
+  system(all.commands[i])
+}
+
 ```
 
-Note: if you don't want to go to the trouble of installing and setting up BirdNET, you can still view example data to get an idea of the raw outputs produced by BirdNET-Analyzer
-```r
-# To view example outputs of raw txt BirdNET results, write to working directory
-data(exampleBirdNET1)
-write.table(x = exampleBirdNET1,
-            file = 'Rivendell_20210623_113602.BirdNET.results.csv',
-            row.names = FALSE, quote = FALSE, sep = ',')
-data(exampleBirdNET2)
-write.table(x = exampleBirdNET2,
-            file = 'Rivendell_20210623_114602.BirdNET.results.csv',
-            row.names = FALSE, quote = FALSE, sep = ',')
-```
+### Additional Tips: 
 
-If you **do** want to run BirdNET from R, the following pseudocode provides an outline for how to implement `birdnet_analyzer()`. Because this function uses external programs, the examples below will not be modifiable to run for you unless you have followed the setup instructions above.
-
-First, before even calling in the reticulate package, you need to use `Sys.setenv(RETICULATE_PYTHON = )` to point to your conda python.exe path. Your conda python.exe path may look something like this: "C:/Users/Username/Anaconda3/envs/pybirdanalyze/python.exe". You'll then invoke `use_condaenv()` to tell conda to use the pybirdanalyze conda environment. 
-
-```r
-# Must set environment BEFORE calling in the reticulate package
-Sys.setenv(RETICULATE_PYTHON = "C:/Your/Python/Path/Here/python.exe")
-library(reticulate)
-
-# Set your conda environment
-use_condaenv(condaenv = "pybirdanalyze", required = TRUE)
-```
-
-Next, we create a few example directories, one with sample wave audio files that come with the package, and another to collect your BirdNET results. We read in the example audio files and write them to the example audio directory. This setup illustrates the file types and folder structure `birdnet_analyzer()` expects to encounter.
-```r
-# Create an audio directory for this example
-dir.create('example-audio-directory')
-
-# Create a results directory for this example
-dir.create('example-results-directory')
-
-# Read in example wave files
-data(exampleAudio1)
-data(exampleAudio2)
-
-# Write example waves to example audio directory
-tuneR::writeWave(object = exampleAudio1,
-                 filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
-tuneR::writeWave(object = exampleAudio2,
-                 filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
-```
-
-Once the example files are set up, we're ready to process audio files through BirdNET. `birdnet_analyzer()` has several arguments. `audio.directory` takes a character string with the absolute path to audio files that should be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS with a wav or mp3 extension. `birdnet_analyzer()`'s default behavior is to process every file in the audio.directory through BirdNET. However, if the user only wants to process specific files, they can pass in a character vector to the argument `audio.files` **or** use the `start` argument to specify a file number to start with. Next, `results.directory` takes an absolute path to the directory where you would like your BirdNET results to be stored. `birdnet.directory` takes the absolute path to the directory where you have installed BirdNET on your machine. The remaining arguments allow you to customize the processing experience. `use.week`	is a logical flag for whether to use week of year in the prediction. If use.week = TRUE, the behavior of `birdnet_analyzer()` is to parse the week of year from the SITEID_YYYYMMDD_HHMMSS filename using lubridate::week(). If FALSE, birdnet_analyzer() will not consider the week of the year when making predictions. `lat` and `lon` take numeric values of the latitude and longitude of the recording location, respectively. You can ignore latitude and longitude values by setting the argument value to -1. A customized species list can be used with the `slist` argument. Please consult the helpfile or [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer) documentation for details. 
-
-In the below example, once you modify the directory paths, `birdnet_analyzer()` will process all example audio files in the folder, with user-input values for lat and lon, and default values for remaining arguments:
-```r
-# Run all audio data in a directory through BirdNET
-birdnet_analyzer(audio.directory = 'absolute/path/example-audio-directory',
-                 results.directory = 'absolute/path/example-results-directory',
-                 birdnet.directory = 'absolute/path/BirdNET-Analyzer-main',
-                 use.week = TRUE,
-                 lat = 46.09924,
-                 lon = -123.8765)
-```
-
-For cases in which we only want to process selected audio files, we can use the `audio.files` argument to specify one or more files, as below: 
-```r
-# Use optional "audio.files" argument to process specific files
-birdnet_analyzer(audio.directory = 'absolute/path/example-audio-directory',
-                 audio.files = 'Rivendell_20210623_113602.wav',
-                 results.directory = 'absolute/path/example-results-directory',
-                 birdnet.directory = 'absolute/path/BirdNET-Analyzer-main',
-                 use.week = TRUE,
-                 lat = 46.09924,
-                 lon = -123.8765)
-```             
-
-Finally, clean up by deleting temporary files that were set up for the example. 
-```r
-# Delete all temporary example files when finished
-unlink(x = 'example-audio-directory', recursive = TRUE)
-unlink(x = 'example-results-directory', recursive = TRUE)
-```
-
-You may not want to process files through RStudio, or you may already have BirdNET-Analyzer txt or csv results in hand that you would like to begin analyzing, in which case you can skip ahead to the next functions. 
-
-### (6) Keep BirdNET Updated (...if you wish)
-
-[The BirdNET-Analyzer model is periodically updated](https://github.com/kahst/BirdNET-Analyzer/tree/main/checkpoints). NSNSDAcoustics supports V2.1 and V2.2. If you have previously been running V2.1 through NSNSDAcoustics, and want to update to V2.2, you will need to redo steps 1, 3, and 4 above. Preliminary investigation suggests that V2.1 and V2.2 produce different results, so if you are intending to apply an updated model to new incoming audio and then compare those results to older audio that was processed with an older BirdNET-Analyzer model, beware that this may change results and inference.
+* Cornell's underlying BirdNET-Analyzer software gives several options for file output types, but the only one implemented in this package is --rtype 'r'. Please specify --rtype 'r' in your command line statements if you want to use the rest of the functions in this package. 
+* The --threads argument specifies how many files BirdNET will work on at once, and it depends on the number of logical processors your machine has. On a Windows machine, to figure out how many cores your processor has, press **CTRL + SHIFT + ESC** to open Task Manager. Select the **Performance** tab to see how many cores and logical processors your PC has. A rule of thumb is to never set "threads" to more than the number of logical processors minus 1. For example, your machine might have 8 logical processors, in which case you would set "threads" to no higher than 7. 
 
 ## Assessing BirdNET Results
 
