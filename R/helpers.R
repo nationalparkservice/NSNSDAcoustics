@@ -209,7 +209,7 @@ readable_julian_breaks <- function(
   data[, date.lab := do.call(paste, c(.SD, sep = sep)), .SDcols = format]
 
   if (missing(julian.breaks)) {
-    julian.range <- range(data$julian.date)
+    julian.range <- range(data$julian.date, na.rm = TRUE)
     julian.breaks <- seq(from = floor(julian.range[1]/10)*10,
                          to = ceiling(julian.range[2]/10)*10,
                          by = timestep)
