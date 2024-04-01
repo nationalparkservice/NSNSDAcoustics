@@ -2,7 +2,7 @@
 % Please edit documentation in R/birdnet_heatmap.R
 \name{birdnet_heatmap}
 \alias{birdnet_heatmap}
-\title{Plot heat maps of BirdNET detections}
+\title{Plot heat maps of BirdNET detections by date}
 \usage{
 birdnet_heatmap(
   data,
@@ -10,7 +10,9 @@ birdnet_heatmap(
   common.name,
   conf.threshold,
   julian.breaks,
-  dates.sampled
+  dates.sampled,
+  tz.local,
+  comparable.color.breaks = FALSE
 )
 }
 \arguments{
@@ -25,12 +27,16 @@ birdnet_heatmap(
 \item{julian.breaks}{Optional numeric vector of julian date plotting breaks to use on the x axis. If omitted, will be computed automatically. Example inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9, and June 29 for non-leap year data); c(130:160) would graph every single date from May 10 to June 9 on the x axis (for non-leap year data). See also \code{\link{readable_julian_breaks}}. Please start with 1 for the first day of the year rather than 0.}
 
 \item{dates.sampled}{Date or character vector of all dates sampled that should be visualized on the heat map. This information is required because your data input may only contain detection data, and not non-detection data (i.e., zeroes). For example, you might have recorded audio on 2021-03-14, but have no BirdNET detections in "data". This will result in an inaccurate visual. Since BirdNET results do not automatically contain non-detection data, it is incumbent on the user to input which dates were sampled.}
+
+\item{tz.local}{Character Olsen names timezone for local time at the monitoring location (e.g., 'America/Los_angeles').}
+
+\item{comparable.color.breaks}{Logical flag for whether to create heat map color breaks based on all species in the input data set or based only on the species of interest in this plot. TRUE means it will be easier to make straightforward comparisons between species, FALSE means activity contrasts within a single species will be easier to see.}
 }
 \value{
 Heat map of BirdNET detections, where N is the number of detections for common.name above conf.threshold on any given day.
 }
 \description{
-Plot heat maps of BirdNET results for a selected species and above a selected confidence threshold through time. See Details.
+Plot heat maps of BirdNET results for a selected species and above a selected confidence threshold by date for multiple or single year data. See Details.
 }
 \details{
 This function was developed by the National Park Service Natural Sounds and Night Skies Division. It is intended to provide exploratory plotting for summarizing and visualizing BirdNET results.
@@ -41,38 +47,60 @@ Function returns a heatmap of BirdNET detections, where N is the number of detec
 \dontrun{
 
 # Read in example data
-data(exampleBarchartData)
+data(exampleHeatmapData)
+data(exampleDatesSampled)
 
-# Generally, add_time_cols() may be called as part of preprocessing
-# (if not, please ensure data object has columns that include locationID (character),
-# recordingID (character), and dateTimeLocal (POSIXct))
-dat <- add_time_cols(dt = exampleBarchartData,
-                     tz.recorder = 'America/Los_angeles',
-                     tz.local = 'America/Los_angeles')
+# Ensure your data has an appropriate recordingID column and time columns
+dat <- exampleHeatmapData
+dat[ ,recordingID := basename(filepath)]
+dat <- add_time_cols(
+           dt = dat,
+           tz.recorder = 'America/Los_angeles',
+           tz.local = 'America/Los_angeles'
+)
 
-# Generate a heatmap with user-input julian.breaks
+
+# Generate a heatmap at Rivendall for Pacific Wren
+# Set comparable.color.breaks = FALSE to maximize contrast in a single species map
+# Add user-input julian.breaks
 birdnet_heatmap(
      data = dat,
      locationID = 'Rivendell',
      common.name = 'Pacific Wren',
      conf.threshold = 0.2,
-     dates.sampled = seq.Date(from = as.Date('2021-03-14'),
-                              to = as.Date('2021-08-15'),
-                              by = 1),
-     julian.breaks = seq(from = 70, to = 250, by = 30))
+     dates.sampled = exampleDatesSampled,
+     julian.breaks = seq(from = 70, to = 250, by = 30),
+     comparable.color.breaks = FALSE
+)
 
-# Generate a heatmap with automatic julian.breaks (default = every 14 days)
-birdnet_heatmap(
-    data = dat,
-    locationID = 'Rivendell',
-    common.name = 'Pacific Wren',
-    conf.threshold = 0.2,
-    dates.sampled = seq.Date(from = as.Date('2021-03-14'),
-                             to = as.Date('2021-08-15'),
-                             by = 1))
+# Generate heatmaps for several species with comparable.color.breaks == TRUE
+# so that heatmap color scale is conserved for ease of interspecies comparison
+sp <- c("Pacific Wren",
+        "Pacific-slope Flycatcher",
+        "Swainson's Thrush",
+        "Wilson's Warbler")
+
+for (i in 1:length(sp)) {
+
+ print(paste0('Working on ', sp[i]))
+
+ g <- birdnet_heatmap(
+     data = dat,
+     locationID = 'Rivendell',
+     common.name = sp[i],
+     conf.threshold = 0.2,
+     dates.sampled = exampleDatesSampled,
+     julian.breaks = seq(from = 70, to = 250, by = 30),
+     comparable.color.breaks = TRUE
+ )
+
+ print(g)
+
+}
+
 }
 
 }
 \seealso{
-\code{\link{birdnet_barchart}}
+\code{\link{birdnet_barchart}} \code{\link{birdnet_heatmap_time}}
 }
