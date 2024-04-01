@@ -266,3 +266,41 @@ NULL
 #' str(exampleAI, max.level = 1)
 #'
 NULL
+
+
+
+#' @title exampleHeatmapData
+#' @description Example data for \code{\link{birdnet_heatmap}} and \code{\link{birdnet_heatmap_time}}
+#' @format An object of class \code{data.table} and \code{data.frame} containing 14 columns.
+#' @details The exampleHeatmapData object can be used to experiment with birdnet_heatmap* functions.
+#' @docType data
+#' @keywords datasets
+#' @name exampleHeatmapData
+#' @usage data(exampleHeatmapData)
+#' @examples
+#' # Load the dataset
+#' data(exampleHeatmapData)
+#'
+#' # View structure
+#' str(exampleHeatmapData, max.level = 1)
+#'
+#'
+NULL
+
+#' @title exampleDatesSampled
+#' @description Example data for \code{\link{birdnet_heatmap}} and \code{\link{birdnet_heatmap_time}}
+#' @format An object of class \code{Date} of length 430.
+#' @details The exampleDatesSampled object can be used to experiment with birdnet_heatmap* functions.
+#' @docType data
+#' @keywords datasets
+#' @name exampleDatesSampled
+#' @usage data(exampleDatesSampled)
+#' @examples
+#' # Load the dataset
+#' data(exampleDatesSampled)
+#'
+#' # View structure
+#' str(exampleDatesSampled, max.level = 1)
+#'
+#'
+NULL
