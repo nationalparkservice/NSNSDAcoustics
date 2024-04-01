@@ -34,7 +34,7 @@ birdnet_heatmap_time(
 
 \item{data}{Data.table or data.frame of BirdNET results that a user would like to plot. Generally, this data object should be preceded by a call to \code{\link{add_time_cols}}; all data should come from a single site and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct). Multiple years of data are allowed in one dataset to enable easy comparison of vocal activity by year at a site.}
 
-\item{minute.timestep}{Integer input of how to summarize the data by minute -- must be divisible by 60.}
+\item{minute.timestep}{Integer input of how to summarize the data by minute. Any divisor of 60 is allowed in options c(1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60).}
 
 \item{tz.local}{Character Olsen names timezone for local time at the monitoring location (e.g., 'America/Los_angeles').}
 
