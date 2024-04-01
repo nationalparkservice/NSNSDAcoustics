@@ -88,6 +88,11 @@ add_time_cols <- function(dt,
 
   # Create a local time column for downstream interpretability
   dt[,dateTimeLocal :=  with_tz(dateTimeUTC, tzone = tz.local)]
+  dt[,detectionTimeLocal := dateTimeLocal + start]
+  dt[,date := as.Date(detectionTimeLocal, tz = tz.local)]
+  dt[,year := year(date)]
+
+  # Add a locaitonID
   dt[,locationID := locIDs]
 
   # Add additional columns for pairing with AI indices
