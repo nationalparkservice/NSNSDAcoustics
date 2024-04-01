@@ -48,7 +48,7 @@
 #'            tz.local = 'America/Los_angeles'
 #' )
 #'
-#' # Generate a heatmap at Rivendall for Pacific-slope Flycatcher
+#' # Generate a heatmap at Rivendell for Pacific-slope Flycatcher
 #' # Set comparable.color.breaks = FALSE to maximize contrast in a single species map
 #' birdnet_heatmap_time(
 #'      data = dat,
@@ -89,12 +89,13 @@
 #'      y.axis.limits = c(3, 10),
 #'      julian.breaks = c(30, 60, 90, 120, 150, 180, 210, 240, 270),
 #'      minute.timestep = 1,
+#'      plot.title = sp[i],
 #'      comparable.color.breaks = TRUE,
 #'      tz.local = 'America/Los_angeles',
 #'      latitude = 46.1646,
 #'      longitude = -123.77955,
 #'      sun.lines = c('dawn', 'sunrise'),
-#'      sun.linetypes = c('longdash', 'dotted')
+#'      sun.linetypes = c('longdash', 'solid')
 #'  )
 #'
 #'  print(g)
