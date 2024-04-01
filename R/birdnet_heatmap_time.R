@@ -257,6 +257,8 @@ birdnet_heatmap_time <- function(
 
   if (missing(hours.sampled)) {
     hours.sampled <- 0:23
+
+    message('You did not use the hours.sampled argument. As a result, this plot will imply that all hours from 0:23 were sampled. See ?birdnet_heatmap_time helpfile for details if this is not desired.\n')
   }
 
   sampled.times <- data.table(tbin = tseq)
@@ -380,27 +382,27 @@ birdnet_heatmap_time <- function(
 
     # Sort this table -- critical to get scale_linetype_manual working downstream
     setkey(sun.dt, julian, variable)
+
+    # Check on any weirdness in sunlines due to lat/long (e.g., northern latitudes in summer may not get full astro night)
+    check.sun <- sun.dt[is.na(minute)]
+    if (nrow(check.sun) > 0 ) {
+      problem.dates <- sort(check.sun$date)
+      problem.vars <- unique(check.sun$variable)
+      warning('Missing sun timing information for problem variables: ', paste0(problem.vars, collapse = ', '),
+              ' on dates like ', paste0(head(problem.dates), collapse = ', '), '... through ...',
+              paste0(tail(problem.dates), collapse = ', '),
+              '. It is possible that sun timing information is not available for these variables at this latitude.',
+              ' This may result in unexpected plotting behavior for sun.lines. \n')
+    }
+
+    # subset sun vars to what we are plotting
+    sun.dt <- unique(sun.dt[,c('variable', 'sun.lty', 'minute', 'julian')])
+
+    # To deal with multi-year data and different exact sun times (and different daylight saving switches)
+    # we keep only the first occurrence for a julian date
+    sun.dt <- sun.dt[,.SD[1], by = c('variable', 'julian'), .SDcols = c('sun.lty', 'minute')]
+    setkey(sun.dt, julian, variable)
   }
-
-  # Check on any weirdness in sunlines due to lat/long (e.g., northern latitudes in summer may not get full astro night)
-  check.sun <- sun.dt[is.na(minute)]
-  if (nrow(check.sun) > 0 ) {
-    problem.dates <- sort(check.sun$date)
-    problem.vars <- unique(check.sun$variable)
-    warning('Missing sun timing information for problem variables: ', paste0(problem.vars, collapse = ', '),
-            ' on dates like ', paste0(head(problem.dates), collapse = ', '), '... through ...',
-            paste0(tail(problem.dates), collapse = ', '),
-            '. It is possible that sun timing information is not available for these variables at this latitude.',
-            ' This may result in unexpected plotting behavior for sun.lines. \n')
-  }
-
-  # subset sun vars to what we are plotting
-  sun.dt <- unique(sun.dt[,c('variable', 'sun.lty', 'minute', 'julian')])
-
-  # To deal with multi-year data and different exact sun times (and different daylight saving switches)
-  # we keep only the first occurrence for a julian date
-  sun.dt <- sun.dt[,.SD[1], by = c('variable', 'julian'), .SDcols = c('sun.lty', 'minute')]
-  setkey(sun.dt, julian, variable)
 
   # Make sure sp.tbin.day has a julian
   sp.tbin.day[,julian := yday(date)]
