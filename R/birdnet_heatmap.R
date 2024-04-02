@@ -39,7 +39,7 @@
 #' )
 #'
 #'
-#' # Generate a heatmap at Rivendall for Pacific Wren
+#' # Generate a heatmap at Rivendell for Pacific Wren
 #' # Set comparable.color.breaks = FALSE to maximize contrast in a single species map
 #' # Add user-input julian.breaks
 #' birdnet_heatmap(
