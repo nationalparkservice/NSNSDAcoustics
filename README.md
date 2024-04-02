@@ -548,11 +548,11 @@ dat <- add_time_cols(
 
 ```
 
-In the data argument, `birdnet_heatmap` expects a data.frame or data.table of BirdNET results. In locationID and common.name, specify a valid character locationID and common.name for your location and species of interest. In conf.threshold, specify a numeric input for a BirdNET confidence threshold below which detections will be discarded. The optional argument julian.breaks allows you to input a numeric vector of julian date plotting breaks to use on the x-axis of the heat map (if omitted, these breaks will be computed automatically by the function). ([Here's a useful chart for choosing julian breaks](https://landweb.modaps.eosdis.nasa.gov/ltdr/browse/calendar.html)). The comparable.color.breaks argument allows you to specify whether you'd like to generate heatmap color breaks based on every species in the input data to enable easier inter-species comparisons (TRUE), or simply generate the heatmap color breaks based only on the species of interest you specified in common.name. Finally, the dates.sampled argument requires either a Date vector or character vector of dates that were sampled and should be visualized on the heat map. This information is required because your data input may only contain detection data, and not non-detection data (i.e., zeroes). For example, you might have recorded audio on 2021-03-14, but have no BirdNET detections in your "data" object. This will result in an inaccurate visualization. Since BirdNET results do not automatically contain non-detection data, it is incumbent on the user to input which dates were sampled.
+In the data argument, `birdnet_heatmap` expects a data.frame or data.table of BirdNET results. In locationID and common.name, specify a valid character locationID and common.name for your location and species of interest. In conf.threshold, specify a numeric input for a BirdNET confidence threshold below which detections will be discarded. The optional argument julian.breaks allows you to input a numeric vector of julian date plotting breaks to use on the x-axis of the heat map (if omitted, these breaks will be computed automatically by the function). ([Here's a useful chart for choosing julian breaks](https://landweb.modaps.eosdis.nasa.gov/ltdr/browse/calendar.html)). Setting comparable.color.breaks = TRUE allows you to generate heatmap color breaks based on every species in the input data to enable easier inter-species comparisons. Setting comparable.color.breaks = FALSE means the function will simply generate heatmap color breaks based only on the species of interest you specified in common.name. Finally, the dates.sampled argument requires either a Date vector or character vector of dates that were sampled and should be visualized on the heat map. This information is required because your data input may only contain detection data, and not non-detection data (i.e., zeroes). For example, you might have recorded audio on 2021-03-14, but have no BirdNET detections in your "data" object. This will result in an inaccurate visualization. Since your results may not automatically contain non-detection data, it is incumbent on the user to input which dates were sampled.
 
 ```r
 
-# Generate a heatmap at Rivendall for Pacific Wren
+# Generate a heatmap at Rivendell for Pacific Wren
 # Set comparable.color.breaks = FALSE to maximize contrast in a single species map
 
 # Add user-input julian.breaks
@@ -570,9 +570,44 @@ birdnet_heatmap(
 
 **Click image for a larger version.**
 <p align="center">
-<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/heatmap-date-multiyear.png 
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/heatmap-date-pawr.png 
      alt="Heatmap of detections of Pacific Wren at a monitoring location. The x axis shows date, the y axis shows year, and daily detection value is visualized from low (purple) to high (yellow)."><br>
 </p>
+
+
+In the second example, we loop through multiple species and set comparable.color.breaks = TRUE to plot according to a consistent color ramp. This option enables easier comparison between species. 
+```r
+
+# Generate heatmaps for several species with comparable.color.breaks == TRUE
+# so that heatmap color scale is conserved for ease of interspecies comparison
+sp <- c("Pacific Wren",
+        "Pacific-slope Flycatcher",
+        "Swainson's Thrush",
+        "Wilson's Warbler")
+
+for (i in 1:length(sp)) {
+ print(paste0('Working on ', sp[i]))
+ g <- birdnet_heatmap(
+     data = dat,
+     locationID = 'Rivendell',
+     common.name = sp[i],
+     conf.threshold = 0.2,
+     dates.sampled = exampleDatesSampled,
+     julian.breaks = seq(from = 70, to = 250, by = 30),
+     comparable.color.breaks = TRUE
+ )
+
+ print(g)
+
+}
+
+```
+**Click image for a larger version.**
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/heatmap-date-multispecies.png 
+     alt="Heatmaps of focal species detections by date at a monitoring location. The x axis shows date, the y axis shows year, and daily detection value is visualized from low (purple) to high (yellow)."><br>
+</p>
+
 
 
 ### Create heat maps of BirdNET detections by date and time
@@ -601,7 +636,9 @@ dat <- add_time_cols(
 
 ```
 
-The arguments to birdnet_heatmap_time are very similar to birdnet_heatmap, but with a few additions. The hours.sampled argument allows the user to clearly display which hours were actually acoustically monitored; the argument takes either an integer vector declaring which hours were sampled across the monitoring period (e.g., c(6:8, 18:20)), or a list declaring sun-based monitoring based on how many hours before and after sunset were recorded. For example, list(sunrise = c(1.5, 1.5), sunset = c(1, 1)) means that the schedule recorded 1.5 hours before sunrise until 1.5 hours after, and 1 hour before sunset to 1 hour after. If missing hours.sampled, the function assumes continuous sampling and will display the plot as such; beware that this may misrepresent your data and if you did not sample during all hours, the plot will make it appear as if you did. The y.axis.limits argument lets the user control how much of the 24-hour day to display, (for example, y.axis.limits = c(2,12) would display data from 2am to 12pm). The minute.timestep argument allows the user to specify how finely to bin the data, from 1 minute up to 60 minutes, any divisor of 60 is allowed in options c(1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60). The sun.lines and sun.linetypes arguments allow the user to customize and graph lines indicating sunrise, sunset, dawn, dusk, and several other options detailed in the helpfile. If using these arguments, the latitude and longitude argument are also required. In the below example, we set comparable.color.breaks = FALSE. 
+The arguments to `birdnet_heatmap_time` are similar to `birdnet_heatmap`, but with a few additions. The hours.sampled argument allows the user to clearly display which hours were actually acoustically monitored; the argument takes either an integer vector declaring which hours were sampled across the monitoring period (e.g., c(6:8, 18:20)), or a list declaring sun-based monitoring based on how many hours before and after sunset were recorded. For example, list(sunrise = c(1.5, 1.5), sunset = c(1, 1)) means that the schedule recorded 1.5 hours before sunrise until 1.5 hours after, and 1 hour before sunset to 1 hour after. If missing hours.sampled, the function assumes continuous sampling and will display the plot as such; beware that this may misrepresent your data and if you did not sample during all hours, the plot will make it appear as if you did. The y.axis.limits argument lets the user control how much of the 24-hour day to display, (for example, y.axis.limits = c(2,12) would display data from 2am to 12pm). The minute.timestep argument allows the user to specify how finely to bin the data; any divisor of 60 is allowed in options c(1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60). The sun.lines and sun.linetypes arguments allow the user to customize and graph lines indicating sunrise, sunset, dawn, dusk, and several other options detailed in the helpfile. If using these arguments, the latitude and longitude argument are also required. 
+
+In the below example, we graph Pacific-slope Flycatcher detections at Rivendell above a confidence threshold of 0.25, in 5 minute increments, under a sampling regime where acoustic monitoring was conducted from 1.5 hours before sunrise to 1.5 hours after, with 0 sampling hours around sunset. We also graph lines for dusk, dawn, sunrise, and sunset. 
 
 ```r
 
@@ -633,7 +670,7 @@ birdnet_heatmap_time(
      alt="Heatmap of detections of Pacific-slope Flycatcher at a monitoring location. The x axis shows date, the y axis shows time of day, and daily detection value is visualized from low (purple) to high (yellow)."><br>
 </p>
 
-In the second example, we set comparable.color.breaks = TRUE to easily compare activity between different species. 
+In the second example, we loop through multiple species and set comparable.color.breaks = TRUE to plot according to a consistent color ramp. This option enables easier comparison between species. 
 ```r
 # Generate heatmaps for several species with comparable.color.breaks == TRUE
 # so that heatmap color scale is conserved for ease of interspecies comparison
@@ -673,7 +710,7 @@ for (i in 1:length(sp)) {
 **Click image for a larger version.**
 <p align="center">
 <img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/heatmap-date-time-loop.png 
-     alt="Heatmap of detections of focal species at a monitoring location. The x axis shows date, the y axis shows time of day, and daily detection value is visualized from low (purple) to high (yellow)."><br>
+     alt="Heatmaps of detections of focal species at a monitoring location. The x axis shows date, the y axis shows time of day, and daily detection value is visualized from low (purple) to high (yellow)."><br>
 </p>
 
 
