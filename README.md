@@ -89,7 +89,7 @@ Test that BirdNET is functional by opening up a Windows Command Prompt (see belo
 
 Next, you can construct a statement for the command prompt. Your statement might look something like the following example, or it might include additional command line arguments: 
 
-`"C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe" --i "D:/AUDIO" --o "D:/RESULTS" --lat -1 --lon -1 --week -1 --slist "D:/species_list.txt" --rtype "r" --min_conf 0.1 --sensitivity 1 --threads 4`
+`"C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe" --i "D:/AUDIO" --o "D:/RESULTS" --lat -1 --lon -1 --week -1 --slist "D:/species_list.txt" --rtype "r" --min_conf 0.1 --sensitivity 1.0 --threads 4`
 
 Please edit this example to reflect file paths and folder names on your machine, and then modify, omit, or include command line arguments as desired, and give it a try. 
 
@@ -118,7 +118,7 @@ all.commands <- paste0(
   '" --o "', result.folders,
   '" --lat -1 --lon -1 --week -1 --slist ',
   species.list.path, ' --rtype "r" --threads ',
-  num.threads, ' --min_conf 0.01 --sensitivity 1.5')
+  num.threads, ' --min_conf 0.1 --sensitivity 1.0')
 
 # Test that one command runs
 # system(all.commands[1])
