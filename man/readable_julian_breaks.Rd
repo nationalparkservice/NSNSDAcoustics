@@ -24,7 +24,7 @@ readable_julian_breaks(
 
 \item{timestep}{Integer specifying the number of days that should be spaced between each label. For example, a value of 14 means labels will occur every two weeks.}
 
-\item{juilan.breaks}{Optional integer vector specifying the values of julian dates to use; will override timestep argument.}
+\item{julian.breaks}{Optional integer vector specifying the values of julian dates to use; will override timestep argument.}
 }
 \value{
 A data.table with two columns: julian.date (integer) and date.lab (character) which can be used downstream in ggplot with the scale_x_continuous() element to customize human-readable dates on the x-axis.

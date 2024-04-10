@@ -122,7 +122,7 @@ add_time_cols <- function(dt,
 #' @param format Character string containing your desired date label components; any options in c('%d', '%m', '%b', '%B', '%y', '%Y'). For example, c('%Y', '%m', '%d') used with sep = '-' results in labels like: '2022-01-28'. See Details. Do not use '%y' or '%Y' options if data contains multiple years.
 #' @param sep Character value used to separate options in format. Any value may be used, but common uses would be options in c(' ', '-', '/').
 #' @param timestep Integer specifying the number of days that should be spaced between each label. For example, a value of 14 means labels will occur every two weeks.
-#' @param juilan.breaks Optional integer vector specifying the values of julian dates to use; will override timestep argument.
+#' @param julian.breaks Optional integer vector specifying the values of julian dates to use; will override timestep argument.
 #' @return A data.table with two columns: julian.date (integer) and date.lab (character) which can be used downstream in ggplot with the scale_x_continuous() element to customize human-readable dates on the x-axis.
 #' @details
 #'
