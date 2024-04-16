@@ -185,7 +185,8 @@ birdnet_heatmap <- function(
   g <- ggplot(dtn,
               aes(julian.date, as.factor(year),
                   fill = N)) +
-    geom_tile(color = 'black', alpha = 1, width = 1) +
+    geom_tile(#color = 'gray50',   # add lines around each tile
+      alpha = 1, width = 1) +
     scale_fill_gradientn(
       limits  = range(color.breaks),
       colors = heat.cols,
