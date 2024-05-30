@@ -2,51 +2,55 @@
 % Please edit documentation in R/birdnet_analyzer.R
 \name{birdnet_analyzer}
 \alias{birdnet_analyzer}
-\title{(Deprecated) Run BirdNET-Analyzer from RStudio}
+\title{Process audio files through BirdNET}
 \usage{
 birdnet_analyzer(
-  audio.directory,
-  audio.files,
-  start = 1,
-  results.directory,
-  birdnet.directory,
-  use.week,
-  slist,
+  birdnet.version,
+  birdnet.path,
+  i.audio,
+  o.results,
   lat = -1,
   lon = -1,
-  ovlp = 0,
-  sens = 1,
+  week = -1,
+  slist = NULL,
+  sensitivity = 1,
   min.conf = 0.1,
-  threads = 4,
+  overlap = 0,
+  rtype = "r",
+  threads = 1,
   batchsize = 1,
   locale = "en",
-  sf.thresh = 0.03
+  sf.thresh = 0.03,
+  classifier = NULL,
+  fmin = 0,
+  fmax = 15000,
+  skip.existing.results = FALSE
 )
 }
 \arguments{
-\item{audio.directory}{Absolute path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS. Default behavior is to process every file in the audio.directory through BirdNET.}
+\item{birdnet.version}{Character name of BirdNET release you are using. Default = "v1.1.0". If you downloaded a BirdNET .exe installer prior to that, try putting "previous" in the birdnet.version argument. If this doesn't work, update to v1.1.0 or consider constructing the command statement by hand instead of using this function. See releases at \href{https://github.com/kahst/BirdNET-Analyzer/releases}{https://github.com/kahst/BirdNET-Analyzer/releases}.}
 
-\item{audio.files}{Optional character vector of specific file names to process within the audio.directory. If missing, all files in audio.directory will be processed.}
+\item{birdnet.path}{Absolute path to BirdNET-Analyzer.exe installation on your machine. e.g., "C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe"}
 
-\item{start}{Optional file number in folder to start on if data processing fails or is interrupted. Default = 1. This argument provides an alternative to the 'audio.files' argument.}
+\item{i.audio}{Absolute path to input file or folder. If this is a file, o.results needs to be a file too.}
 
-\item{results.directory}{Absolute path to directory where BirdNET results should be stored.}
+\item{o.results}{Absolute path to output file or folder. If this is a file, i.audio needs to be a file too.}
 
-\item{birdnet.directory}{Absolute path to directory where BirdNET is installed on your machine.}
+\item{lat}{Recording location latitude. Set -1 to ignore.}
 
-\item{use.week}{Logical flag for whether to use week of year in the input. If use.week = TRUE, the behavior of birdnet_analyzer() is to parse the week of year from the SITEID_YYYYMMDD_HHMMSS filename using lubridate::week(). If FALSE, birdnet_analyzer() will not consider the week of the year when making predictions (uses -1 to ignore week).}
+\item{lon}{Recording location longitude Set -1 to ignore.}
 
-\item{slist}{Path to species list txt file or folder. If only a folder is provided, species list needs to be named "species_list.txt". If lat and lon are provided, this list will be ignored. See \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer} for details on formatting a species list. Note that if you are using the slist argument, any inputs to lat and lon will be ignored.}
+\item{week}{Week of the year when the recording was made. Values in c(1:48) (4 weeks per month). Set -1 for year-round species list.}
 
-\item{lat}{Recording location latitude. Set -1 to ignore. Any user input will be ignored if slist is used.}
+\item{slist}{Absolute path to species list text file or folder. If only a folder is provided, species list needs to be named "species_list.txt". If lat and lon are provided, BirdNET-Analyzer will ignore this argument. See \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer} for details on formatting a species list.}
 
-\item{lon}{Recording location longitude Set -1 to ignore. Any user input will be ignored if slist is used.}
-
-\item{ovlp}{Overlap in seconds between extracted spectrograms. Values from 0.0 to 2.9. Default = 0.0.}
-
-\item{sens}{Detection sensitivity; higher values result in higher sensitivity. Values from 0.5 to 1.5. Default = 1.0.}
+\item{sensitivity}{Detection sensitivity. higher values result in higher sensitivity. Values from 0.5 to 1.5. Default = 1.0.}
 
 \item{min.conf}{Minimum confidence threshold. Values from 0.01 to 0.99. Default = 0.1.}
+
+\item{overlap}{Overlap of prediction segments. Values from 0.0 to 2.9. Default = 0.0.}
+
+\item{rtype}{Output format. Values in c('table', 'audacity', 'r', 'kaleidoscope', 'csv'). Defaults to 'r', and strongly recommend using rtype 'r' if you want to use other functions in NSNSDAcoustics.}
 
 \item{threads}{Number of CPU threads.}
 
@@ -54,10 +58,18 @@ birdnet_analyzer(
 
 \item{locale}{Locale for translated species common names. Values in c('af', 'de', 'it', ...). Defaults to 'en'.}
 
-\item{sf.thresh}{Minimum species occurrence frequency threshold for location filter. Values in c(0.01, 0.99). Defaults to 0.03.}
+\item{sf.thresh}{Minimum species occurrence frequency threshold for location filter. Values from 0.01 to 0.99. Defaults to 0.03.}
+
+\item{classifier}{(Untested argument.) Absolute path to custom trained classifier. Defaults to None. If set, lat, lon and locale are ignored.}
+
+\item{fmin}{Minimum frequency for bandpass filter. Defaults to 0.}
+
+\item{fmax}{Maximum frequency for bandpass filter. Defaults to 15000.}
+
+\item{skip.existing.results}{(Untested argument.) Skip files that have already been analyzed. Default = FALSE.}
 }
 \value{
-Saves a csv file of results for each audio file in results.directory. Files have suffix "BirdNET.results.csv". Files contain the following columns:
+Saves a file of results for each audio file in results.directory. For the recommended rtype = 'r', files are csv with suffix "BirdNET.results.csv". Files contain the following columns:
 
 \itemize{
 \item{\strong{filepath}: Filepath for the processed audio file.}
@@ -77,78 +89,55 @@ Saves a csv file of results for each audio file in results.directory. Files have
 }
 }
 \description{
-NOTE: Function is now deprecated. Analyze files via Windows Commmand line or other methods instead. This function uses the reticulate package to run Python from RStudio in order to process files through \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer}. It is meant for Windows users and may have unexpected results on other systems. To use this function, follow the steps outlined in the \href{https://github.com/nationalparkservice/NSNSDAcoustics#running-birdnet-from-rstudio-with-birdnet_analyzer}{NSNSDAcoustics ReadME}. In brief, these steps are to (1) Install BirdNET using the "Install BirdNET from zip" instructions at \href{https://github.com/kahst/BirdNET-Analyzer#setup-windows}{BirdNET-Analyzer Setup (Windows)}, (2) Download \href{https://www.anaconda.com/}{Anaconda}, (3) Set up a \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#3-set-up-a-conda-environment-for-birdnet-analyzer}{conda environment for BirdNET}, (4) Copy the "checkpoints" folder and eBird_taxonomy_codes_2021E.json file into your BirdNET conda environment folder. Function assumes that all files in a folder come from the same site, and that the audio files follow a SITEID_YYYYMMDD_HHMMSS naming convention. Please input absolute paths for all directory arguments (necessary due to the way RStudio is communicating with the underlying Python code). Supported audio file types are wave and mp3. Please see \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer} usage documentation for more details.
+This function allows a user to process audio files through \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer} via R's \code{\link{system}} function. It is meant for Windows users and may have unexpected results on other systems. To use this function, follow the steps outlined in the \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#running-birdnet-from-rstudio}{NSNSDAcoustics ReadME}. Please see \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer} usage documentation for more details.
 }
 \details{
-This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET, for users who prefer to operate in R rather than in Python. The example given in this function's documentation below will not run unless you have set up BirdNET-Analyzer and a conda environment as conveyed in the Description. As an alternative to the \code{\link{birdnet_analyzer}} function, you may find that you prefer to run BirdNET directly from the command line, as described at the \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer Github page}. This may be faster since you will be able to specify multiple threads, which likely won't work via R due to the way Python, R, and reticulate interact. If you choose to run BirdNET from the command line instead of from this function, you will still be able to use other functions in this package to gather and visualize BirdNET results.
-
-BirdNET-Analyzer model versions 2.1 and 2.2 are currently supported. \href{https://github.com/kahst/BirdNET-Analyzer/tree/main/checkpoints}{View information on BirdNET version history.}
-
-The function can handle .wav or .mp3 audio files. The current behavior for .mp3 files is to convert to a temporary wave file for processing, and then delete the temporary file when finished. This behavior may not be necessary on all platforms and Python / conda installations.
+This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET.
+The function has been tested on BirdNET Analyzer \href{https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.1.0}{v1.1.0}.
+To use this function, follow the steps outlined in the \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#running-birdnet-from-rstudio}{NSNSDAcoustics ReadME}.
 
 If there is an issue with any audio files (e.g., audio file corrupt or too short), error messaging will be returned and problematic files that were not processed in this call to the function will be recorded in a file named 'BirdNET_Problem-Files_results.directory_YYYY-MM-DD HHMMSS.csv'. Note that problem files may also occur if you have results open from previous runs and are attempting to rewrite the results while the file is still open. To help diagnose problems, birdnet_analyzer() attempts to catch error messaging and return errors to the user at the end of the function run. However, internal error catching in R from BirdNET-Analyzer's underlying Python code does not always work; you may need to rely on the "Problem-Files" result to rerun problematic files and diagnose issues.
-
-NSNSDAcoustics suggests the reticulate package but does not install it for you. To use this function, please install reticulate using install.packages('reticulate').
 }
 \examples{
 \dontrun{
 
-# To view example outputs of raw BirdNET results, write to working directory
-data(exampleBirdNET1)
-write.table(x = exampleBirdNET1,
-            file = 'Rivendell_20210623_113602.BirdNET.results.csv',
-            row.names = FALSE, quote = FALSE, sep = ',')
-data(exampleBirdNET2)
-write.table(x = exampleBirdNET2,
-            file = 'Rivendell_20210623_114602.BirdNET.results.csv',
-            row.names = FALSE, quote = FALSE, sep = ',')
-
-
-##### The following example is pseudocode ######
-
-# Because this function uses two external programs (Python and BirdNET-Analyzer),
-# the example function below will not be modifiable to run for you unless
-# you follow the instructions given in "Description".
-
-# Must set environment BEFORE calling in the reticulate package
-Sys.setenv(RETICULATE_PYTHON = "C:/Your/Python/Path/Here/python.exe")
-library(reticulate)
-
-# Set your conda environment
-use_condaenv(condaenv = "pybirdanalyze", required = TRUE)
-
 # Create an audio directory for this example
 dir.create('example-audio-directory')
-
-# Create a results directory for this example
-dir.create('example-results-directory')
 
 # Read in example wave files
 data(exampleAudio1)
 data(exampleAudio2)
 
 # Write example waves to example audio directory
-tuneR::writeWave(object = exampleAudio1,
-                 filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
-tuneR::writeWave(object = exampleAudio2,
-                 filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+tuneR::writeWave(
+  object = exampleAudio1,
+  filename = 'example-audio-directory/Rivendell_20210623_113602.wav'
+)
+tuneR::writeWave(
+  object = exampleAudio2,
+  filename = 'example-audio-directory/Rivendell_20210623_114602.wav'
+)
+
+# Create a BirdNET results directory for this example
+dir.create('example-results-directory')
+
+
+##### The following example is pseudocode ######
+
+# Because this function calls an external programs (BirdNET-Analyzer.exe),
+# the example function below will not be modifiable to run for you unless
+# you follow the instructions given the NSNSDAcoustics documentation here:
+# https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md
 
 # Run all audio data in a directory through BirdNET
-birdnet_analyzer(audio.directory = 'absolute/path/example-audio-directory',
-                 results.directory = 'absolute/path/example-results-directory',
-                 birdnet.directory = 'absolute/path/BirdNET-Analyzer-main',
-                 use.week = TRUE,
-                 lat = 46.09924,
-                 lon = -123.8765)
-
-# Use optional "audio.files" argument to process specific files
-birdnet_analyzer(audio.directory = 'absolute/path/example-audio-directory',
-                 audio.files = 'Rivendell_20210623_113602.wav',
-                 results.directory = 'absolute/path/example-results-directory',
-                 birdnet.directory = 'absolute/path/BirdNET-Analyzer-main',
-                 use.week = TRUE,
-                 lat = 46.09924,
-                 lon = -123.8765)
+birdnet_analyzer(
+ birdnet.version = 'v1.1.0',
+ birdnet.path = 'absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe',
+ audio.directory = 'absolute/path/example-audio-directory',
+ results.directory = 'absolute/path/example-results-directory',
+ week = -1,
+ slist = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/species_list.txt',
+)
 
 # Delete all temporary example files when finished
 unlink(x = 'example-audio-directory', recursive = TRUE)
