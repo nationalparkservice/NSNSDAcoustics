@@ -9,6 +9,9 @@ example-input-directory/
 example-output-directory/
 example-results-directory/
 example-audio-directory/
+example-segments-audio/
+example-segments-results/
+example-classifier/
 data-raw/
 fixing-nvspl-ai-columns.R
 
