@@ -40,45 +40,31 @@
 #' @examples
 #' \dontrun{
 #'
-#' # Create basic example data.frame
-#' recording.info <- data.frame(
-#' recordingID = c('GLBABART_20200528_104200.wav',
-#'                 'GLBABART_20200528_114157.wav',
-#'                 'GLBABART_20200528_124152.wav',
-#'                 'GLBABART_20200529_104000.wav',
-#'                 'GLBABART_20200529_113957.wav',
-#'                 'GLBABART_20200529_123952.wav'
-#'               ))
+#' # Ensure your data has an appropriate recordingID column and time columns
+#' dat <- exampleHeatmapData
+#' dat[ , recordingID := basename(filepath)]
+#' dat <- add_time_cols(
+#'  dt = dat,
+#'  tz.recorder = 'America/Los_angeles',
+#'  tz.local = 'America/Los_angeles'
+#' )
 #'
-#' output <- add_time_cols(dt = recording.info,
-#'                         recording.id.col = 'recordingID',
-#'                         tz.recorder = 'UTC',
-#'                         tz.local = 'America/Anchorage')
-#'
-#'
-#' # Read in an example scores table to demonstrate the utility of the timestep argument:
-#' data(exampleScores)
-#' output <- add_time_cols(dt = exampleScores,
-#'                         recording.id.col = 'recordingID',
-#'                         tz.recorder = 'America/Los_angeles',
-#'                         tz.local = 'America/Los_angeles',
-#'                         timestep = 10
-#'                         )
 #'
 #' }
 
-add_time_cols <- function(dt,
-                          recording.id.col = 'recordingID',
-                          tz.recorder,
-                          tz.local,
-                          timestep = 10
+add_time_cols <- function(
+    dt,
+    recording.id.col = 'recordingID',
+    tz.recorder,
+    tz.local,
+    timestep = 10
 ) {
   dt <- as.data.table(dt)
   splt <- strsplit(x = dt[,get(recording.id.col)], fixed = TRUE, split = '_')
-  locIDs <- unlist(lapply(splt, '[[', 1))
-  dates <- unlist(lapply(splt, '[[', 2))
+  locIDs <- sapply(splt, '[[', 1)
+  dates <- sapply(splt, '[[', 2)
   times <- gsub(pattern = '.wav|.mp3', ignore.case = TRUE, replacement = '',
-                x = unlist(lapply(splt, "[[", 3)))
+                x = sapply(splt, "[[", 3))
 
   dateTimes <- as.POSIXct(paste0(dates, times), tz = tz.recorder, format = '%Y%m%d%H%M%S')
   dt[,dateTimeRecorder := dateTimes]
@@ -169,7 +155,7 @@ add_time_cols <- function(dt,
 #'   format = c('%B', '%d'),
 #'   sep = ' ',
 #'   timestep = 30
-#'   )
+#' )
 #'
 #' # Example plot of using breaks with human-readable data across years
 #' # WARNING: May take a moment to plot the following
@@ -277,7 +263,7 @@ birdnet_audio_embed <- function(
   }
 
   if (!('locationID' %in% colnames(results))) {
-    results[,locationID := unlist(lapply(strsplit(recordingID, split = '_'), '[[', 1))]
+    results[,locationID := sapply(strsplit(recordingID, split = '_', '[[', 1))]
   }
 
   # Sample one result

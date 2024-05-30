@@ -33,23 +33,22 @@
 #' dat <- exampleHeatmapData
 #' dat[ ,recordingID := basename(filepath)]
 #' dat <- add_time_cols(
-#'            dt = dat,
-#'            tz.recorder = 'America/Los_angeles',
-#'            tz.local = 'America/Los_angeles'
+#'  dt = dat,
+#'  tz.recorder = 'America/Los_angeles',
+#'  tz.local = 'America/Los_angeles'
 #' )
-#'
 #'
 #' # Generate a heatmap at Rivendell for Pacific Wren
 #' # Set comparable.color.breaks = FALSE to maximize contrast in a single species map
 #' # Add user-input julian.breaks
 #' birdnet_heatmap(
-#'      data = dat,
-#'      locationID = 'Rivendell',
-#'      common.name = 'Pacific Wren',
-#'      conf.threshold = 0.2,
-#'      dates.sampled = exampleDatesSampled,
-#'      julian.breaks = seq(from = 70, to = 250, by = 30),
-#'      comparable.color.breaks = FALSE
+#'   data = dat,
+#'   locationID = 'Rivendell',
+#'   common.name = 'Pacific Wren',
+#'   conf.threshold = 0.2,
+#'   dates.sampled = exampleDatesSampled,
+#'   julian.breaks = seq(from = 70, to = 250, by = 30),
+#'   comparable.color.breaks = FALSE
 #' )
 #'
 #' # Generate heatmaps for several species with comparable.color.breaks == TRUE
@@ -64,13 +63,13 @@
 #'  print(paste0('Working on ', sp[i]))
 #'
 #'  g <- birdnet_heatmap(
-#'      data = dat,
-#'      locationID = 'Rivendell',
-#'      common.name = sp[i],
-#'      conf.threshold = 0.2,
-#'      dates.sampled = exampleDatesSampled,
-#'      julian.breaks = seq(from = 70, to = 250, by = 30),
-#'      comparable.color.breaks = TRUE
+#'    data = dat,
+#'    locationID = 'Rivendell',
+#'    common.name = sp[i],
+#'    conf.threshold = 0.2,
+#'    dates.sampled = exampleDatesSampled,
+#'    julian.breaks = seq(from = 70, to = 250, by = 30),
+#'    comparable.color.breaks = TRUE
 #'  )
 #'
 #'  print(g)

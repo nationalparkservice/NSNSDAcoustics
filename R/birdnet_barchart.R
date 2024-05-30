@@ -26,15 +26,17 @@
 #' @examples
 #' \dontrun{
 #'
-#' # Read in exampleBarchartData
-#' data(exampleBarchartData)
+#' # Read in example data
+#' data(exampleHeatmapData)
 #'
-#' # Generally, add_time_cols() may be called as part of preprocessing
-#' # (if not, please ensure data object has columns that include locationID (character),
-#' # recordingID (character), and dateTimeLocal (POSIXct))
-#' dat <- add_time_cols(dt = exampleBarchartData,
-#'                      tz.recorder = 'America/Los_angeles',
-#'                      tz.local = 'America/Los_angeles')
+#' # Ensure your data has an appropriate recordingID column and time columns
+#' dat <- exampleHeatmapData
+#' dat[ ,recordingID := basename(filepath)]
+#' dat <- add_time_cols(
+#'  dt = dat,
+#'  tz.recorder = 'America/Los_angeles',
+#'  tz.local = 'America/Los_angeles'
+#' )
 #'
 #' # Produce an interactive plotly barchart with interactive = TRUE
 #' birdnet_barchart(data = dat, interactive = TRUE)
@@ -42,17 +44,24 @@
 #' # Produce a static ggplot barchat with interactive = FALSE,
 #' # add focal.species with custom colors (any species in the data object
 #' # that are not in focal.species will be plotted in black as "Other".)
-#' birdnet_barchart(data = dat,
-#'                  interactive = FALSE,
-#'                  focal.species = c("Pacific Wren", "Swainson's Thrush", "Varied Thrush"),
-#'                  focal.colors = c('#00BE67', '#C77CFF', '#c51b8a'))
+#' birdnet_barchart(
+#'    data = dat,
+#'    interactive = FALSE,
+#'    focal.species = c("Pacific Wren", "Swainson's Thrush", "Varied Thrush"),
+#'    focal.colors = c('#00BE67', '#C77CFF', '#c51b8a')
+#' )
 #'
 #' }
 #'
 
-birdnet_barchart <- function(data, julian.breaks, y.limits,
-                             interactive = FALSE,
-                             focal.species, focal.colors)
+birdnet_barchart <- function(
+    data,
+    julian.breaks,
+    y.limits,
+    interactive = FALSE,
+    focal.species,
+    focal.colors
+)
 {
   # For some reason, data.table is having "side-effects" on the data object
   # So saving a backup object here that will be operated on
@@ -184,19 +193,21 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
       # scale_color_manual(guide = 'none') + # eliminate additional legend
       ggtitle(paste0('Count by Date - ', unique(dt$locationID))) +
       theme_classic() +
-      theme(axis.ticks.y = element_blank(),
-            panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank(),
-            axis.line = element_line(color = 'black'),
-            plot.title = element_text(hjust = 0.5, size = 12),
-            legend.position = 'none',
-            legend.title = element_blank(),
-            strip.background = element_blank(),
-            axis.title.x = element_text(size = 12),
-            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+      theme(
+        axis.ticks.y = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(color = 'black'),
+        plot.title = element_text(hjust = 0.5, size = 12),
+        legend.position = 'none',
+        legend.title = element_blank(),
+        strip.background = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
 
-            # Avoid overlapping x-axis labels in the event of multi-year data
-            panel.spacing.x = unit(5, "mm"))
+        # Avoid overlapping x-axis labels in the event of multi-year data
+        panel.spacing.x = unit(5, "mm")
+      )
 
     if (interactive == TRUE) {
 
@@ -230,21 +241,23 @@ birdnet_barchart <- function(data, julian.breaks, y.limits,
       ggtitle(paste0('Count by Date - ', unique(dt$locationID))) +
       labs(fill = 'Species') +
       theme_classic() +
-      theme(axis.ticks.y = element_blank(),
-            panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank(),
-            axis.line = element_line(color = 'black'),
-            plot.title = element_text(hjust = 0.5, size = 12),
-            legend.position = 'bottom',
-            # ^^ note: legend.position will not be respected by ggplotly style:
-            #    https://github.com/plotly/plotly.R/issues/1049
-            legend.text = element_text(size = 12),
-            strip.background = element_blank(),
-            axis.title.x = element_text(size = 12),
-            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+      theme(
+        axis.ticks.y = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(color = 'black'),
+        plot.title = element_text(hjust = 0.5, size = 12),
+        legend.position = 'bottom',
+        # ^^ note: legend.position will not be respected by ggplotly style:
+        #    https://github.com/plotly/plotly.R/issues/1049
+        legend.text = element_text(size = 12),
+        strip.background = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
 
-            # Avoid overlapping x-axis labels in the event of multi-year data
-            panel.spacing.x = unit(5, "mm"))
+        # Avoid overlapping x-axis labels in the event of multi-year data
+        panel.spacing.x = unit(5, "mm")
+      )
 
     if (interactive == TRUE) {
 

@@ -46,18 +46,24 @@
 #'
 #'# Write examples of raw BirdNET outputs to example results directory
 #' data(exampleBirdNET1)
-#' write.table(x = exampleBirdNET1,
-#'             file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
-#'             row.names = FALSE, quote = FALSE, sep = ',')
-
+#' write.table(
+#'   x = exampleBirdNET1,
+#'   file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
+#'   row.names = FALSE, quote = FALSE, sep = ','
+#' )
+#'
 #' data(exampleBirdNET2)
-#' write.table(x = exampleBirdNET2,
-#'             file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
-#'             row.names = FALSE, quote = FALSE, sep = ',')
+#' write.table(
+#'   x = exampleBirdNET2,
+#'   file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
+#'   row.names = FALSE, quote = FALSE, sep = ','
+#' )
 #'
 #' # Run birdnet_format:
-#' birdnet_format(results.directory = 'example-results-directory',
-#'                timezone = 'GMT')
+#' birdnet_format(
+#'   results.directory = 'example-results-directory',
+#'   timezone = 'GMT'
+#' )
 #'
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-results-directory', recursive = TRUE)
@@ -65,8 +71,10 @@
 #' }
 #'
 
-birdnet_format <- function(results.directory,
-                           timezone) {
+birdnet_format <- function(
+    results.directory,
+    timezone
+) {
 
   if(missing(timezone)) {
     stop('You are missing an input to the "timezone" argument. Please specify the timezone setting used in the audio recorder (e.g., "GMT", "America/Denver"). This argument allows you to declare the timezone shown by the wave filename. If recordings were taken in local time at your study site, specify an Olson-names-formatted character timezone (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for the location (e.g., "America/Los_Angeles"). If recordings were taken in GMT, you can put either "GMT" or "UTC" (both are acceptable in R for downstream date-time formatting). This argument is critical to foster clarity in data analysis through the years and across monitoring locations, because some projects may vary across time and space as to whether the standard operating procedure specifies recordings in GMT vs. local time.')
