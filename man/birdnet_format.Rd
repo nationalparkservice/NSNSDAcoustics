@@ -50,17 +50,24 @@ dir.create('example-results-directory')
 
 # Write examples of raw BirdNET outputs to example results directory
 data(exampleBirdNET1)
-write.table(x = exampleBirdNET1,
-            file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
-            row.names = FALSE, quote = FALSE, sep = ',')
+write.table(
+  x = exampleBirdNET1,
+  file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
+  row.names = FALSE, quote = FALSE, sep = ','
+)
+
 data(exampleBirdNET2)
-write.table(x = exampleBirdNET2,
-            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
-            row.names = FALSE, quote = FALSE, sep = ',')
+write.table(
+  x = exampleBirdNET2,
+  file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
+  row.names = FALSE, quote = FALSE, sep = ','
+)
 
 # Run birdnet_format:
-birdnet_format(results.directory = 'example-results-directory',
-               timezone = 'GMT')
+birdnet_format(
+  results.directory = 'example-results-directory',
+  timezone = 'GMT'
+)
 
 # Delete all temporary example files when finished
 unlink(x = 'example-results-directory', recursive = TRUE)

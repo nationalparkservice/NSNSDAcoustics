@@ -47,30 +47,15 @@ This function was developed by the National Park Service Natural Sounds and Nigh
 \examples{
 \dontrun{
 
-# Create basic example data.frame
-recording.info <- data.frame(
-recordingID = c('GLBABART_20200528_104200.wav',
-                'GLBABART_20200528_114157.wav',
-                'GLBABART_20200528_124152.wav',
-                'GLBABART_20200529_104000.wav',
-                'GLBABART_20200529_113957.wav',
-                'GLBABART_20200529_123952.wav'
-              ))
+# Ensure your data has an appropriate recordingID column and time columns
+dat <- exampleHeatmapData
+dat[ , recordingID := basename(filepath)]
+dat <- add_time_cols(
+ dt = dat,
+ tz.recorder = 'America/Los_angeles',
+ tz.local = 'America/Los_angeles'
+)
 
-output <- add_time_cols(dt = recording.info,
-                        recording.id.col = 'recordingID',
-                        tz.recorder = 'UTC',
-                        tz.local = 'America/Anchorage')
-
-
-# Read in an example scores table to demonstrate the utility of the timestep argument:
-data(exampleScores)
-output <- add_time_cols(dt = exampleScores,
-                        recording.id.col = 'recordingID',
-                        tz.recorder = 'America/Los_angeles',
-                        tz.local = 'America/Los_angeles',
-                        timestep = 10
-                        )
 
 }
 }

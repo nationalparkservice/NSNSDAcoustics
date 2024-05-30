@@ -1,6 +1,6 @@
-# birdnet_plot =================================================================
+# birdnet_spectro =================================================================
 
-#' @name birdnet_plot
+#' @name birdnet_spectro
 #' @title Plot spectrograms of BirdNET detections
 #' @description Plot spectrograms of user-selected verified or unverified data
 #' @param data Data.table or data.frame of subsetted detections that a user would like to plot \strong{for a single species}. This allows the user precise control over which detections to plot.
@@ -31,10 +31,14 @@
 #' data(exampleAudio2)
 #'
 #' # Write example waves to example audio directory
-#' tuneR::writeWave(object = exampleAudio1,
-#'                  filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
-#' tuneR::writeWave(object = exampleAudio2,
-#'                  filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+#' tuneR::writeWave(
+#'   object = exampleAudio1,
+#'   filename = 'example-audio-directory/Rivendell_20210623_113602.wav'
+#' )
+#' tuneR::writeWave(
+#'   object = exampleAudio2,
+#'   filename = 'example-audio-directory/Rivendell_20210623_114602.wav'
+#' )
 #'
 #' # Read in example data.table/data.frame for plotting
 #' data(examplePlotData)
@@ -42,46 +46,52 @@
 #' # Plot only detections of Swainson's Thrush verified as "song",
 #' # with frequency limits ranging from 0.5 to 12 kHz, gray spectrogram colors,
 #' # a custom title, and a gray box around each detection
-#' plot.songs <- examplePlotData[common_name == "Swainson's Thrush" & verify == "song"]
-#' birdnet_plot(data = plot.songs,
-#'              audio.directory = 'example-audio-directory',
-#'              title = "Swainson's Thrush Songs",
-#'              frq.lim = c(0.5, 12),
-#'              new.window = TRUE,
-#'              spec.col = gray.3(),
-#'              box = TRUE,
-#'              box.lwd = 1,
-#'              box.col = 'gray')
+#' plot.songs <- exampleSpectroData[common_name == "Swainson's Thrush" & verify %in% c("song", "both")]
+#' birdnet_spectro(
+#'   data = plot.songs,
+#'   audio.directory = 'example-audio-directory',
+#'   title = "Swainson's Thrush Songs",
+#'   frq.lim = c(0.5, 12),
+#'   new.window = TRUE,
+#'   spec.col = gray.3(),
+#'   box = TRUE,
+#'   box.lwd = 1,
+#'   box.col = 'gray'
+#' )
 #'
 #' # Plot only detections of Swainson's Thrush verified as "call"
-#' # with frequency limits ranging from 0.5 to 6 kHz,a custom title, no boxes,
+#' # with frequency limits ranging from 0.5 to 6 kHz, a custom title, no boxes,
 #' # and colors sampled from the viridis color package
-#' plot.calls <- examplePlotData[common_name == "Swainson's Thrush" & verify == "call"]
-#' birdnet_plot(data = plot.calls,
-#'              audio.directory = 'example-audio-directory',
-#'              title = "Swainson's Thrush Calls",
-#'              frq.lim = c(0.5, 6),
-#'              new.window = TRUE,
-#'              spec.col = viridis::viridis(30),
-#'              box = FALSE)
+#' plot.calls <- exampleSpectroData[common_name == "Swainson's Thrush" & verify %in% c("call", "both")]
+#' birdnet_spectro(
+#'   data = plot.calls,
+#'   audio.directory = 'example-audio-directory',
+#'   title = "Swainson's Thrush Calls",
+#'   frq.lim = c(0.5, 12),
+#'   new.window = TRUE,
+#'   spec.col = viridis::viridis(30),
+#'   box = FALSE,
+#' )
+#'
 #'
 #' # Loop through to plot detections for selected unverified species
 #' # where confidence of detection >= 0.25
 #' # with frequency limits ranging from 0.5 to 12 kHz, custom titles, gray boxes,
 #' # and gray spectrogram colors
-#' sp <- c('Varied Thrush', 'Pacific-slope Flycatcher')
+#' sp <- c('Pacific Wren', 'Pacific-slope Flycatcher')
 #' for (i in 1:length(sp)) {
-#'  plot.sp <- examplePlotData[confidence >= 0.25 & common_name == sp[i]]
-#'  birdnet_plot(data = plot.sp,
-#'               audio.directory = 'example-audio-directory',
-#'               title = paste0(sp[i], ' Detections >= 0.25'),
-#'               frq.lim = c(0.5, 12),
-#'               new.window = TRUE,
-#'               spec.col = gray.3(),
-#'               box = TRUE,
-#'               box.lwd = 0.5,
-#'               box.col = 'gray',
-#'               title.size = 1.5)
+#'  plot.sp <- exampleSpectroData[common_name == sp[i] & confidence >= 0.25]
+#'  birdnet_spectro(data = plot.sp,
+#'     audio.directory = 'example-audio-directory',
+#'     title = paste0(sp[i], ' Detections >= 0.25'),
+#'     frq.lim = c(0.5, 12),
+#'     new.window = TRUE,
+#'     spec.col = gray.3(),
+#'     box = TRUE,
+#'     box.lwd = 0.5,
+#'     box.col = 'gray',
+#'     title.size = 1.5
+#'  )
 #' }
 #'
 #' # Delete all temporary example files when finished
@@ -90,26 +100,19 @@
 #' }
 #'
 
-
-birdnet_plot <- function(data,
-                         audio.directory,
-                         title,
-                         frq.lim = c(0, 12),
-                         new.window = TRUE,
-                         spec.col = monitoR::gray.3(),
-                         box = TRUE,
-                         box.lwd = 1,
-                         box.col = 'black',
-                         title.size = 1
+birdnet_spectro <- function(
+    data,
+    audio.directory,
+    title,
+    frq.lim = c(0, 12),
+    new.window = TRUE,
+    spec.col = monitoR::gray.3(),
+    box = TRUE,
+    box.lwd = 1,
+    box.col = 'black',
+    title.size = 1
 )
 {
-
-  # Rename columns if came from csv
-  if (all(c('common.name', 'start.s', 'end.s') %in% colnames(data))) {
-    colnames(data)[colnames(data) == 'common.name'] <- 'common_name'
-    colnames(data)[colnames(data) == 'start.s'] <- 'start'
-    colnames(data)[colnames(data) == 'end.s'] <- 'end'
-  }
 
   if(length(unique(data$common_name)) > 1) {
     stop("Please input data for one species at a time. You have input a dataset with ", length(unique(data$common_name)), " species.")

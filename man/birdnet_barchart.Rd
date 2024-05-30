@@ -42,15 +42,17 @@ Use of interactive = TRUE is meant strictly for exploratory purposes. If focal.s
 \examples{
 \dontrun{
 
-# Read in exampleBarchartData
-data(exampleBarchartData)
+# Read in example data
+data(exampleHeatmapData)
 
-# Generally, add_time_cols() may be called as part of preprocessing
-# (if not, please ensure data object has columns that include locationID (character),
-# recordingID (character), and dateTimeLocal (POSIXct))
-dat <- add_time_cols(dt = exampleBarchartData,
-                     tz.recorder = 'America/Los_angeles',
-                     tz.local = 'America/Los_angeles')
+# Ensure your data has an appropriate recordingID column and time columns
+dat <- exampleHeatmapData
+dat[ ,recordingID := basename(filepath)]
+dat <- add_time_cols(
+ dt = dat,
+ tz.recorder = 'America/Los_angeles',
+ tz.local = 'America/Los_angeles'
+)
 
 # Produce an interactive plotly barchart with interactive = TRUE
 birdnet_barchart(data = dat, interactive = TRUE)
@@ -58,10 +60,12 @@ birdnet_barchart(data = dat, interactive = TRUE)
 # Produce a static ggplot barchat with interactive = FALSE,
 # add focal.species with custom colors (any species in the data object
 # that are not in focal.species will be plotted in black as "Other".)
-birdnet_barchart(data = dat,
-                 interactive = FALSE,
-                 focal.species = c("Pacific Wren", "Swainson's Thrush", "Varied Thrush"),
-                 focal.colors = c('#00BE67', '#C77CFF', '#c51b8a'))
+birdnet_barchart(
+   data = dat,
+   interactive = FALSE,
+   focal.species = c("Pacific Wren", "Swainson's Thrush", "Varied Thrush"),
+   focal.colors = c('#00BE67', '#C77CFF', '#c51b8a')
+)
 
 }
 

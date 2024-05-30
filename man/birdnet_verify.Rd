@@ -62,27 +62,38 @@ data(exampleAudio1)
 data(exampleAudio2)
 
 # Write example waves to example audio directory
-tuneR::writeWave(object = exampleAudio1,
-                 filename = 'example-audio-directory/Rivendell_20210623_113602.wav')
-tuneR::writeWave(object = exampleAudio2,
-                 filename = 'example-audio-directory/Rivendell_20210623_114602.wav')
+tuneR::writeWave(
+   object = exampleAudio1,
+   filename = 'example-audio-directory/Rivendell_20210623_113602.wav'
+)
+tuneR::writeWave(
+   object = exampleAudio2,
+   filename = 'example-audio-directory/Rivendell_20210623_114602.wav'
+)
 
 # Create a BirdNET results directory for this example
 dir.create('example-results-directory')
 
 # Write examples of formatted BirdNET outputs to example results directory
 data(exampleFormatted1)
-write.table(x = exampleFormatted1,
-            file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
-            row.names = FALSE, quote = FALSE, sep = ',')
+write.table(
+   x = exampleFormatted1,
+   file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
+   row.names = FALSE, quote = FALSE, sep = ','
+ )
+
 data(exampleFormatted2)
-write.table(x = exampleFormatted2,
-            file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
-            row.names = FALSE, quote = FALSE, sep = ',')
+write.table(
+  x = exampleFormatted2,
+  file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
+  row.names = FALSE, quote = FALSE, sep = ','
+ )
 
 # Gather formatted BirdNET results
-dat <- birdnet_gather(results.directory = 'example-results-directory',
-                      formatted = TRUE)
+dat <- birdnet_gather(
+  results.directory = 'example-results-directory',
+  formatted = TRUE
+)
 
 # Create a random sample of three detections to verify
 set.seed(4)
@@ -92,20 +103,25 @@ to.verify <- dat[common_name == "Swainson's Thrush"][sample(.N, 3)]
 ver.lib <- c('y', 'n', 'unsure')
 
 # Verify detections
-birdnet_verify(data = to.verify,
-               verification.library = ver.lib,
-               audio.directory = 'example-audio-directory',
-               results.directory = 'example-results-directory',
-               overwrite = FALSE,
-               play = TRUE,
-               frq.lim = c(0, 12),
-               buffer = 1,
-               box.col = 'blue',
-               spec.col = monitoR::gray.3())
+birdnet_verify(
+  data = to.verify,
+  verification.library = ver.lib,
+  audio.directory = 'example-audio-directory',
+  results.directory = 'example-results-directory',
+  overwrite = FALSE,
+  play = TRUE,
+  frq.lim = c(0, 12),
+  buffer = 1,
+  box.col = 'blue',
+  spec.col = monitoR::gray.3()
+)
 
 # Check that underlying files have been updated with user verifications
-dat <- birdnet_gather(results.directory = 'example-results-directory',
-                      formatted = TRUE)
+dat <- birdnet_gather(
+  results.directory = 'example-results-directory',
+  formatted = TRUE
+)
+
 dat[!is.na(verify)]
 
 # Delete all temporary example files when finished

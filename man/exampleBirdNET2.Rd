@@ -28,9 +28,11 @@ dir.create('example-results-directory')
 
 # Write examples of raw BirdNET txt outputs to example results directory to
 # mimic BirdNET output format
-write.table(x = exampleBirdNET2,
-          file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
-          row.names = FALSE, quote = FALSE, sep = ',')
+write.table(
+  x = exampleBirdNET2,
+  file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
+  row.names = FALSE, quote = FALSE, sep = ','
+)
 
 # Delete all temporary example files when finished
 unlink(x = 'example-results-directory', recursive = TRUE)

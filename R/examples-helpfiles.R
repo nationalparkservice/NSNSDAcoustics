@@ -69,26 +69,6 @@ NULL
 NULL
 
 
-
-#' @title exampleScores
-#' @description Sample scores data.frame.
-#' @format An object of class \code{data.frame} and \code{data.table} containing 4 columns.
-#' @details The exampleScores object is used to demonstrate \code{\link{add_time_cols}}.
-#' @docType data
-#' @keywords datasets
-#' @name exampleScores
-#' @usage data(exampleScores)
-#' @examples
-#'
-#' # Read in example data
-#' data(exampleScores)
-#'
-#' # View structure
-#' str(exampleScores, 1)
-#'
-NULL
-
-
 #' @title exampleBirdNET1
 #' @description Sample of raw BirdNET output.
 #' @format An object of class \code{data.frame} containing 14 columns.
@@ -109,9 +89,11 @@ NULL
 #'
 #' # Write examples of raw BirdNET txt outputs to example results directory to
 #' # mimic BirdNET output format
-#' write.table(x = exampleBirdNET1,
-#'           file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
-#'           row.names = FALSE, quote = FALSE, sep = ',')
+#' write.table(
+#'   x = exampleBirdNET1,
+#'   file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
+#'   row.names = FALSE, quote = FALSE, sep = ','
+#' )
 #'
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-results-directory', recursive = TRUE)
@@ -139,9 +121,11 @@ NULL
 #'
 #' # Write examples of raw BirdNET txt outputs to example results directory to
 #' # mimic BirdNET output format
-#' write.table(x = exampleBirdNET2,
-#'           file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
-#'           row.names = FALSE, quote = FALSE, sep = ',')
+#' write.table(
+#'   x = exampleBirdNET2,
+#'   file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
+#'   row.names = FALSE, quote = FALSE, sep = ','
+#' )
 #'
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-results-directory', recursive = TRUE)
@@ -210,21 +194,21 @@ NULL
 NULL
 
 
-#' @title examplePlotData
-#' @description Sample data.frame to demonstrate \code{\link{birdnet_plot}}
+#' @title exampleSpectroData
+#' @description Sample data.frame to demonstrate \code{\link{birdnet_spectro}}
 #' @format An object of class \code{data.frame} and \code{data.table} containing 17 columns.
-#' @details The examplePlotData object is used to demonstrate \code{\link{birdnet_plot}}
+#' @details The exampleSpectroData object is used to demonstrate \code{\link{birdnet_spectro}}
 #' @docType data
 #' @keywords datasets
-#' @name examplePlotData
-#' @usage data(examplePlotData)
+#' @name exampleSpectroData
+#' @usage data(exampleSpectroData)
 #' @examples
 #'
 #' # Load the dataset
-#' data(examplePlotData)
+#' data(exampleSpectroData)
 #'
 #' # View structure
-#' str(examplePlotData, max.level = 1)
+#' str(exampleSpectroData, max.level = 1)
 #'
 NULL
 
@@ -301,6 +285,24 @@ NULL
 #'
 #' # View structure
 #' str(exampleDatesSampled, max.level = 1)
+#'
+#'
+NULL
+
+#' @title exampleSpeciesList
+#' @description Example data for \code{\link{birdnet_analyzer}}
+#' @format An object of class \code{data.table} and \code{data.frame} with 4 rows and 1 column.
+#' @details The exampleSpeciesList object can be used to test the \code{\link{birdnet_analyzer}} function.
+#' @docType data
+#' @keywords datasets
+#' @name exampleSpeciesList
+#' @usage data(exampleSpeciesList)
+#' @examples
+#' # Load the dataset
+#' data(exampleSpeciesList)
+#'
+#' # View structure
+#' str(exampleSpeciesList, max.level = 1)
 #'
 #'
 NULL

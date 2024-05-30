@@ -72,7 +72,7 @@ brks <- readable_julian_breaks(
   format = c('\%B', '\%d'),
   sep = ' ',
   timestep = 30
-  )
+)
 
 # Example plot of using breaks with human-readable data across years
 # WARNING: May take a moment to plot the following
