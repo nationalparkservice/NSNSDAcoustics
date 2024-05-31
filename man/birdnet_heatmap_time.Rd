@@ -78,29 +78,29 @@ data(exampleDatesSampled)
 dat <- exampleHeatmapData
 dat[ ,recordingID := basename(filepath)]
 dat <- add_time_cols(
-           dt = dat,
-           tz.recorder = 'America/Los_angeles',
-           tz.local = 'America/Los_angeles'
+  dt = dat,
+  tz.recorder = 'America/Los_angeles',
+  tz.local = 'America/Los_angeles'
 )
 
 # Generate a heatmap at Rivendell for Pacific-slope Flycatcher
 # Set comparable.color.breaks = FALSE to maximize contrast in a single species map
 birdnet_heatmap_time(
-     data = dat,
-     common.name = 'Pacific-slope Flycatcher',
-     locationID = 'Rivendell',
-     conf.threshold = 0.25,
-     dates.sampled = exampleDatesSampled,
-     hours.sampled = list(sunrise = c(1.5, 1.5), sunset = c(0, 0)),
-     y.axis.limits = c(0, 23),
-     julian.breaks = c(30, 60, 90, 120, 150, 180, 210, 240, 270),
-     minute.timestep = 5,
-     comparable.color.breaks = FALSE,
-     tz.local = 'America/Los_angeles',
-     latitude = 46.1646,
-     longitude = -123.77955,
-     sun.lines = c('dusk', 'dawn', 'sunrise', 'sunset'),
-     sun.linetypes = c('dotdash', 'longdash', 'dotted', 'solid')
+  data = dat,
+  common.name = 'Pacific-slope Flycatcher',
+  locationID = 'Rivendell',
+  conf.threshold = 0.25,
+  dates.sampled = exampleDatesSampled,
+  hours.sampled = list(sunrise = c(1.5, 1.5), sunset = c(0, 0)),
+  y.axis.limits = c(0, 23),
+  julian.breaks = c(30, 60, 90, 120, 150, 180, 210, 240, 270),
+  minute.timestep = 5,
+  comparable.color.breaks = FALSE,
+  tz.local = 'America/Los_angeles',
+  latitude = 46.1646,
+  longitude = -123.77955,
+  sun.lines = c('dusk', 'dawn', 'sunrise', 'sunset'),
+  sun.linetypes = c('dotdash', 'longdash', 'dotted', 'solid')
 )
 
 # Generate heatmaps for several species with comparable.color.breaks == TRUE
@@ -112,28 +112,28 @@ sp <- c("Pacific Wren",
 
 for (i in 1:length(sp)) {
 
- print(paste0('Working on ', sp[i]))
+  print(paste0('Working on ', sp[i]))
 
- g <- birdnet_heatmap_time(
-     data = dat,
-     common.name = sp[i],
-     locationID = 'Rivendell',
-     conf.threshold = 0.1,
-     dates.sampled = exampleDatesSampled,
-     hours.sampled = list(sunrise = c(1.5, 1.5), sunset = c(0, 0)),
-     y.axis.limits = c(3, 10),
-     julian.breaks = c(30, 60, 90, 120, 150, 180, 210, 240, 270),
-     minute.timestep = 1,
-     plot.title = sp[i],
-     comparable.color.breaks = TRUE,
-     tz.local = 'America/Los_angeles',
-     latitude = 46.1646,
-     longitude = -123.77955,
-     sun.lines = c('dawn', 'sunrise'),
-     sun.linetypes = c('longdash', 'solid')
- )
+  g <- birdnet_heatmap_time(
+    data = dat,
+    common.name = sp[i],
+    locationID = 'Rivendell',
+    conf.threshold = 0.1,
+    dates.sampled = exampleDatesSampled,
+    hours.sampled = list(sunrise = c(1.5, 1.5), sunset = c(0, 0)),
+    y.axis.limits = c(3, 10),
+    julian.breaks = c(30, 60, 90, 120, 150, 180, 210, 240, 270),
+    minute.timestep = 1,
+    plot.title = sp[i],
+    comparable.color.breaks = TRUE,
+    tz.local = 'America/Los_angeles',
+    latitude = 46.1646,
+    longitude = -123.77955,
+    sun.lines = c('dawn', 'sunrise'),
+    sun.linetypes = c('longdash', 'solid')
+  )
 
- print(g)
+  print(g)
 
 }
 

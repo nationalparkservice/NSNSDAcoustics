@@ -76,10 +76,15 @@
 #' data(exampleAudio2)
 #'
 #' # Write example waves to example input directory
-#' tuneR::writeWave(object = exampleAudio1,
-#'                  filename = 'example-input-directory/Rivendell_20210623_113602.wav')
-#' tuneR::writeWave(object = exampleAudio2,
-#'                  filename = 'example-input-directory/Rivendell_20210623_114602.wav')
+#' tuneR::writeWave(
+#'   object = exampleAudio1,
+#'   filename = 'example-input-directory/Rivendell_20210623_113602.wav'
+#' )
+#'
+#' tuneR::writeWave(
+#'   object = exampleAudio2,
+#'   filename = 'example-input-directory/Rivendell_20210623_114602.wav'
+#' )
 #'
 #' # Perform wave_to_nvspl in test mode (test.file = TRUE)
 #' wave_to_nvspl(
@@ -87,7 +92,8 @@
 #'  data.directory = FALSE,
 #'  test.file = TRUE,
 #'  project = 'testproject',
-#'  timezone = 'GMT')
+#'  timezone = 'GMT'
+#' )
 #'
 #' # Perform wave_to_nvspl in batch mode (test.file = FALSE)
 #' wave_to_nvspl(
@@ -95,7 +101,8 @@
 #'  data.directory = FALSE,
 #'  test.file = FALSE,
 #'  project = 'testproject',
-#'  timezone = 'GMT')
+#'  timezone = 'GMT'
+#' )
 #'
 #' # Verify that NVSPL outputs have been created
 #' nvspls <- list.files('example-input-directory/NVSPL', full.names = TRUE)

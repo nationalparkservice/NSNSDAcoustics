@@ -66,6 +66,7 @@ tuneR::writeWave(
    object = exampleAudio1,
    filename = 'example-audio-directory/Rivendell_20210623_113602.wav'
 )
+
 tuneR::writeWave(
    object = exampleAudio2,
    filename = 'example-audio-directory/Rivendell_20210623_114602.wav'

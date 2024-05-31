@@ -102,20 +102,26 @@
 #'
 #' # Write example NVSPL data to example input directory
 #' for (i in 1:length(exampleNVSPL)) {
-#' write.table(x = exampleNVSPL[[i]],
-#'             file = paste0('example-input-directory/', names(exampleNVSPL)[i]),
-#'             sep = ',',
-#'             quote = FALSE)
+#'   write.table(
+#'     x = exampleNVSPL[[i]],
+#'     file = paste0('example-input-directory/', names(exampleNVSPL)[i]),
+#'     sep = ',',
+#'     quote = FALSE
+#'   )
 #' }
 #'
 #' # Run nvspl_to_ai to generate acoustic indices csv for example NVSPL files
-#' nvspl_to_ai(input.directory = 'example-input-directory',
-#'             output.directory = 'example-output-directory',
-#'             project = 'example-project')
+#' nvspl_to_ai(
+#'   input.directory = 'example-input-directory',
+#'   output.directory = 'example-output-directory',
+#'   project = 'example-project'
+#' )
 #'
 #' # View Results
-#' (ai.results <- read.csv(list.files(path = 'example-output-directory',
-#'                                    pattern = '.csv', full.names = TRUE)))
+#' (ai.results <- read.csv(
+#'   list.files(path = 'example-output-directory',
+#'              pattern = '.csv', full.names = TRUE))
+#' )
 #'
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-input-directory', recursive = TRUE)

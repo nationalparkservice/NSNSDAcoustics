@@ -60,13 +60,13 @@ birdnet_analyzer(
 
 \item{sf.thresh}{Minimum species occurrence frequency threshold for location filter. Values from 0.01 to 0.99. Defaults to 0.03.}
 
-\item{classifier}{(Untested argument.) Absolute path to custom trained classifier. Defaults to None. If set, lat, lon and locale are ignored.}
+\item{classifier}{Absolute path to custom trained classifier. Defaults to None. If set, lat, lon and locale are ignored.}
 
 \item{fmin}{Minimum frequency for bandpass filter. Defaults to 0.}
 
 \item{fmax}{Maximum frequency for bandpass filter. Defaults to 15000.}
 
-\item{skip.existing.results}{(Untested argument.) Skip files that have already been analyzed. Default = FALSE.}
+\item{skip.existing.results}{Skip files that have already been analyzed. Default = FALSE.}
 }
 \value{
 Saves a file of results for each audio file in results.directory. For the recommended rtype = 'r', files are csv with suffix "BirdNET.results.csv". Files contain the following columns:
@@ -95,8 +95,6 @@ This function allows a user to process audio files through \href{https://github.
 This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET.
 The function has been tested on BirdNET Analyzer \href{https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.1.0}{v1.1.0}.
 To use this function, follow the steps outlined in the \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#running-birdnet-from-rstudio}{NSNSDAcoustics ReadME}.
-
-If there is an issue with any audio files (e.g., audio file corrupt or too short), error messaging will be returned and problematic files that were not processed in this call to the function will be recorded in a file named 'BirdNET_Problem-Files_results.directory_YYYY-MM-DD HHMMSS.csv'. Note that problem files may also occur if you have results open from previous runs and are attempting to rewrite the results while the file is still open. To help diagnose problems, birdnet_analyzer() attempts to catch error messaging and return errors to the user at the end of the function run. However, internal error catching in R from BirdNET-Analyzer's underlying Python code does not always work; you may need to rely on the "Problem-Files" result to rerun problematic files and diagnose issues.
 }
 \examples{
 \dontrun{
@@ -121,10 +119,19 @@ tuneR::writeWave(
 # Create a BirdNET results directory for this example
 dir.create('example-results-directory')
 
+# Create a species_list.txt file for this example and write to working directory
+data(exampleSpeciesList)
+write.table(
+   x = exampleSpeciesList,
+   file = 'species_list.txt',
+   row.names = FALSE,
+   col.names = FALSE,
+   quote = FALSE
+)
 
 ##### The following example is pseudocode ######
 
-# Because this function calls an external programs (BirdNET-Analyzer.exe),
+# Because this function calls an external program (BirdNET-Analyzer.exe),
 # the example function below will not be modifiable to run for you unless
 # you follow the instructions given the NSNSDAcoustics documentation here:
 # https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md
@@ -133,9 +140,8 @@ dir.create('example-results-directory')
 birdnet_analyzer(
  birdnet.version = 'v1.1.0',
  birdnet.path = 'absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe',
- audio.directory = 'absolute/path/example-audio-directory',
- results.directory = 'absolute/path/example-results-directory',
- week = -1,
+ i.audio = 'absolute/path/example-audio-directory',
+ o.results = 'absolute/path/example-results-directory',
  slist = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/species_list.txt',
 )
 

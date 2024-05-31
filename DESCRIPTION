@@ -40,7 +40,6 @@ Collate:
     'birdnet_heatmap.R'
     'birdnet_heatmap_time.R'
     'birdnet_iNEXT.R'
-    'birdnet_plot.R'
     'birdnet_run.R'
     'birdnet_spectro.R'
     'birdnet_verify.R'

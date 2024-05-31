@@ -10,6 +10,7 @@
 #' If formatted = TRUE:
 #'
 #' \itemize{
+#' \item{\strong{recordingID}: Recording identifier for the file, e.g., SITE_YYYYMMDD_HHMMSS.wav.}
 #' \item{\strong{filepath}: Filepath for the processed audio file.}
 #' \item{\strong{start}: Start time of detection in seconds.}
 #' \item{\strong{end}: End time of detection in seconds.}
@@ -24,7 +25,6 @@
 #' \item{\strong{min_conf}: Minimum confidence input used.}
 #' \item{\strong{species_list}: Species list used.}
 #' \item{\strong{model}: BirdNET model used.}
-#' \item{\strong{recordingID}: Recording identifier for the file, e.g., SITE_YYYYMMDD_HHMMSS.wav.}
 #' \item{\strong{verify}: A column into which verifications may be populated. When initially created, will be 'NA'.}
 #' \item{\strong{timezone}: Timezone setting used in the audio recorder.}
 #' }
@@ -49,55 +49,71 @@
 #'
 #' # Write examples of formatted BirdNET outputs to example results directory
 #' data(exampleFormatted1)
-#' write.table(x = exampleFormatted1,
-#'             file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
-#'             row.names = FALSE, quote = FALSE, sep = ',')
+#' write.table(
+#'    x = exampleFormatted1,
+#'    file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
+#'    row.names = FALSE, quote = FALSE, sep = ','
+#' )
 #'
 #' data(exampleFormatted2)
-#' write.table(x = exampleFormatted2,
-#'             file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
-#'             row.names = FALSE, quote = FALSE, sep = ',')
+#' write.table(
+#'    x = exampleFormatted2,
+#'    file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
+#'    row.names = FALSE, quote = FALSE, sep = ','
+#' )
 #'
 #' # Write examples of raw BirdNET outputs to example results directory
 #' data(exampleBirdNET1)
-#' write.table(x = exampleBirdNET1,
-#'             file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
-#'             row.names = FALSE, quote = FALSE, sep = ',')
-
+#' write.table(
+#'    x = exampleBirdNET1,
+#'    file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
+#'    row.names = FALSE, quote = FALSE, sep = ','
+#' )
+#'
 #' data(exampleBirdNET2)
-#' write.table(x = exampleBirdNET2,
-#'             file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
-#'             row.names = FALSE, quote = FALSE, sep = ',')
+#' write.table(
+#'    x = exampleBirdNET2,
+#'    file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
+#'    row.names = FALSE, quote = FALSE, sep = ','
+#' )
 #'
 #' # Gather formatted BirdNET results
 #' formatted.results <- birdnet_gather(
-#'                              results.directory = 'example-results-directory',
-#'                              formatted = TRUE
-#'                              )
+#'   results.directory = 'example-results-directory',
+#'   formatted = TRUE
+#' )
 #'
 #' # Gather unformatted (raw) BirdNET results
 #' raw.results <- birdnet_gather(
-#'                        results.directory = 'example-results-directory',
-#'                        formatted = FALSE
-#'                        )
+#'   results.directory = 'example-results-directory',
+#'   formatted = FALSE
+#' )
 #'
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-results-directory', recursive = TRUE)
+#'
 #' }
 #'
 
-birdnet_gather <- function(results.directory,
-                           formatted = TRUE) {
+birdnet_gather <- function(
+    results.directory,
+    formatted = TRUE
+) {
+
   ifelse(formatted == TRUE,
-         paths <- list.files(path = results.directory,
-                             pattern = 'formatted',
-                             full.names = TRUE,
-                             recursive = TRUE),
-         paths <- grep(list.files(path = results.directory,
-                                  full.names = TRUE,
-                                  recursive = TRUE),
-                       pattern = 'formatted',
-                       invert = TRUE, value = TRUE))
+         paths <- list.files(
+           path = results.directory,
+           pattern = 'formatted',
+           full.names = TRUE,
+           recursive = TRUE
+         ),
+         paths <- grep(list.files(
+           path = results.directory,
+           full.names = TRUE,
+           recursive = TRUE
+         ),
+         pattern = 'formatted',
+         invert = TRUE, value = TRUE))
 
   # remove "problem" files
   paths <- paths[grep(pattern = 'problem-files', x = tolower(paths), invert = TRUE)]

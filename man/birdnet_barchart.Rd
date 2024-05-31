@@ -63,7 +63,7 @@ birdnet_barchart(data = dat, interactive = TRUE)
 birdnet_barchart(
    data = dat,
    interactive = FALSE,
-   focal.species = c("Pacific Wren", "Swainson's Thrush", "Varied Thrush"),
+   focal.species = c("Pacific Wren", "Swainson's Thrush"),
    focal.colors = c('#00BE67', '#C77CFF', '#c51b8a')
 )
 

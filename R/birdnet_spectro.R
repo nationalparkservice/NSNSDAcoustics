@@ -41,9 +41,9 @@
 #' )
 #'
 #' # Read in example data.table/data.frame for plotting
-#' data(examplePlotData)
+#' data(exampleSpectroData)
 #'
-#' # Plot only detections of Swainson's Thrush verified as "song",
+#' # Plot detections of Swainson's Thrush that contain songs
 #' # with frequency limits ranging from 0.5 to 12 kHz, gray spectrogram colors,
 #' # a custom title, and a gray box around each detection
 #' plot.songs <- exampleSpectroData[common_name == "Swainson's Thrush" & verify %in% c("song", "both")]
@@ -59,7 +59,7 @@
 #'   box.col = 'gray'
 #' )
 #'
-#' # Plot only detections of Swainson's Thrush verified as "call"
+#' # Plot only detections of Swainson's Thrush that contain calls
 #' # with frequency limits ranging from 0.5 to 6 kHz, a custom title, no boxes,
 #' # and colors sampled from the viridis color package
 #' plot.calls <- exampleSpectroData[common_name == "Swainson's Thrush" & verify %in% c("call", "both")]
@@ -72,7 +72,6 @@
 #'   spec.col = viridis::viridis(30),
 #'   box = FALSE,
 #' )
-#'
 #'
 #' # Loop through to plot detections for selected unverified species
 #' # where confidence of detection >= 0.25
