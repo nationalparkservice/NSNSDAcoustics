@@ -29,12 +29,14 @@ Next, you can install NSNSDAcoustics using one of two options:
 
 ### (1) Option 1: Use `install_github()`:
 
-You may need to first install the latest version of devtools, and the R console may also prompt you to install Rtools (follow directions given in console message). If you are having trouble installing devtools, make sure to disconnect from VPN. Once you have Rtools and devtools, you can install the latest version of NSNSDAcoustics:
+You may first need to install the latest version of devtools (and possibly Rtools). Then you can install the latest version of NSNSDAcoustics:
 
 ```r
+
 install.packages('devtools')
 library(devtools)
 devtools::install_github('nationalparkservice/NSNSDAcoustics')
+
 ```
 
 ### (2) Option 2: Download and install manually
@@ -42,15 +44,16 @@ devtools::install_github('nationalparkservice/NSNSDAcoustics')
 
 Eventually, you will be able to download the zip or tar.gz file directly using one of the following links. 
 * Windows users can download the zip file from NSNSDAcoustics-master.zip [**need to create link**]()
-* Mac or Linux users can download the tar.gz file from NSNSDAcoustcs-master.tar.gz [**need to create link**]()
 
 After downloading, open R Studio, click on the Install button on the Packages tab, select Install From Package Archive File, and navigate to the downloaded file.
 
-Once NSNSDAcoustics is installed, you can call in the package and look at all helpfiles: 
+Once NSNSDAcoustics is installed, you can call in the package and view helpfiles: 
 
 ```r
+
 library(NSNSDAcoustics)
 help(package = 'NSNSDAcoustics')
+
 ```
 
 
@@ -62,17 +65,17 @@ NSNSDAcoustics depends on the R package `data.table`, which enables fast queryin
 
 **This worfklow was developed for Windows 10, BirdNET-Analyzer release V1.1.0, and model version V2.4. It has not been tested on other systems.** 
 
-[BirdNET](https://birdnet.cornell.edu/) is a bird sound recognition program developed by the [Cornell Center for Conservation Bioacoustics](https://www.birds.cornell.edu/ccb/). The [BirdNET-Analyzer Github repository](https://github.com/kahst/BirdNET-Analyzer) provides a promising free tool for processing large volumes of audio data relatively quickly and understanding something about which avian species are present.
+[BirdNET](https://birdnet.cornell.edu/) is a bird sound recognition program developed by the [Cornell Center for Conservation Bioacoustics](https://www.birds.cornell.edu/ccb/). The [BirdNET-Analyzer Github repository](https://github.com/kahst/BirdNET-Analyzer) provides a promising free tool for quickly processing large volumes of audio data and detecting sounds. 
 
 ### (1) Step 1. [Download the fully packaged BirdNET Analyzer for Windows and follow the directions](https://github.com/kahst/BirdNET-Analyzer?tab=readme-ov-file#setup-windows). 
 
-Download the link shown in this screenshot and follow the directions: 
+Download at the link shown in this screenshot and follow the directions: 
 
 <p align="center">
 <img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/birdnet24install.png alt="Image showing which BirdNET link to click and download."><br>
 </p>
 
-If you are working on a machine where you do not have admin privileges, you may not be able to unblock the software and will need to pursue a workaround. NPS staff please reach out to Cathleen Balantic (`cathleen_balantic` at `nps.gov`) with questions.
+NPS staff please reach out to Cathleen Balantic (`cathleen_balantic` at `nps.gov`) with questions.
 
 ### (2) Step 2. Familiarize yourself with the [command line arguments listed in BirdNET-Analyzer's documentation](https://github.com/kahst/BirdNET-Analyzer?tab=readme-ov-file#71-usage-cli).
 
@@ -91,9 +94,7 @@ Next, you can construct a statement for the command prompt. Your statement might
 
 `"C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe" --i "D:/AUDIO" --o "D:/RESULTS" --lat -1 --lon -1 --week -1 --slist "D:/species_list.txt" --rtype "r" --min_conf 0.1 --sensitivity 1.0 --threads 4`
 
-Please edit this example to reflect file paths and folder names on your machine, and then modify, omit, or include command line arguments as desired, and give it a try. 
-
-If BirdNET-Analyzer writes files to your results folder, you were successful in getting everything installed. 
+Please edit this example to reflect file paths and folder names on your machine, and then modify, omit, or include command line arguments as desired. If BirdNET-Analyzer writes files to your results folder, you were successful in getting everything installed. 
 
 ### (4) Step 4. Run BirdNET from RStudio.
 
@@ -106,7 +107,8 @@ Below, we'll walk through the documentation and example helpfiles for `birdnet_a
 ?birdnet_analyzer
 
 ```
-To set up this example, we first create an example audio and results directories. Then we write example audio wave files to the directory. We also create a sample species list to illustrate how you might use this in your workflow. This setup illustrates the file types and folder structure you will emulate when you use `birdnet_analyzer()`.
+
+To set up this example, we first create example audio and results directories. Then we write example audio wave files to the directory. We also create a sample species list to illustrate how you might use this in your workflow. This setup illustrates the file types and folder structure you will emulate when you use `birdnet_analyzer()`.
 
 ```r
 
@@ -141,9 +143,9 @@ write.table(
 )
 ```
 
-Now, we're set up to run the function. `birdnet_analyzer()` takes a large number of arguments. First, `birdnet.version` specifies which release of BirdNET-Analyzer you are using. Currently, the default is 'v1.1.0' -- if you aren't running this version yet, we recommend downloading it. In `birdnet.path`, 	specify your absolute path to the BirdNET-Analyzer.exe installation on your machine. e.g., "C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe". All of the remaining arguments will look very similar to the [command line arguments listed in BirdNET-Analyzer's documentation](https://github.com/kahst/BirdNET-Analyzer?tab=readme-ov-file#71-usage-cli). For example, `i.audio` requires an absolute path to an input file or folder, and `o.results` requires an absolute path to an output file or folder. See `?birdnet_analyzer()` help documentation or BirdNET-Analyzer's documentation for more details. 
+Now, we're set up to run the function. `birdnet_analyzer()` takes a large number of arguments. First, `birdnet.version` specifies which release of BirdNET-Analyzer you are using. Currently, the default is 'v1.1.0' -- if you aren't running this version yet, we recommend downloading it. In `birdnet.path`, 	specify the absolute path to the BirdNET-Analyzer.exe installation on your machine. e.g., "C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe". All of the remaining arguments will look very similar to the [command line arguments listed in BirdNET-Analyzer's documentation](https://github.com/kahst/BirdNET-Analyzer?tab=readme-ov-file#71-usage-cli). For example, `i.audio` requires an absolute path to an input file or folder, and `o.results` requires an absolute path to an output file or folder. See `?birdnet_analyzer()` help documentation or BirdNET-Analyzer's documentation for more details. 
 
-Below, we show pseudocode that you can modify for your own purposes to test the function. Note that many arguments are missing because many use defaults. Be sure to familiarize yourself with each argument. You may wish to test various combinations of parameters and observe how they affect results.
+Below, we show pseudocode that you can modify to test the function. Note that many arguments are missing because many use defaults. Be sure to familiarize yourself with each argument. You may wish to test various combinations of parameters and observe how they affect results.
 
 ```r
 
@@ -167,11 +169,11 @@ birdnet_analyzer(
 
 ```
 
-If you have dozens of audio folders to process, you can use `birdnet_analyzer()` to loop through each folder. For example, let's say you have several audio folders: D:/AUDIO_1, D:/AUDIO_2, and D:/AUDIO_3. You might have created corresponding results folders: D:/RESULTS_1, D:/RESULTS_2, and D:/RESULTS_3. The following pseudocode illustrates a loop that can be edited for your own purposes: 
+If you have dozens of audio folders, you can use `birdnet_analyzer()` to loop through each folder. For example, let's say you have several audio folders: D:/AUDIO_1, D:/AUDIO_2, and D:/AUDIO_3. You might have created corresponding results folders: D:/RESULTS_1, D:/RESULTS_2, and D:/RESULTS_3. The following pseudocode illustrates a loop that can be edited for your own purposes: 
 
 ```r
 
-# Initialize important variables such as your BirdNET analyzer path, folders, and other command line arguments:
+# Initialize important variables:
 my.birdnet.path <- 'absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe'
 audio.folders <- c(paste0('D:/', 'AUDIO_', 1:3))
 result.folders <- c(paste0('D:/', 'RESULTS_', 1:3))
@@ -199,7 +201,7 @@ If you're having trouble running `birdnet_analyzer()`, note that under the hood,
 
 ```r
 
-# Initialize important variables such as your BirdNET analyzer path, folders, and other command line arguments:
+# Initialize important variables:
 my.birdnet.path <- 'absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe'
 audio.folders <- c(paste0('D:/', 'AUDIO_', 1:3))
 result.folders <- c(paste0('D:/', 'RESULTS_', 1:3))
@@ -214,7 +216,8 @@ all.commands <- paste0(
   '" --o "', result.folders,
   '" --lat -1 --lon -1 --week -1 --slist ',
   species.list.path, ' --rtype "r" --threads ',
-  num.threads, ' --min_conf 0.1 --sensitivity 1.0')
+  num.threads, ' --min_conf 0.1 --sensitivity 1.0'
+)
 
 # Test that one command runs
 # system(all.commands[1])
@@ -231,11 +234,11 @@ for (i in 1:length(all.commands)) {
 
 ## Assessing BirdNET Results
 
-If you have a large number of audio files, and plan to monitor for a long time across many locations, you may very quickly find yourself managing thousands of BirdNET output files. It's likely that you'll want a systematic way to track and check on these results, and verify whether BirdNET detections are truly from a target species. The `birdnet_format()` --> `birdnet_verify()` workflow offers one way to keep track of your verifications. An alternative way would be to set up a SQLite database (e.g., [as used in the AMMonitor package](https://code.usgs.gov/vtcfwru/ammonitor)). Although a database solution may ultimately be the most robust way to track results through time in a long term project, this can come with a lot of start up and might not be easily extensible to your project needs. Instead, the worfklow below provides a simple way to reformat and work with BirdNET output files directly, allowing you to store your verifications there.
+If you have a large number of audio files, and plan to monitor for a long time across many locations, you may soon find yourself managing thousands of BirdNET output files. It's likely that you'll want a systematic way to track and check on these results, and verify whether BirdNET detections are truly from a target species. The `birdnet_format()` --> `birdnet_verify()` workflow offers one way to keep track of your verifications. An alternative way would be to set up a SQLite database (e.g., [as used in the AMMonitor package](https://code.usgs.gov/vtcfwru/ammonitor)). Although a database solution may ultimately be the most robust way to track results through time in a long term project, this can come with a lot of start up and might not be easily extensible to your project needs. Instead, the worfklow below provides a simple way to reformat and work with BirdNET output files directly, allowing you to store your verifications there.
 
 ### Reformat raw BirdNET results
 
-`birdnet_format()` is a simple function that reformats the raw BirdNET rtype = 'r' results with a "recordingID" column for easier data manipulation, a "verify" column to support manual verification of detection results, and a "timezone" column to clarify the timezone setting used by the audio recorder. 
+`birdnet_format()` is a simple function that reformats the raw BirdNET `rtype = 'r'` results with a "recordingID" column for easier data manipulation, a "verify" column to support manual verification of detection results, and a "timezone" column to clarify the timezone setting used by the audio recorder. 
 
 Below, we'll walk through the documentation and example helpfiles for `birdnet_format()`. Always start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
 
@@ -269,7 +272,7 @@ write.table(
 
 ```
 
-Now, we're set up to run the function. `birdnet_format()` takes two arguments. First, the `results.directory` should point to the folder where you have stored your raw BirdNET outputs. Second, the `timezone` argument allows you to specify the timezone setting used in the audio recorder (i.e., the timezone reflected in the wave filename). **It's important to pay attention to this!** Recall that the functions described here expect wave files that follow a SITEID_YYYYMMDD_HHMMSS naming convention. In the package sample audio data, we have a wave named Rivendell_20210623_113602.wav. This means the site ID is Rivendell, and the recording was taken on June 23rd, 2021 at 11:36:02. The `timezone` argument allows us to clarify what 11:36:02 actually means. Was the recording taken in local time at your site, or was it taken in UTC? This point might seem trivial if you're just getting started with collecting data at a few sites for a single season, but if you're collecting data across many sites, over many years, with varying audio recorder equipment and varying recording settings through time, different field technicians, and potentially across timezones (as we often do at NPS NSNSD), you will want to keep meticulous track of your timezones so that your analyses will be accurate across time and space. If recordings were taken in local time at your study site, specify an [Olson-names-formatted character timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for the location (e.g., "America/Los_Angeles"). If recordings were taken in UTC, you can put either 'GMT' or 'UTC' (both are acceptable in R for downstream date-time formatting). 
+Now, we're set up to run the function. `birdnet_format()` takes two arguments. First, the `results.directory` should point to the folder where you have stored your raw BirdNET outputs. Second, the `timezone` argument allows you to specify the timezone setting used in the audio recorder (i.e., the timezone reflected in the wave filename). **It's important to pay attention to this!** Recall that the functions described here expect wave files that follow a SITEID_YYYYMMDD_HHMMSS naming convention. In the package sample audio data, we have a wave named Rivendell_20210623_113602.wav. This means the site ID is Rivendell, and the recording was taken on June 23rd, 2021 at 11:36:02. The `timezone` argument allows us to clarify what 11:36:02 actually means. Was the recording taken in local time at your site, or was it taken in UTC? This point might seem trivial if you're just getting started with collecting data at a few sites for a single season, but if you're collecting data across many sites, over many years, with varying audio recorder equipment and varying recording settings through time, different field technicians, and potentially across timezones (as we often do at NPS NSNSD), you will want to keep meticulous track of your timezones so that your analyses will be accurate across time and space. If recordings were taken in local time at your study site, specify an [Olson-names-formatted character timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for the location (e.g., "America/Los_Angeles"). If recordings were taken in UTC, you can put either 'GMT' or 'UTC'; both are acceptable in R for downstream date-time formatting. 
 
 Below, we point to our example results directory and specify 'GMT' (i.e., 'UTC') as the timezone, since the recordings were not taken in local time at this recorder.
 
@@ -283,9 +286,10 @@ birdnet_format(
 
 ```
 
-After running the function, look in your example results directory folder and check on the results. This function produces new formatted files with filename suffix "BirdNET_formatted_results.csv" (note that it does NOT overwrite your raw BirdNET results). The columns in this formatted file are described in the helpfile. 
+After running the function, look in your example results directory folder and check on the results. This function produces new formatted files with filename suffix "BirdNET_formatted_results.csv". Note that `birdnet_format()` does NOT overwrite your raw BirdNET results. 
 
 Finally, clean up by deleting temporary files that were set up for the example. 
+
 ```r
 
 # Delete all temporary example files when finished
@@ -293,7 +297,7 @@ unlink(x = 'example-results-directory', recursive = TRUE)
 
 ```
 
-The point of all this reformatting is to make it easier to keep track of our downstream analyses of BirdNET detections. The "verify" column allows us to track whether a detected event actually came from a target species. 
+The point of all this reformatting is to make it easier to keep track of downstream analyses of BirdNET detections. The "verify" column allows us to track whether a detected event actually came from a target species. 
 
 ### Gather BirdNET results
 
@@ -377,7 +381,7 @@ Below, we'll walk through the documentation and example helpfiles for `birdnet_v
 
 ```
 
-To run this example, we first create an example audio directory, to which we will write the sample audio that comes with the package. We'll also set up an example results directory to which we will write example formatted .txt data. This is meant to illustrate the file types and folder structure `birdnet_verify()` expects to encounter.
+To run this example, we first create an example audio directory, to which we write the sample audio that comes with the package. We also set up an example results directory, to which we write example formatted .csv data. This is meant to illustrate the file types and folder structure `birdnet_verify()` expects to encounter.
 
 ```r
 
@@ -477,7 +481,7 @@ birdnet_verify(
 
 ```
 
-Running this example will produce an interactive output like the below image. The RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide which label to choose. In this example, we've used the `buffer` argument to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the txt or csv file, and informs us that BirdNET has a confidence level of 0.9 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
+Running this example will produce an interactive output like the below image. The RStudio console will prompt you to provide a label for the detection. The plot pane will display a spectrogram of the detection. You'll use this spectrogram -- optionally along with the temporary wave file -- to decide which label to choose. In this example, we've used the `buffer` argument to place a 1 second buffer around the detection to provide additional visual and acoustic context. The detection itself is contained within the blue box (all BirdNET detections occur in three-second chunks). About 23.5 seconds in, a Swainson's Thrush begins singing. The spectrogram title gives us information about where we can find this detection in the csv file, and informs us that BirdNET has a confidence level of 0.19 for the detection. We can label this as 'y' because the blue detection window does contain a Swainson's Thrush vocalization. 
 
 **Click image for a larger version.**
 
@@ -486,7 +490,7 @@ Running this example will produce an interactive output like the below image. Th
 </p>
 
 
-Once you've added labels for the remaining detections (in fact, they all contain Swainson's Thrush vocalizations!), `birdnet_verify()` will update the underlying formatted txt or csv files with your verifications. Below, we gather up the results again and check that our three verifications have been added.
+Once you've added labels for the remaining detections, `birdnet_verify()` will update the underlying formatted csv files with your verifications. Below, we gather up the results again and check that our three verifications have been added.
 
 ```r
 
@@ -555,7 +559,7 @@ data(exampleSpectroData)
 
 ```
 
-`birdnet_spectro()` expects a data.table/data.frame that has been formatted with the columns produced by `birdnet_format()`. Beyond that, this data.frame can contain just about anything. A user might choose to plot data by species, song type, verification label, confidence levels, and more. The `audio.directory` argument should point to the folder where your audio are contained. The remaining arguments allow some aesthetic control over plotting, with the option to provide a title, control the frequency limits, and choose spectrogram and box colors (see helpfile for details).  
+`birdnet_spectro()` expects a data.table/data.frame that has been formatted with the columns produced by `birdnet_format()`. Beyond that, this data.frame can contain just about anything. A user might choose to plot data by species, song type, verification label, confidence levels, and more. The `audio.directory` argument should point to the folder where your audio are contained. The remaining arguments allow some aesthetic control over plotting, with the option to provide a title, control the frequency limits, and choose spectrogram and box colors.  
 
 Below, we subset the `exampleSpectroData` object to plot detections for Swainson's Thrush that contain songs. In this case, the user had a verification library of c('song', 'call', 'both', 'n') -- a detection was labeled 'both' if it contained both a Swainson's thrush song and call. Below, we give the plot a descriptive title, use frequency limits ranging from 0.5 to 12 kHz, specify a gray color scheme for the spectrogram, and draw gray boxes around each detection. 
 
@@ -666,7 +670,7 @@ unlink(x = 'example-audio-directory', recursive = TRUE)
 
 ``` 
 
-First, we read in example data to be used as an input to `birdnet_barchart`. This would typically be a data.table generated by a call to `birdnet_gather`, and typically the data have been formatted using `birdnet_format`. Generally, this data object may be preceded by a call to `add_time_cols`. Regardless, the data object input to `birdnet_barchart` should contain BirdNET detection data that comes from a single site, and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct).
+First, we read in example data to be used as an input to `birdnet_barchart()`. This would typically be a data.table generated by a call to `birdnet_gather()`, and typically the data have been formatted using `birdnet_format()`. Generally, this data object may be preceded by a call to `add_time_cols()`. Regardless, the data object input to `birdnet_barchart()` should contain BirdNET detection data that comes from a single site, and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct).
 
 ```r
 
@@ -684,7 +688,7 @@ dat <- add_time_cols(
 
 ```
 
-In addition to the data object, `birdnet_barchart` has an argument called interactive. When set to TRUE, `birdnet_barchart` will display a plotly-based interactive plot that allows the user to hover over data to see which species detections are being visualized.
+In addition to the `data` argument, `birdnet_barchart()` has an argument called `interactive`. When set to TRUE, `birdnet_barchart()` will display a plotly-based interactive plot that allows the user to hover over data to see which species detections are being visualized.
 
 ```r
 
@@ -700,7 +704,7 @@ birdnet_barchart(data = dat, interactive = TRUE)
 </p>
 
 
-Meanwhile, when interactive is set to FALSE, `birdnet_barchart` produces a ggplot-based static plot. The user also has the option to highlight certain species with the focal.species argument, which takes a character vector of common names of species to display. The focal.colors argument allows the user to specify which colors to use for which focal species. If the data object contains other species aside from the focals, all non-focal species will be plotted in black as "Other". 
+Meanwhile, when `interactive = FALSE`, `birdnet_barchart()` produces a ggplot-based static plot. The user also has the option to highlight certain species with the `focal.species` argument, which takes a character vector of common names of species to display. The `focal.colors` argument allows the user to specify which colors to use for which focal species. If `data` contains other species aside from the focals, all non-focal species will be plotted in black as "Other". 
 
 ```r
 
@@ -723,9 +727,9 @@ birdnet_barchart(
 </p>
 
 
-Generally, interactive = FALSE should be used in conjunction with the focal.species argument. If the focal.species argument is being used, a legend will also be plotted. This option provides a static plot output and the opportunity to highlight a small number of focal species and their detection activity through time. 
+Generally, `interactive = FALSE` should be used in conjunction with the `focal.species` argument. If using `focal.species`, a legend will also be plotted. This option provides a static plot output and the opportunity to highlight a small number of focal species and their detection activity through time. 
 
-Meanwhile, use of interactive = TRUE is meant strictly for exploratory purposes. If the focal.species argument is not used, no legend will be plotted. A typical use case is to omit focal.species when setting interactive = TRUE since the pointer can hover over the data interactively to display species. A legend is not plotted in this case because typically interactive mode is only being used when there are dozens of species to display, and the number of colors in the legend will make species indistinguishable. 
+Meanwhile, use of `interactive = TRUE` is meant strictly for exploratory purposes. If `focal.species` is not used, no legend will be plotted. A typical use case is to omit `focal.species` when setting `interactive = TRUE` since the pointer can hover over the data interactively to display species. A legend is not plotted in this case because typically interactive mode is only being used when there are dozens of species to display, and the number of colors in the legend will make species indistinguishable. 
 
 
 ### Create heat maps of BirdNET detections by date
@@ -738,7 +742,7 @@ Meanwhile, use of interactive = TRUE is meant strictly for exploratory purposes.
 
 ``` 
 
-First, we read in example data to be used as an input to `birdnet_heatmap`. This would typically be a data.table generated by a call to `birdnet_gather`, and the data may or may not been formatted using `birdnet_format`. Generally, this data object may be preceded by a call to `add_time_cols`. Regardless, the data object input to `birdnet_heatmap` should contain BirdNET detection data that comes from a single site, and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct).  Below, we are also reading in `exampleDatesSampled`, which is a dates object.
+First, we read in example data to be used as an input to `birdnet_heatmap()`. This would typically be a data.table generated by a call to `birdnet_gather()`, and the data may or may not been formatted using `birdnet_format()`. Generally, this data object may be preceded by a call to `add_time_cols()`. Regardless, the data object input to `birdnet_heatmap()` should contain BirdNET detection data that comes from a single site, and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct).  Below, we are also reading in `exampleDatesSampled`, which is a dates object.
 
 ```r
 
@@ -757,7 +761,7 @@ dat <- add_time_cols(
 
 ```
 
-In the data argument, `birdnet_heatmap` expects a data.frame or data.table of BirdNET results. In locationID and common.name, specify a valid character locationID and common.name for your location and species of interest. In conf.threshold, specify a numeric input for a BirdNET confidence threshold below which detections will be discarded. The optional argument julian.breaks allows you to input a numeric vector of julian date plotting breaks to use on the x-axis of the heat map (if omitted, these breaks will be computed automatically by the function). ([Here's a useful chart for choosing julian breaks](https://landweb.modaps.eosdis.nasa.gov/ltdr/browse/calendar.html)). Setting comparable.color.breaks = TRUE allows you to generate heatmap color breaks based on every species in the input data to enable easier inter-species comparisons. Setting comparable.color.breaks = FALSE means the function will simply generate heatmap color breaks based only on the species of interest you specified in common.name. Finally, the dates.sampled argument requires either a Date vector or character vector of dates that were sampled and should be visualized on the heat map. This information is required because your data input may only contain detection data, and not non-detection data (i.e., zeroes). For example, you might have recorded audio on 2021-03-14, but have no BirdNET detections in your "data" object. This will result in an inaccurate visualization. Since your results may not automatically contain non-detection data, it is incumbent on the user to input which dates were sampled.
+In the `data` argument, `birdnet_heatmap()` expects a data.frame or data.table of BirdNET results. In `locationID` and `common.name`, specify a valid character locationID and common.name for your location and species of interest. In `conf.threshold`, specify a numeric input for a BirdNET confidence threshold below which detections will be discarded. The optional argument `julian.breaks` allows you to input a numeric vector of julian date plotting breaks to use on the x-axis of the heat map (if omitted, these breaks will be computed automatically by the function). ([Here's a useful chart for choosing julian breaks](https://landweb.modaps.eosdis.nasa.gov/ltdr/browse/calendar.html)). Setting `comparable.color.breaks = TRUE` allows you to generate heatmap color breaks based on every species in the input data to enable easier inter-species comparisons. Setting `comparable.color.breaks = FALSE` means the function will simply generate heatmap color breaks based only on the species of interest you specified in `common.name`. Finally, the `dates.sampled` argument requires either a Date vector or character vector of dates that were sampled and should be visualized on the heat map. This information is required because your data input may only contain detection data, and not non-detection data (i.e., zeroes). For example, you might have recorded audio on 2021-03-14, but have no BirdNET detections in your input to the `data` argument. This will result in an inaccurate visualization. Since your results may not automatically contain non-detection data, it is incumbent on the user to input which dates were sampled.
 
 ```r
 
@@ -783,7 +787,8 @@ birdnet_heatmap(
 </p>
 
 
-In the second example, we loop through multiple species and set comparable.color.breaks = TRUE to plot according to a consistent color ramp. This option enables easier comparison between species. 
+In the second example, we loop through multiple species and set `comparable.color.breaks = TRUE` to plot according to a consistent color ramp. This option enables easier comparison between species. 
+
 ```r
 
 # Generate heatmaps for several species with comparable.color.breaks == TRUE
@@ -830,7 +835,7 @@ for (i in 1:length(sp)) {
 
 ``` 
 
-First, we read in example data to be used as an input to `birdnet_heatmap_time`. This would typically be a data.table generated by a call to `birdnet_gather`, and the data may or may not been formatted using `birdnet_format`. Generally, this data object may be preceded by a call to `add_time_cols`. Regardless, the data object input to `birdnet_heatmap_time` should contain BirdNET detection data that comes from a single site, and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct). Below, we are also reading in `exampleDatesSampled`, which is a dates object.
+First, we read in example data to be used as an input to `birdnet_heatmap_time()`. This would typically be a data.table generated by a call to `birdnet_gather()`, and the data may or may not been formatted using `birdnet_format()`. Generally, this data object may be preceded by a call to `add_time_cols()`. Regardless, the data object input to `birdnet_heatmap_time()` should contain BirdNET detection data that comes from a single site, and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct). Below, we are also reading in `exampleDatesSampled`, which is a dates object.
 
 ```r
 # Read in example data
@@ -848,7 +853,7 @@ dat <- add_time_cols(
 
 ```
 
-The arguments to `birdnet_heatmap_time` are similar to `birdnet_heatmap`, but with a few additions. The hours.sampled argument allows the user to clearly display which hours were actually acoustically monitored; the argument takes either an integer vector declaring which hours were sampled across the monitoring period (e.g., c(6:8, 18:20)), or a list declaring sun-based monitoring based on how many hours before and after sunset were recorded. For example, list(sunrise = c(1.5, 1.5), sunset = c(1, 1)) means that the schedule recorded 1.5 hours before sunrise until 1.5 hours after, and 1 hour before sunset to 1 hour after. If missing hours.sampled, the function assumes continuous sampling and will display the plot as such; beware that this may misrepresent your data and if you did not sample during all hours, the plot will make it appear as if you did. The y.axis.limits argument lets the user control how much of the 24-hour day to display, (for example, y.axis.limits = c(2,12) would display data from 2am to 12pm). The minute.timestep argument allows the user to specify how finely to bin the data; any divisor of 60 is allowed in options c(1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60). The sun.lines and sun.linetypes arguments allow the user to customize and graph lines indicating sunrise, sunset, dawn, dusk, and several other options detailed in the helpfile. If using these arguments, the latitude and longitude argument are also required. 
+The arguments to `birdnet_heatmap_time()` are similar to `birdnet_heatmap()`, but with a few additions. The `hours.sampled` argument allows the user to clearly display which hours were actually acoustically monitored; the argument takes either an integer vector declaring which hours were sampled across the monitoring period (e.g., c(6:8, 18:20)), or a list declaring sun-based monitoring based on how many hours before and after sunset were recorded. For example, `list(sunrise = c(1.5, 1.5), sunset = c(1, 1))` means that the schedule recorded 1.5 hours before sunrise until 1.5 hours after, and 1 hour before sunset to 1 hour after. If missing `hours.sampled`, the function assumes continuous sampling and will display the plot as such; beware that this may misrepresent your data and if you did not sample during all hours, the plot will make it appear as if you did. The `y.axis.limits` argument lets the user control how much of the 24-hour day to display, (for example, `y.axis.limits = c(2, 12)` would display data from 2am to 12pm). The `minute.timestep` argument allows the user to specify how finely to bin the data; any divisor of 60 is allowed in options c(1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60). The `sun.lines` and `sun.linetypes` arguments allow the user to customize and graph lines indicating sunrise, sunset, dawn, dusk, and several other options detailed in the helpfile. If using these arguments, the `latitude` and `longitude` arguments are also required. 
 
 In the below example, we graph Pacific-slope Flycatcher detections at Rivendell above a confidence threshold of 0.25, in 5 minute increments, under a sampling regime where acoustic monitoring was conducted from 1.5 hours before sunrise to 1.5 hours after, with 0 sampling hours around sunset. We also graph lines for dusk, dawn, sunrise, and sunset. 
 
@@ -882,7 +887,7 @@ birdnet_heatmap_time(
      alt="Heatmap of detections of Pacific-slope Flycatcher at a monitoring location. The x axis shows date, the y axis shows time of day, and daily detection value is visualized from low (purple) to high (yellow)."><br>
 </p>
 
-In the second example, we loop through multiple species and set comparable.color.breaks = TRUE to plot according to a consistent color ramp. This option enables easier comparison between species. 
+In the second example, we loop through multiple species and set `comparable.color.breaks = TRUE` to plot according to a consistent color ramp. This option enables easier comparison between species. 
 
 ```r
 
