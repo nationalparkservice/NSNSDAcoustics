@@ -1,14 +1,14 @@
 # birdnet_verify_segments ===============================================================
 
 #' @name birdnet_verify_segments
-#' @title Verify BirdNET segment detections (beta)
-#' @description (beta) Interactive function that produces spectrograms and wave clips enabling a user to verify BirdNET "segments". Underlying files are updated with user verifications.
+#' @title (BETA) Verify BirdNET segment detections
+#' @description (BETA) Interactive function that produces spectrograms and wave clips enabling a user to verify BirdNET "segments".
 #' @param verification.library Character vector specifying which verification options should be shown to the user. Allows finer control to fit user's needs: user may specify whether a detection is a song, a call, a certain song or call type of interest, false alarm, unsure, or whatever the user needs. This enables maximum flexibility for the user, but also requires some thoughtfulness so that verification options remain consistent. BirdNET provides only species-level confidence and does not classify to song or call types. Thus, depending on the underlying research question and a verifier's expertise and familiarity with a focal species, a user may find themselves in a situation where songs are easily verified, but calls are not. Verification library provides the flexibility to accommodate varying questions and levels of expertise, but must be thought through by the user beforehand.
 #' @param segments.directory Directory path for segments.
 #' @param results.directory Directory path where you would like the output csv to be placed.
 #' @param frq.lim Optional two-element numeric vector specifying frequency limits, in kHz, to apply to the plotted spectrograms. Default = c(0, 12).
 #' @param spec.col The colors used to plot verification spectrograms. Default = gray.3(). Spectrogram colors are adjustable, and users may create their own gradients for display. A few spectrogram color options are provided via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(), and topo.1(), all of which are based on existing R colors.
-#' @return Updates the 'verify' column of formatted BirdNET txt or csv files with user-input verifications.
+#' @return Returns a CSV of user-input verifications.
 #' @details
 #'
 #' This function was developed by the National Park Service Natural Sounds and Night Skies Division to process and explore audio data using BirdNET.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/birdnet_verify_segments.R
 \name{birdnet_verify_segments}
 \alias{birdnet_verify_segments}
-\title{Verify BirdNET segment detections (beta)}
+\title{(BETA) Verify BirdNET segment detections}
 \usage{
 birdnet_verify_segments(
   verification.library,
@@ -24,10 +24,10 @@ birdnet_verify_segments(
 \item{spec.col}{The colors used to plot verification spectrograms. Default = gray.3(). Spectrogram colors are adjustable, and users may create their own gradients for display. A few spectrogram color options are provided via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(), and topo.1(), all of which are based on existing R colors.}
 }
 \value{
-Updates the 'verify' column of formatted BirdNET txt or csv files with user-input verifications.
+Returns a CSV of user-input verifications.
 }
 \description{
-(beta) Interactive function that produces spectrograms and wave clips enabling a user to verify BirdNET "segments". Underlying files are updated with user verifications.
+(BETA) Interactive function that produces spectrograms and wave clips enabling a user to verify BirdNET "segments".
 }
 \details{
 This function was developed by the National Park Service Natural Sounds and Night Skies Division to process and explore audio data using BirdNET.
