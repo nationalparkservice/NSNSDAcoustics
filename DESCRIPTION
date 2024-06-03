@@ -25,7 +25,7 @@ License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Depends: R (>= 3.5.0), data.table, monitoR, tuneR
 Imports: ineq, iNEXT, ggplot2, lubridate, moments, NbClust, plotly, reticulate, stringr, suncalc, vegan, viridis
 Collate:
