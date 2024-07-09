@@ -5,18 +5,18 @@
 \title{Plot heat maps of BirdNET detections by date and time of day}
 \usage{
 birdnet_heatmap_time(
+  data,
+  locationID,
   common.name,
   conf.threshold,
-  locationID,
   julian.breaks,
-  data,
-  minute.timestep,
-  tz.local,
-  plot.title,
   dates.sampled,
+  tz.local,
+  comparable.color.breaks = FALSE,
+  minute.timestep,
+  plot.title,
   hours.sampled,
   y.axis.limits = c(0, 23),
-  comparable.color.breaks = TRUE,
   sun.lines = NULL,
   sun.linetypes = NULL,
   latitude,
@@ -24,29 +24,29 @@ birdnet_heatmap_time(
 )
 }
 \arguments{
+\item{data}{Data.table or data.frame of BirdNET results that a user would like to plot. Generally, this data object should be preceded by a call to \code{\link{add_time_cols}}; all data should come from a single site and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct). Multiple years of data are allowed in one dataset to enable easy comparison of vocal activity by year at a site.}
+
+\item{locationID}{Character input of the locationID for which data should be plotted.}
+
 \item{common.name}{Character input of the target species for which data should be plotted.}
 
 \item{conf.threshold}{Numeric input of the BirdNET confidence threshold above which data should be plotted. Detections below this confidence threshold will be discarded.}
 
-\item{locationID}{Character input of the locationID for which data should be plotted.}
-
 \item{julian.breaks}{Optional numeric vector of julian date plotting breaks to use on the x axis. If omitted, will be computed automatically. Example inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9, and June 29 for non-leap year data); c(130:160) would graph every single date from May 10 to June 9 on the x axis (for non-leap year data). See also \code{\link{readable_julian_breaks}}. Please start with 1 for the first day of the year rather than 0.}
 
-\item{data}{Data.table or data.frame of BirdNET results that a user would like to plot. Generally, this data object should be preceded by a call to \code{\link{add_time_cols}}; all data should come from a single site and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct). Multiple years of data are allowed in one dataset to enable easy comparison of vocal activity by year at a site.}
-
-\item{minute.timestep}{Integer input of how to summarize the data by minute. Any divisor of 60 is allowed in options c(1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60).}
+\item{dates.sampled}{Date or character vector of all dates sampled that should be visualized on the heat map. This information is required because your data input may only contain detection data, and not non-detection data (i.e., zeroes). For example, you might have recorded audio on 2021-03-14, but have no BirdNET detections in "data". This will result in an inaccurate visual. Since BirdNET results do not automatically contain non-detection data, it is incumbent on the user to input which dates were sampled.}
 
 \item{tz.local}{Character Olsen names timezone for local time at the monitoring location (e.g., 'America/Los_angeles').}
 
-\item{plot.title}{User input plot title if desired}
+\item{comparable.color.breaks}{Logical flag for whether to create heat map color breaks based on all species in the input data set or based only on the species of interest in this plot. TRUE means it will be easier to make straightforward comparisons between species, FALSE means activity contrasts within a single species will be easier to see.}
 
-\item{dates.sampled}{Date or character vector of all dates sampled that should be visualized on the heat map. This information is required because your data input may only contain detection data, and not non-detection data (i.e., zeroes). For example, you might have recorded audio on 2021-03-14, but have no BirdNET detections in "data". This will result in an inaccurate visual. Since BirdNET results do not automatically contain non-detection data, it is incumbent on the user to input which dates were sampled.}
+\item{minute.timestep}{Integer input of how to summarize the data by minute. Any divisor of 60 is allowed in options c(1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60).}
+
+\item{plot.title}{User input plot title if desired}
 
 \item{hours.sampled}{Either an integer vector declaring which hours were sampled across the monitoring period (e.g., c(6:8, 18:20)), or a list declaring sun-based monitoring based on how many hours before and after sunset were recorded, e.g. list(sunrise = c(1.5, 1.5), sunset = c(1, 1)) means that the schedule recorded 1.5 hours before sunrise until 1.5 hours after, and 1 hour before sunset to 1 hour after. If missing hours.sampled, the function assumes continuous sampling and will display the plot as such; beware that this may misrepresent your data: if you did not sample during all hours, the plot will make it appear as if you did.}
 
 \item{y.axis.limits}{Length 2 integer vector of hourl limits to show. c(0, 23) is default.}
-
-\item{comparable.color.breaks}{Logical flag for whether to create heat map color breaks based on all species in the input data set or based only on the species of interest in this plot. TRUE means it will be easier to make straightforward comparisons between species, FALSE means activity contrasts within a single species will be easier to see.}
 
 \item{sun.lines}{Optional character vector of sun-based lines to plot, from suncalc::getSunlightTimes. Options include: c('sunrise', 'sunriseEnd', 'goldenHourEnd', 'solarNoon', 'goldenHour', 'sunsetStart', 'sunset', 'dusk', 'nauticalDusk', 'night', 'nadir', 'nightEnd', 'nauticalDawn', 'dawn')}
 
