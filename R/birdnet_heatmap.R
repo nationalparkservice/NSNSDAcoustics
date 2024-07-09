@@ -132,6 +132,16 @@ birdnet_heatmap <- function(
                               c('julian.date', 'date.lab')])
   }
 
+  # Subset data according to input params
+  dts <- data[common_name == common.name
+              & confidence >= conf.threshold
+              & locationID == locid]
+
+  if (nrow(dts) == 0) {
+    stop(paste0('No detections to graph for common.name = ', common.name, ', conf.threshold = ', conf.threshold, ', and locationID = ', locationID, '.'))
+  }
+
+
   # If comparable.color.breaks == TRUE
   # Create heatmap color breaks based on the whole dataset, not just this species
   # so that interspecies comparisons are easier visually (i.e., use the same color breaks)
@@ -154,10 +164,7 @@ birdnet_heatmap <- function(
                           by = c('locationID', 'common_name', 'date')]$N, na.rm = TRUE))))
   }
 
-  # Subset data according to input params
-  dts <- data[common_name == common.name
-              & confidence >= conf.threshold
-              & locationID == locid]
+
 
   # Summarize detection counts by date
   dtn <- dts[,.N, by = c('date', 'locationID')]
