@@ -138,7 +138,8 @@ birdnet_heatmap <- function(
               & locationID == locid]
 
   if (nrow(dts) == 0) {
-    stop(paste0('No detections to graph for common.name = ', common.name, ', conf.threshold = ', conf.threshold, ', and locationID = ', locationID, '.'))
+    message(paste0('No detections to graph for common.name = ', common.name, ', conf.threshold = ', conf.threshold, ', and locationID = ', locationID, '.'))
+    return(NULL)
   }
 
 
