@@ -2,7 +2,7 @@
 #' @name birdnet_analyzer
 #' @title Process audio files through BirdNET
 #' @description This function allows a user to process audio files through \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer} via R's \code{\link{system}} function. It is meant for Windows users and may have unexpected results on other systems. To use this function, follow the steps outlined in the \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#running-birdnet-from-rstudio}{NSNSDAcoustics ReadME}. Please see \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer} usage documentation for more details.
-#' @param birdnet.version Character name of BirdNET release you are using. Default = "v1.1.0". If you downloaded a BirdNET .exe installer prior to that, try putting "previous" in the birdnet.version argument. If this doesn't work, update to v1.1.0 or consider constructing the command statement by hand instead of using this function. See releases at \href{https://github.com/kahst/BirdNET-Analyzer/releases}{https://github.com/kahst/BirdNET-Analyzer/releases}.
+#' @param birdnet.version Character name of BirdNET release you are using (options in c('v1.1.0', 'v1.2.0', 'previous')). If you downloaded a BirdNET .exe installer prior to that, try putting "previous" in the birdnet.version argument. If this doesn't work, update to a new version or consider constructing the command statement by hand instead of using this function. See releases at \href{https://github.com/kahst/BirdNET-Analyzer/releases}{https://github.com/kahst/BirdNET-Analyzer/releases}.
 #' @param birdnet.path Absolute path to BirdNET-Analyzer.exe installation on your machine. e.g., "C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe"
 #' @param i.audio Absolute path to input file or folder. If this is a file, o.results needs to be a file too.
 #' @param o.results Absolute path to output file or folder. If this is a file, i.audio needs to be a file too.
@@ -137,7 +137,7 @@ birdnet_analyzer <- function(
   }
 
   # Generate command for birdnet based on version
-  if (birdnet.version == 'v1.1.0') {
+  if (birdnet.version %in% c('v1.1.0', 'v1.2.0')) {
     cmd <- paste0(
       '"', birdnet.path,
       '" --i "', i.audio,

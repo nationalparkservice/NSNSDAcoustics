@@ -28,7 +28,7 @@ birdnet_analyzer(
 )
 }
 \arguments{
-\item{birdnet.version}{Character name of BirdNET release you are using. Default = "v1.1.0". If you downloaded a BirdNET .exe installer prior to that, try putting "previous" in the birdnet.version argument. If this doesn't work, update to v1.1.0 or consider constructing the command statement by hand instead of using this function. See releases at \href{https://github.com/kahst/BirdNET-Analyzer/releases}{https://github.com/kahst/BirdNET-Analyzer/releases}.}
+\item{birdnet.version}{Character name of BirdNET release you are using (options in c('v1.1.0', 'v1.2.0', 'previous')). If you downloaded a BirdNET .exe installer prior to that, try putting "previous" in the birdnet.version argument. If this doesn't work, update to a new version or consider constructing the command statement by hand instead of using this function. See releases at \href{https://github.com/kahst/BirdNET-Analyzer/releases}{https://github.com/kahst/BirdNET-Analyzer/releases}.}
 
 \item{birdnet.path}{Absolute path to BirdNET-Analyzer.exe installation on your machine. e.g., "C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe"}
 
