@@ -44,6 +44,10 @@ birdnet_verify_segments <- function(
     stop('Please input verification.library argument. See ?birdnet_verify_segments.')
   }
 
+  if ('s' %in% verification.library) {
+    stop('We noticed "s" in your verification library. This function reserves "s" for skip. Please choose a different label in your verification library.')
+  }
+
   # Save existing working directory to reset it after
   #  function is done running:
   owd <- setwd(getwd())
@@ -64,16 +68,36 @@ birdnet_verify_segments <- function(
   splt <- strsplit(x = sg$segmentID, split = '_')
   sg[, locationID :=  sapply(splt, '[[', 3)]
   sg[,confidence := sapply(splt, '[[', 1)]
-  sg[,recordingID := paste0(
-    sapply(splt, '[[', 3), '_',
-    sapply(splt, '[[', 4), '_',
-    sapply(splt, '[[', 5), '.',
-    sapply(strsplit(x = sapply(splt, '[[', 7), split = '.', fixed = TRUE), '[[', 3)
-  )]
-  sg[,start := as.numeric(gsub(pattern = '.0s', replacement = '', x = unlist(lapply(splt, '[[', 6))))]
-  sg[,end := as.numeric(gsub(pattern = '.0s.wav|.0s.WAV|.0s.mp3', replacement = '', x = unlist(lapply(splt, '[[', 7))))]
-  sg[, verify := as.character(NA)]
 
+  if (length(splt[[1]]) == 10) {
+    # If encountering SEKI filenames
+    sg[,recordingID := paste0(
+      sapply(splt, '[[', 3), '__',
+      sapply(splt, '[[', 5), '__',
+      sapply(splt, '[[', 7), '_',
+      sapply(splt, '[[', 8), '.',
+      sapply(strsplit(x = sapply(splt, '[[', 10), split = '.', fixed = TRUE), '[[', 3))]
+    sg[,start := as.numeric(gsub(pattern = '.0s', replacement = '', x = unlist(lapply(splt, '[[', 9))))]
+    sg[,end := as.numeric(gsub(pattern = '.0s.wav|.0s.WAV|.0s.mp3', replacement = '', x = unlist(lapply(splt, '[[', 10))))]
+    sg[,parseableRecordingID := gsub(
+      pattern = '__1__',
+      replacement = '_',
+      x = recordingID,
+      fixed = TRUE)]
+
+  } else {
+    # If encountering typical recordingID filenames
+    sg[,recordingID := paste0(
+      sapply(splt, '[[', 3), '_',
+      sapply(splt, '[[', 4), '_',
+      sapply(splt, '[[', 5), '.',
+      sapply(strsplit(x = sapply(splt, '[[', 7), split = '.', fixed = TRUE), '[[', 3))]
+    sg[,start := as.numeric(gsub(pattern = '.0s', replacement = '', x = unlist(lapply(splt, '[[', 6))))]
+    sg[,end := as.numeric(gsub(pattern = '.0s.wav|.0s.WAV|.0s.mp3', replacement = '', x = unlist(lapply(splt, '[[', 7))))]
+    sg[,parseableRecordingID := recordingID]
+  }
+
+  sg[,verify := as.character(NA)]
 
   # Read in paths for all wavs in folder
   all.wav <- list.files(segments.directory, full.names = TRUE, recursive = TRUE)
@@ -82,7 +106,6 @@ birdnet_verify_segments <- function(
   # hard to deal with mp3 in R without installing 3rd party software, so we have to do this the hard/slow way (see ?monitoR::readMP3)
   wav.paths <- all.wav
   check.file <- wav.paths[1]
-
 
   if (file_ext(check.file) == 'mp3') {
 
@@ -105,30 +128,30 @@ birdnet_verify_segments <- function(
 
   # Start verifying
   counter <- 0
-  for (s in 1:nrow(sg)) {
+  for (sgmnt in 1:nrow(sg)) {
 
     ask <- FALSE
     oldask <- par(ask = par("ask"))
     on.exit(par(oldask))
     vers <- NULL
 
-    is.mp3 <- file_ext(wav.paths[s]) == 'mp3'
+    is.mp3 <- file_ext(wav.paths[sgmnt]) == 'mp3'
     if (is.mp3) {
       # Unfortunately need to convert to wave
       message('This is an mp3. Converting to wave...')
-      r <- readMP3(wav.paths[s])  ## MP3 file in working directory
+      r <- readMP3(wav.paths[sgmnt])  ## MP3 file in working directory
       temp.file <- paste0(segments.directory, 'temp-',
-                          gsub('.mp3', '.wav', basename(wav.paths[s]),
+                          gsub('.mp3', '.wav', basename(wav.paths[sgmnt]),
                                ignore.case = TRUE))
       writeWave(r, temp.file, extensible = FALSE)
-      wav.paths[w] <- temp.file
+      wav.paths[sgmnt] <- temp.file
       message('Done converting temporary wave file.')
     }
 
     # Set up helpful spectrogram variables
     counter <- counter + 1
     x <- "x"
-    wav <- tuneR::readWave(wav.paths[s],units = 'seconds')
+    wav <- tuneR::readWave(wav.paths[sgmnt], units = 'seconds')
     reclen <- length(wav@left)/wav@samp.rate
     fft.data <- monitoR:::spectro(wave = wav)
     trec <- fft.data$time
@@ -148,7 +171,7 @@ birdnet_verify_segments <- function(
       xlab = 'Time (s)',
       ylab = "Frequency (kHz)", xaxt = "n",
       bty = 'n', axes = FALSE,
-      main = sg[s, segmentID]
+      main = sg[sgmnt, segmentID]
     )
     axis(2, at = pretty(frec), labels = pretty(frec))
     axis(1, at = pretty(trec), labels = pretty(trec))
@@ -159,7 +182,7 @@ birdnet_verify_segments <- function(
                  nrow(sg),
                  ".\n"))
 
-      cat(paste0("\n", s, ". Showing user input verification library options: ",
+      cat(paste0("\n", sgmnt, ". Showing user input verification library options: ",
                  paste0(verification.library, collapse = ', '),
                  "\n Enter an option in ", paste0(verification.library, collapse = ', '), ", s to skip, or q to exit this recording (q will exit and save any verifications you have already completed for this recording). If you have many recordings and wish to escape out of the function completely, press 'Esc': "))
 
@@ -178,11 +201,12 @@ birdnet_verify_segments <- function(
 
       if (x %in% verification.library) {
         # Save the library label for this verification
-        sg[s, verify := x]
+        sg[sgmnt, verify := x]
       }
 
       if (x == 's') {
         message("Skipping to next verification.\n")
+        sg[sgmnt, verify := NA]
         break
       }
 
@@ -191,8 +215,8 @@ birdnet_verify_segments <- function(
         break
       }
 
-      if (!x %in% c(verification.library, "r", "s", "q")) {
-        message("Value not recognized. Enter an option from your verification library, or enter s, r, or q.\n")
+      if (!x %in% c(verification.library, "s", "q")) {
+        message("Value not recognized. Enter an option from your verification library, or enter s or q.\n")
         next
       }
 
@@ -201,26 +225,16 @@ birdnet_verify_segments <- function(
     # If q, break out of the peaks loop
     if (!is.na(x) & x == 'q') break
 
-    if (is.na(x) || x != "r")
-      sg[s, verify := x]
-    par(ask = ask)
-    if (!is.na(x) && x == "r")
-      s <- s - 1
-    else s <- s + 1
-    if (s < 1)
-      s <- 1
-
-
     cat("\n")
 
-  } # end 's' wave for loop
+  } # end 'sgmnt' wave for loop
 
   finame <- paste0(results.directory, '/', basename(segments.directory), '-results.csv')
   write.csv(x = sg, file = finame, row.names = FALSE)
   message('Segment verifications saved as: ', finame)
 
 
-  cat("Finished verifying for this recording.\n")
+  cat("Finished verifying.\n")
 
   if(exists('temp.file')) unlink(temp.file) # get rid of temporary check.file
 

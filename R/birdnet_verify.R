@@ -129,6 +129,10 @@ birdnet_verify <- function(
     stop('Please input verification.library argument. See ?birdnet_verify.')
   }
 
+  if ('s' %in% verification.library) {
+    stop('We noticed "s" in your verification library. This function reserves "s" for skip. Please choose a different label in your verification library.')
+  }
+
   # Save existing working directory to reset it after
   #  function is done running:
   owd <- setwd(getwd())
@@ -356,6 +360,7 @@ birdnet_verify <- function(
 
         if (x == 's') {
           message("Skipping to next verification.\n")
+          vers[i] <- NA
           break
         }
 
@@ -364,8 +369,8 @@ birdnet_verify <- function(
           break
         }
 
-        if (!x %in% c(verification.library, "r", "s", "q")) {
-          message("Value not recognized. Enter an option from your verification library, or enter s, r, or q.\n")
+        if (!x %in% c(verification.library, "s", "q")) {
+          message("Value not recognized. Enter an option from your verification library, or enter s or q.\n")
           next
         }
 
@@ -373,15 +378,6 @@ birdnet_verify <- function(
 
       # If q, break out of the peaks loop
       if (!is.na(x) & x == 'q') break
-
-      if (is.na(x) || x != "r")
-        vers[i] <- x
-      par(ask = ask)
-      if (!is.na(x) && x == "r")
-        i <- i - 1
-      else i <- i + 1
-      if (i < 1)
-        i <- 1
 
       if (play) {
         file.remove(fn) # remove the temporary file
