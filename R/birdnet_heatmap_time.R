@@ -228,22 +228,28 @@ birdnet_heatmap_time <- function(
   # Create heatmap color breaks based on the whole dataset, not just this species
   # so that interspecies comparisons are easier visually (i.e., use the same color breaks)
   if (comparable.color.breaks == TRUE) {
+    prep <- data[,.N, by = c('common_name', 'julian', 'y.unit', 'year')]
+    prep <- prep[,mean(N), by = c('common_name', 'julian', 'y.unit')]
     color.breaks <- pretty(
       c(0,
         seq(from = min(0, na.rm = TRUE),
-            to = max(data[,.N, by = c('common_name', 'julian', 'y.unit')]$N, na.rm = TRUE))))
-  }
+            to = max(prep$V1, na.rm = TRUE))))
+     }
 
   # If comparable.color.breaks == FALSE
   # Create heatmap color breaks based only on this species, so that patterns in this species
   # are easier to see
   if (comparable.color.breaks == FALSE) {
+
+    prep <- data[common_name == common.name & confidence >= conf.threshold & locationID == locid,
+                 .N,
+                 by = c('common_name', 'julian', 'y.unit', 'year')]
+    prep <- prep[,mean(N), by = c('common_name', 'julian', 'y.unit')]
+
     color.breaks <- pretty(
       c(0,
         seq(from = min(0, na.rm = TRUE),
-            to = max(data[common_name == common.name & confidence >= conf.threshold & locationID == locid,
-                          .N,
-                          by = c('common_name', 'julian', 'y.unit')]$N, na.rm = TRUE))))
+            to = max(prep$V1, na.rm = TRUE))))
   }
 
   # If you don't have dates sampled, could use this for a time sequence.
