@@ -34,7 +34,7 @@ birdnet_analyzer(
 
 \item{i.audio}{Absolute path to input file or folder. If this is a file, o.results needs to be a file too.}
 
-\item{o.results}{Absolute path to output file or folder. If this is a file, i.audio needs to be a file too.}
+\item{o.results}{Absolute path to output file or folder. If this is a file, i.audio needs to be a file too. If using a file, give it the same extension name as would be produced by your rtype value (i.e., if using rtype = 'r', ensure the file extension for o.results input is something like 'your_filename.csv').}
 
 \item{lat}{Recording location latitude. Set -1 to ignore.}
 

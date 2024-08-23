@@ -5,7 +5,7 @@
 #' @param birdnet.version Character name of BirdNET release you are using (options in c('v1.1.0', 'v1.2.0', 'previous')). If you downloaded a BirdNET .exe installer prior to that, try putting "previous" in the birdnet.version argument. If this doesn't work, update to a new version or consider constructing the command statement by hand instead of using this function. See releases at \href{https://github.com/kahst/BirdNET-Analyzer/releases}{https://github.com/kahst/BirdNET-Analyzer/releases}.
 #' @param birdnet.path Absolute path to BirdNET-Analyzer.exe installation on your machine. e.g., "C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe"
 #' @param i.audio Absolute path to input file or folder. If this is a file, o.results needs to be a file too.
-#' @param o.results Absolute path to output file or folder. If this is a file, i.audio needs to be a file too.
+#' @param o.results Absolute path to output file or folder. If this is a file, i.audio needs to be a file too. If using a file, give it the same extension name as would be produced by your rtype value (i.e., if using rtype = 'r', ensure the file extension for o.results input is something like 'your_filename.csv').
 #' @param lat Recording location latitude. Set -1 to ignore.
 #' @param lon Recording location longitude Set -1 to ignore.
 #' @param week Week of the year when the recording was made. Values in c(1:48) (4 weeks per month). Set -1 for year-round species list.
@@ -193,6 +193,8 @@ birdnet_analyzer <- function(
   if(is.null(classifier)) {
     cmd <- gsub(pattern = ' --classifier ""', replacement = '', x = cmd)
   }
+
+ # browser()
 
   # Send command to BirdNET.exe
   run.cmd <- system(cmd)
