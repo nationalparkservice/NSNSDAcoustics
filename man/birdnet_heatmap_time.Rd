@@ -65,7 +65,7 @@ Plot heat maps of BirdNET results for a selected species and above a selected co
 \details{
 This function was developed by the National Park Service Natural Sounds and Night Skies Division. It is intended to provide exploratory plotting for summarizing and visualizing BirdNET results.
 
-Function returns a heatmap of BirdNET detections by julian date, where N is the number of detections for common.name above conf.threshold on any given day. The y-axis shows time of day. Optional inputs allow the user to graph sunrise and sunset-based times on the plot for additional context (see help documentation for \code{\link[suncalc]{getSunlightTimes}} for details). For multi-year data, all detections are summed and displayed for a given julian date.
+Function returns a heatmap of BirdNET detections by julian date, where N is the number of detections in a timestep for common.name above conf.threshold on any given day. If multiple years of data are input to the function, an average is plotted for that timestep and day. The y-axis shows time of day. Optional inputs allow the user to graph sunrise and sunset-based times on the plot for additional context (see help documentation for \code{\link[suncalc]{getSunlightTimes}} for details). For multi-year data, all detections are summed and displayed for a given julian date.
 }
 \examples{
 \dontrun{

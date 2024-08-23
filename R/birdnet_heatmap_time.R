@@ -25,7 +25,7 @@
 #'
 #' This function was developed by the National Park Service Natural Sounds and Night Skies Division. It is intended to provide exploratory plotting for summarizing and visualizing BirdNET results.
 #'
-#' Function returns a heatmap of BirdNET detections by julian date, where N is the number of detections for common.name above conf.threshold on any given day. The y-axis shows time of day. Optional inputs allow the user to graph sunrise and sunset-based times on the plot for additional context (see help documentation for \code{\link[suncalc]{getSunlightTimes}} for details). For multi-year data, all detections are summed and displayed for a given julian date.
+#' Function returns a heatmap of BirdNET detections by julian date, where N is the number of detections in a timestep for common.name above conf.threshold on any given day. If multiple years of data are input to the function, an average is plotted for that timestep and day. The y-axis shows time of day. Optional inputs allow the user to graph sunrise and sunset-based times on the plot for additional context (see help documentation for \code{\link[suncalc]{getSunlightTimes}} for details). For multi-year data, all detections are summed and displayed for a given julian date.
 #'
 #'
 #' @seealso  \code{\link{birdnet_heatmap}}
@@ -135,7 +135,7 @@ birdnet_heatmap_time <- function(
       'Multiple years of data are detected: ',
       paste0(yrs, collapse = ', '),
       '\n',
-      'Data will be aggregated across all years. Restart function and check your data inputs if this is not desired.\n'
+      'Data will be averaged across all years. Restart function and check your data inputs if this is not desired.\n'
     )
   }
 
@@ -381,7 +381,7 @@ birdnet_heatmap_time <- function(
     sun.dt[,minute :=  hour(value)*60 + minute(value)]
     sun.dt[,julian := yday(date)]
 
-    # Sort this table -- critical to get scale_linetype_manual working downstream
+    # MUST sort this table -- critical to get scale_linetype_manual working downstream
     setkey(sun.dt, julian, variable)
 
     # Check on any weirdness in sunlines due to lat/long (e.g., northern latitudes in summer may not get full astro night)
@@ -408,8 +408,8 @@ birdnet_heatmap_time <- function(
   # Make sure sp.tbin.day has a julian
   sp.tbin.day[,julian := yday(date)]
 
-  # Summarize by julian date regardless of whether we are graphing 1 year or multiple
-  sp.tbin.day <- sp.tbin.day[, sum(N), by = c('common_name', 'julian', 'y.unit')]
+  # Take an average by julian date regardless of whether we are graphing 1 year or multiple
+  sp.tbin.day <- sp.tbin.day[, mean(N), by = c('common_name', 'julian', 'y.unit')]
   colnames(sp.tbin.day)[colnames(sp.tbin.day) == 'V1'] <- 'N'
 
   # y.axis.limits argument to control y.axis
