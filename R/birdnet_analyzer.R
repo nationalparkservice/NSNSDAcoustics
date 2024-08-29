@@ -194,8 +194,6 @@ birdnet_analyzer <- function(
     cmd <- gsub(pattern = ' --classifier ""', replacement = '', x = cmd)
   }
 
- # browser()
-
   # Send command to BirdNET.exe
   run.cmd <- system(cmd)
 
