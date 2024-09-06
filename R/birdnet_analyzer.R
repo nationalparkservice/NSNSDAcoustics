@@ -22,7 +22,7 @@
 #' @param fmin Minimum frequency for bandpass filter. Defaults to 0.
 #' @param fmax Maximum frequency for bandpass filter. Defaults to 15000.
 #' @param skip.existing.results Skip files that have already been analyzed. Default = FALSE.
-#' @return Saves a file of results for each audio file in results.directory. For the recommended rtype = 'r', files are csv with suffix "BirdNET.results.csv". Files contain the following columns:
+#' @return Saves a file of results for each audio file in results.directory. For the recommended rtype = 'r', files are csv with suffix "BirdNET.results.csv" or "BirdNET.results.r.csv", depending on your BirdNET release version. Files contain the following columns:
 #'
 #' \itemize{
 #' \item{\strong{filepath}: Filepath for the processed audio file.}
@@ -137,7 +137,7 @@ birdnet_analyzer <- function(
   }
 
   # Generate command for birdnet based on version
-  if (birdnet.version %in% c('v1.1.0', 'v1.2.0', 'v1.3.0')) {
+  if (grep(pattern = c('v1.1.0|v1.2.0|v1.3.'), x = birdnet.version) == 1 ) {
     cmd <- paste0(
       '"', birdnet.path,
       '" --i "', i.audio,

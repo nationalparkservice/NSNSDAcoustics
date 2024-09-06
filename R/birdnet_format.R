@@ -34,7 +34,7 @@
 #' This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data using BirdNET. It was developed for use on Windows. CSV encodings may vary based on platform and result in errors.
 
 #'
-#' @seealso  \code{\link{birdnet_analyzer}}, \code{\link{birdnet_run}}, \code{\link{birdnet_verify}}
+#' @seealso  \code{\link{birdnet_analyzer}}, \code{\link{birdnet_verify}}
 #' @export
 #' @import data.table
 #' @importFrom tools file_ext
@@ -48,14 +48,14 @@
 #' data(exampleBirdNET1)
 #' write.table(
 #'   x = exampleBirdNET1,
-#'   file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
+#'   file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.r.csv',
 #'   row.names = FALSE, quote = FALSE, sep = ','
 #' )
 #'
 #' data(exampleBirdNET2)
 #' write.table(
 #'   x = exampleBirdNET2,
-#'   file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
+#'   file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.r.csv',
 #'   row.names = FALSE, quote = FALSE, sep = ','
 #' )
 #'
@@ -158,7 +158,7 @@ birdnet_format <- function(
         if (inherits(catch.error, 'error')) {
           # Guess on the recID being wave if there are no results in the file
           recID <- gsub(x = gsub(x = fi[i],
-                                 pattern = 'BirdNET_|.BirdNET.results',
+                                 pattern = 'BirdNET_|.BirdNET.results|.BirdNET.results.r',
                                  replacement = ''),
                         pattern = '.csv',
                         replacement = '.wav')
@@ -182,23 +182,25 @@ birdnet_format <- function(
 
         # If no results, add one row of NA so that it can be clear in downstream analysis that nothing was detected
         if (nrow(result) == 0) {
-          row1 <- data.table(recordingID = recID,
-                             filepath = as.character(NA),
-                             start = as.numeric(NA),
-                             end = as.numeric(NA),
-                             scientific_name = as.character(NA),
-                             common_name = as.character(NA),
-                             confidence = as.numeric(NA),
-                             lat = as.numeric(NA),
-                             lon = as.numeric(NA),
-                             week = as.numeric(NA),
-                             overlap = as.numeric(NA),
-                             sensitivity = as.numeric(NA),
-                             min_conf = as.numeric(NA),
-                             species_list = as.character(NA),
-                             model = as.character(NA),
-                             verify = as.character(NA),
-                             timezone = as.character(NA))
+          row1 <- data.table(
+            recordingID = recID,
+            filepath = as.character(NA),
+            start = as.numeric(NA),
+            end = as.numeric(NA),
+            scientific_name = as.character(NA),
+            common_name = as.character(NA),
+            confidence = as.numeric(NA),
+            lat = as.numeric(NA),
+            lon = as.numeric(NA),
+            week = as.numeric(NA),
+            overlap = as.numeric(NA),
+            sensitivity = as.numeric(NA),
+            min_conf = as.numeric(NA),
+            species_list = as.character(NA),
+            model = as.character(NA),
+            verify = as.character(NA),
+            timezone = as.character(NA)
+          )
 
           result <- rbind(result, row1)
         }
@@ -211,8 +213,8 @@ birdnet_format <- function(
       # Write formatted file
       newname <- paste0(results.directory,
                         gsub(x = basename(finame),
-                             pattern = 'BirdNET_|BirdNET.',
-                             replacement = 'BirdNET_formatted_'))
+                             pattern = 'BirdNET_|BirdNET.results.|BirdNET.results.r.',
+                             replacement = 'BirdNET_formatted_results.'))
       write.csv(x = result, file = newname, row.names = FALSE)
 
     } # end if csv
@@ -236,25 +238,27 @@ birdnet_format <- function(
 
           # If no results, add one row of NA so that it can be clear in
           # downstream analysis that nothing was detected
-          row1 <- data.table(filepath = as.character(NA),
-                             start = as.numeric(NA),
-                             end = as.numeric(NA),
-                             scientific_name = as.character(NA),
-                             common_name = as.character(NA),
-                             confidence = as.numeric(NA),
-                             lat = as.numeric(NA),
-                             lon = as.numeric(NA),
-                             week = as.numeric(NA),
-                             overlap = as.numeric(NA),
-                             sensitivity = as.numeric(NA),
-                             min_conf = as.numeric(NA),
-                             species_list = as.character(NA),
-                             model = as.character(NA),
-                             # making assumption that it's wav
-                             recordingID = gsub(x = gsub(x = fi[i], pattern = 'BirdNET_', replacement = ''),
-                                                pattern = '.txt', replacement = '.wav'),
-                             verify = as.character(NA),
-                             timezone = as.character(NA))
+          row1 <- data.table(
+            filepath = as.character(NA),
+            start = as.numeric(NA),
+            end = as.numeric(NA),
+            scientific_name = as.character(NA),
+            common_name = as.character(NA),
+            confidence = as.numeric(NA),
+            lat = as.numeric(NA),
+            lon = as.numeric(NA),
+            week = as.numeric(NA),
+            overlap = as.numeric(NA),
+            sensitivity = as.numeric(NA),
+            min_conf = as.numeric(NA),
+            species_list = as.character(NA),
+            model = as.character(NA),
+            # making assumption that it's wav
+            recordingID = gsub(x = gsub(x = fi[i], pattern = 'BirdNET_', replacement = ''),
+                               pattern = '.txt', replacement = '.wav'),
+            verify = as.character(NA),
+            timezone = as.character(NA)
+          )
           result <- rbind(result, row1, fill = TRUE)
         } else {
           # If results are detected, add recordingID, verify, and timezone columns

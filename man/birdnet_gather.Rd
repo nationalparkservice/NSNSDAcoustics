@@ -69,14 +69,14 @@ write.table(
 data(exampleBirdNET1)
 write.table(
    x = exampleBirdNET1,
-   file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.csv',
+   file = 'example-results-directory/Rivendell_20210623_113602.BirdNET.results.r.csv',
    row.names = FALSE, quote = FALSE, sep = ','
 )
 
 data(exampleBirdNET2)
 write.table(
    x = exampleBirdNET2,
-   file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.csv',
+   file = 'example-results-directory/Rivendell_20210623_114602.BirdNET.results.r.csv',
    row.names = FALSE, quote = FALSE, sep = ','
 )
 

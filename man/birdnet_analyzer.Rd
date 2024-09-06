@@ -69,7 +69,7 @@ birdnet_analyzer(
 \item{skip.existing.results}{Skip files that have already been analyzed. Default = FALSE.}
 }
 \value{
-Saves a file of results for each audio file in results.directory. For the recommended rtype = 'r', files are csv with suffix "BirdNET.results.csv". Files contain the following columns:
+Saves a file of results for each audio file in results.directory. For the recommended rtype = 'r', files are csv with suffix "BirdNET.results.csv" or "BirdNET.results.r.csv", depending on your BirdNET release version. Files contain the following columns:
 
 \itemize{
 \item{\strong{filepath}: Filepath for the processed audio file.}
