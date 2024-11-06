@@ -63,7 +63,7 @@ NSNSDAcoustics depends on the R package `data.table`, which enables fast queryin
 
 ## Running BirdNET from RStudio
 
-**This worfklow was developed for Windows 10, BirdNET-Analyzer release V1.1.0, and model version V2.4. It has not been tested on other systems.** 
+**This worfklow was developed for Windows 10, BirdNET-Analyzer releases V1.1.x through 1.3.x, and model version V2.4. It has not been tested on other systems.** 
 
 [BirdNET](https://birdnet.cornell.edu/) is a bird sound recognition program developed by the [Cornell Center for Conservation Bioacoustics](https://www.birds.cornell.edu/ccb/). The [BirdNET-Analyzer Github repository](https://github.com/kahst/BirdNET-Analyzer) provides a promising free tool for quickly processing large volumes of audio data and detecting sounds. 
 
