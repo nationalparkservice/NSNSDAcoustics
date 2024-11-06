@@ -201,7 +201,8 @@ birdnet_heatmap <- function(
     ) +
     scale_x_continuous(expand = c(0, 0),
                        breaks = brks$julian.date,
-                       labels = brks$date.lab) +
+                       labels = brks$date.lab,
+                       limits = range(yday(dates.sampled), na.rm = TRUE)) +
     scale_y_discrete(expand = c(0, 0)) +
     labs(title = paste0(unique(dtn$locationID), ' - ', common.name),
          x = 'Date',
