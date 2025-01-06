@@ -28,13 +28,13 @@ birdnet_analyzer(
 )
 }
 \arguments{
-\item{birdnet.version}{Character name of BirdNET release you are using (options in c('v1.1.0', 'v1.2.0', 'v1.3.0', 'previous')). If you downloaded a BirdNET .exe installer prior to that, try putting "previous" in the birdnet.version argument. If this doesn't work, update to a new version or consider constructing the command statement by hand instead of using this function. See releases at \href{https://github.com/kahst/BirdNET-Analyzer/releases}{https://github.com/kahst/BirdNET-Analyzer/releases}.}
+\item{birdnet.version}{Character name of BirdNET GUI release you are using. Options in c('v1.1.0', 'v1.2.0', 'v1.3.x', 'v1.5.x', 'previous'). If you downloaded a BirdNET .exe installer prior to that, try putting "previous" in the birdnet.version argument. If this doesn't work, update to a new version or consider constructing the command statement by hand instead of using this function. See releases at \href{https://github.com/kahst/BirdNET-Analyzer/releases}{https://github.com/kahst/BirdNET-Analyzer/releases}. (NOTE: The BirdNET "release" version specified in this argument is different from the BirdNET model version. The only BirdNET model version supported by this function is model version 2.4.)}
 
 \item{birdnet.path}{Absolute path to BirdNET-Analyzer.exe installation on your machine. e.g., "C:/path/to/BirdNET-Analyzer/BirdNET-Analyzer.exe"}
 
 \item{i.audio}{Absolute path to input file or folder. If this is a file, o.results needs to be a file too.}
 
-\item{o.results}{Absolute path to output folder. For v1.1.0 and v1.2.0, if this is a file, i.audio needs to be a file too. If using a file, give it the same extension name as would be produced by your rtype value (i.e., if using rtype = 'r', ensure the file extension for o.results input is something like 'your_filename.csv'). Note: for version v1.3.0, \href{https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.3.0}{"analysis does not support specifying a specific file as output anymore".}}
+\item{o.results}{Absolute path to output folder. For v1.1.0 and v1.2.0, if this is a file, i.audio needs to be a file too. If using a file, give it the same extension name as would be produced by your rtype value (i.e., if using rtype = 'r', ensure the file extension for o.results input is something like 'your_filename.csv'). Note: for version v1.3+, \href{https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.3.0}{"analysis does not support specifying a specific file as output anymore".}}
 
 \item{lat}{Recording location latitude. Set -1 to ignore.}
 
@@ -93,7 +93,7 @@ This function allows a user to process audio files through \href{https://github.
 }
 \details{
 This function was developed by the National Park Service Natural Sounds and Night Skies Division to act as a wrapper to process audio data using BirdNET.
-The function has been tested on BirdNET Analyzer \href{https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.1.0}{v1.1.0}.
+The function has been tested on BirdNET Analyzer GUI releases \href{https://github.com/kahst/BirdNET-Analyzer/releases}{v1.1.x through 1.5.x}.
 To use this function, follow the steps outlined in the \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#running-birdnet-from-rstudio}{NSNSDAcoustics ReadME}.
 }
 \examples{
@@ -138,11 +138,11 @@ write.table(
 
 # Run all audio data in a directory through BirdNET
 birdnet_analyzer(
- birdnet.version = 'v1.1.0',
+ birdnet.version = 'v1.5.0',
  birdnet.path = 'absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe',
  i.audio = 'absolute/path/example-audio-directory',
  o.results = 'absolute/path/example-results-directory',
- slist = 'C:/Users/cbalantic/OneDrive - DOI/Code-NPS/NSNSDAcoustics/species_list.txt',
+ slist = 'absolute/path/species_list.txt',
 )
 
 # Delete all temporary example files when finished
