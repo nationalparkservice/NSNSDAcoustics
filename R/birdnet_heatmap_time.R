@@ -230,6 +230,11 @@ birdnet_heatmap_time <- function(
   if (comparable.color.breaks == TRUE) {
     prep <- data[,.N, by = c('common_name', 'julian', 'y.unit', 'year')]
     prep <- prep[,mean(N), by = c('common_name', 'julian', 'y.unit')]
+
+    if(nrow(prep) == 0) {
+      stop('No detections for this combination of locationID, common.name, and conf.threshold.')
+    }
+
     color.breaks <- pretty(
       c(0,
         seq(from = min(0, na.rm = TRUE),
@@ -245,6 +250,10 @@ birdnet_heatmap_time <- function(
                  .N,
                  by = c('common_name', 'julian', 'y.unit', 'year')]
     prep <- prep[,mean(N), by = c('common_name', 'julian', 'y.unit')]
+
+    if(nrow(prep) == 0) {
+      stop('No detections for this combination of locationID, common.name, and conf.threshold.')
+    }
 
     color.breaks <- pretty(
       c(0,
@@ -470,9 +479,10 @@ birdnet_heatmap_time <- function(
       )
     } +
 
-    scale_x_continuous(expand = c(0, 0),
-                       breaks = brks$julian.date,
-                       labels = brks$date.lab) +
+    scale_x_continuous(
+      expand = c(0, 0),
+      breaks = brks$julian.date,
+      labels = brks$date.lab) +
 
     scale_y_continuous(
       expand = c(0, 0),
