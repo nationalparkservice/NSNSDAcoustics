@@ -71,7 +71,7 @@ NSNSDAcoustics depends on the R package `data.table`, which enables fast queryin
 
 As of this writing, [version 1.5.1](https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.5.1) is the approved version for NPS. For a signed version of this software, NPS staff please reach out to Cathleen. 
 
-### (2) Step 2. Familiarize yourself with the [command line arguments listed in BirdNET-Analyzer's documentation](https://kahst.github.io/BirdNET-Analyzer/usage/cli.html#birdnet_analyzer.cli-analyzer_parser-named-arguments).
+### (2) Step 2. Familiarize yourself with the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html#birdnet_analyzer.cli-analyzer_parser-named-arguments).
 
 These command line arguments are the building blocks needed to construct a statement that tells BirdNET where to find your audio (--i), where to place result files (--o), what detection sensitivity to use (--sensitivity), where to find a species list if you are using one (--slist), how many CPU threads to use (--threads), what type of result to produce (--rtype) and more. **To use the functions in this package, you will need to specify --rtype 'r'.** Once you understand the command line arguments, you are ready to try using BirdNET from the Windows command line. 
 
@@ -137,7 +137,7 @@ write.table(
 )
 ```
 
-Now, we're set up to run the function. `birdnet_analyzer()` takes a large number of arguments. First, `birdnet.version` specifies which release of BirdNET-Analyzer you are using. Currently, the default is 'v1.1.0' -- if you aren't running this version yet, we recommend downloading it. In `birdnet.path`, 	specify the absolute path to the BirdNET-Analyzer.exe installation on your machine. e.g., "C:/your-path-here/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe". All of the remaining arguments will look very similar to the [command line arguments listed in BirdNET-Analyzer's documentation](https://kahst.github.io/BirdNET-Analyzer/usage/cli.html#). For example, `i.audio` requires an absolute path to an input file or folder, and `o.results` requires an absolute path to an output file or folder. See `?birdnet_analyzer()` help documentation or BirdNET-Analyzer's documentation for more details. 
+Now, we're set up to run the function. `birdnet_analyzer()` takes a large number of arguments. First, `birdnet.version` specifies which release of BirdNET-Analyzer you are using. Currently, the default is 'v1.1.0' -- if you aren't running this version yet, we recommend downloading it. In `birdnet.path`, 	specify the absolute path to the BirdNET-Analyzer.exe installation on your machine. e.g., "C:/your-path-here/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe". All of the remaining arguments will look very similar to the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html). For example, `i.audio` requires an absolute path to an input file or folder, and `o.results` requires an absolute path to an output file or folder. See `?birdnet_analyzer()` help documentation or BirdNET-Analyzer's documentation for more details. 
 
 Below, we show pseudocode that you can modify to test the function. Note that many arguments are missing because many use defaults. Be sure to familiarize yourself with each argument. You may wish to test various combinations of parameters and observe how they affect results.
 
