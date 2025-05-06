@@ -2,7 +2,7 @@
 
 This repository provides a place for National Park Service [Natural Sounds and Night Skies Division (NSNSD)](https://www.nps.gov/orgs/1050/index.htm) staff to develop and modernize several bioacoustics workflows. 
 
-**All documentation and code is actively under development. There is currently no official release of this package and code may change. If you encounter a problem, please submit it to [Issues](https://github.com/nationalparkservice/NSNSDAcoustics/issues). If you have a question or need that isn't covered by submitting an issue, please reach out to Cathleen Balantic (`cathleen_balantic` at `nps.gov`).**
+If you encounter a problem, please submit it to [Issues](https://github.com/nationalparkservice/NSNSDAcoustics/issues).
 
 # Table of Contents
 
