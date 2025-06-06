@@ -40,10 +40,8 @@ devtools::install_github('nationalparkservice/NSNSDAcoustics')
 ```
 
 ### (2) Option 2: Download and install manually
-**Note: this option will not be implemented until we have a first stable release of NSNSDAcoustics.**
 
-Eventually, you will be able to download the zip or tar.gz file directly using one of the following links. 
-* Windows users can download the zip file from NSNSDAcoustics-master.zip [**need to create link**]()
+Download the zip or tar.gz file from this link: [https://irma.nps.gov/DataStore/Reference/Profile/2311171](https://irma.nps.gov/DataStore/Reference/Profile/2311171)
 
 After downloading, open R Studio, click on the Install button on the Packages tab, select Install From Package Archive File, and navigate to the downloaded file.
 
