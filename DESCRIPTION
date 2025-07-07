@@ -1,6 +1,6 @@
 Package: NSNSDAcoustics
 Title: Streamline National Park Service Bioacoustics Analysis
-Version: 0.0.0.9000
+Version: 1.0.1
 Authors@R:
     c(person(given = "Cathleen",
            family = "Balantic",
@@ -20,8 +20,7 @@ Description: This package facilitates streamlined bioacoustics analysis develope
     Division (NSNSD). Workflows include processing, analyzing, and verifying data
     produced by BirdNET, converting wave files to NVSPL tables, and converting
     NVSPL tables into acoustic indices.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License:  CC0-1.0 license
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
