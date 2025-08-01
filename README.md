@@ -145,14 +145,14 @@ Below, we show pseudocode that you can modify to test the function. Note that ma
 
 # Because this function calls an external program (BirdNET-Analyzer.exe),
 # the example function below will not be modifiable to run for you unless
-# you have already installed BirdNET-Analyzer V1.1.0 for Windows.
+# you have already installed BirdNET-Analyzer V1.x.x for Windows.
 
 # Run all audio data in a directory through BirdNET
 # Modify the birdnet.path, i.audio, o.results, and
 # slist arguments with appropriate paths for your machine
 
 birdnet_analyzer(
- birdnet.version = 'v1.1.0',
+ birdnet.version = 'v1.5.1',
  birdnet.path = 'absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe',
  i.audio = 'absolute/path/example-audio-directory',
  o.results = 'absolute/path/example-results-directory',
@@ -173,7 +173,7 @@ species.list.path <- 'D:/species_list.txt'
 
 for (i in 1:length(audio.folders)) {
  birdnet_analyzer(
-  birdnet.version = 'v1.1.0',
+  birdnet.version = 'v1.5.1',
   birdnet.path = my.birdnet.path,
   i.audio = audio.folders[i],    
   o.results = result.folders[i], 
