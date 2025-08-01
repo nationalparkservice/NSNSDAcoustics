@@ -1,6 +1,6 @@
 Package: NSNSDAcoustics
 Title: Streamline National Park Service Bioacoustics Analysis
-Version: 1.0.1
+Version: 1.1.0
 Authors@R:
     c(person(given = "Cathleen",
            family = "Balantic",
@@ -20,7 +20,7 @@ Description: This package facilitates streamlined bioacoustics analysis develope
     Division (NSNSD). Workflows include processing, analyzing, and verifying data
     produced by BirdNET, converting wave files to NVSPL tables, and converting
     NVSPL tables into acoustic indices.
-License:  CC0-1.0 license
+License: CC0-1.0 license
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -34,17 +34,16 @@ Collate:
     'Viewer.R'
     'birdnet_analyzer.R'
     'birdnet_barchart.R'
+    'birdnet_conf_threshold.R'
     'birdnet_format.R'
     'birdnet_gather.R'
     'birdnet_heatmap.R'
     'birdnet_heatmap_time.R'
     'birdnet_iNEXT.R'
-    'birdnet_run.R'
     'birdnet_spectro.R'
     'birdnet_verify.R'
     'birdnet_verify_segments.R'
     'examples-helpfiles.R'
     'helpers.R'
     'nvspl_to_ai.R'
-    'plot_audio_summary.R'
     'wave_to_nvspl.R'

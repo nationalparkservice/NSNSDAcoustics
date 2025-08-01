@@ -7,9 +7,12 @@
 birdnet_gather(results.directory, formatted = TRUE)
 }
 \arguments{
-\item{results.directory}{Path to directory where raw csv or txt BirdNET results using rtype = "r" have been stored.}
+\item{results.directory}{Path to directory where raw csv or txt BirdNET results
+using rtype = "r" (v1) or "csv" (v2) have been stored.}
 
-\item{formatted}{Logical indicating whether to gather formatted (see \code{\link{birdnet_format}}) or unformatted (raw) BirdNET results. Default = TRUE. When FALSE, the function will gather only unformatted (raw) results.}
+\item{formatted}{Logical indicating whether to gather formatted
+(see \code{\link{birdnet_format}}) or unformatted (raw) BirdNET results.
+Default = TRUE. When FALSE, the function will gather only unformatted (raw) results.}
 }
 \value{
 Returns a data.frame/data.table.
@@ -24,25 +27,28 @@ If formatted = TRUE:
 \item{\strong{scientific_name}: Species scientific name.}
 \item{\strong{common_name}: Species common name.}
 \item{\strong{confidence}: BirdNET's confidence level in this detection ranging from 0 (least confident) to 1 (most confident).}
-\item{\strong{lat}: Latitude input used.}
-\item{\strong{long}: Longitude input used.}
-\item{\strong{week}: Week of year.}
-\item{\strong{overlap}: Overlap input used.}
-\item{\strong{sensitivity}: Sensitivity input used.}
-\item{\strong{min_conf}: Minimum confidence input used.}
-\item{\strong{species_list}: Species list used.}
-\item{\strong{model}: BirdNET model used.}
+\item{\strong{lat}: Latitude input used (if present in the data).}
+\item{\strong{long}: Longitude input used (if present in the data).}
+\item{\strong{week}: Week of year (if present in the data).}
+\item{\strong{overlap}: Overlap input used (if present in the data).}
+\item{\strong{sensitivity}: Sensitivity input used (if present in the data).}
+\item{\strong{min_conf}: Minimum confidence input used (if present in the data).}
+\item{\strong{species_list}: Species list used (if present in the data).}
+\item{\strong{model}: BirdNET model used (if present in the data).}
 \item{\strong{verify}: A column into which verifications may be populated. When initially created, will be 'NA'.}
 \item{\strong{timezone}: Timezone setting used in the audio recorder.}
 }
 
-When formatted = FALSE, it returns the same columns without the recordingID, verify, and timezone columns.
+When formatted = FALSE, it returns whatever the input columns were.
 }
 \description{
-Gather all BirdNET results from a desired folder into one user-friendly data.table / data.frame.
+Gather all BirdNET results from a desired folder into one user-friendly
+data.table / data.frame.
 }
 \details{
-This function was developed by the National Park Service Natural Sounds and Night Skies Division to gather results produced by BirdNET. It uses the data.table function fread for much faster reading of many csv or txt files.
+This function was developed by the National Park Service Natural Sounds and
+Night Skies Division to gather results produced by BirdNET. It uses the
+data.table function \code{\link{fread}} for much faster reading of many csv or txt files.
 }
 \examples{
 \dontrun{

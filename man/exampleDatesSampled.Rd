@@ -14,7 +14,8 @@ data(exampleDatesSampled)
 Example data for \code{\link{birdnet_heatmap}} and \code{\link{birdnet_heatmap_time}}
 }
 \details{
-The exampleDatesSampled object can be used to experiment with birdnet_heatmap* functions.
+The exampleDatesSampled object can be used to experiment with
+birdnet_heatmap* functions.
 }
 \examples{
 # Load the dataset

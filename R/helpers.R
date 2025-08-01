@@ -10,29 +10,41 @@
 
 #' @name add_time_cols
 #' @title Add R-friendly time-based columns to bioacoustics data
-#' @description Convenience function to parse recordingIDs into useful columns to allow expedient summaries by date, local time, hour, etc. Input table must have a parseable recordingID column.
-#' @param dt Data.frame or data.table containing a recordingID column of format NAME_YYYYMMDD_HHMMSS.wav
-#' @param recording.id.col Column name that contains recordingID with format 'NAME_YYYYMMDD_HHMMSS.wav'. Default = 'recordingID'.
-#' @param tz.recorder Olsen names timezone used by the audio recorder during data collection. For example, you may have collected data using a Wildlife Acoustics SM4, and may have used UTC/GMT instead of setting a local time. Note that 'UTC' and 'GMT' are synonymous and both acceptable for this function argument. This argument accounts for the fact that recordings may have been taken in UTC. The tz.local argument then allows us to convert the times to local times that will make sense for analysis.
-#' @param tz.local Olsen names timezone for local time at the monitoring location (e.g., 'America/Anchorage').
-#' @param timestep If adding time columns with the intention of pairing automated detection data with a 'time' column with acoustic indices (AI) data, please add the time increment used to generate the AI data (e.g., "10" for 10 minutes).
-#' @return A data.table with the same columns as the input, but now including the following additional columns:
+#' @description Convenience function to parse recordingIDs into useful columns and
+#' enable expedient summaries by date and local time. Input table must
+#' have a parseable recordingID column of format LOCATIONID_YYYYMMDD_HHMMSS.wav
+#' @param dt Data.frame or data.table containing a recordingID column of format
+#' LOCATIONID_YYYYMMDD_HHMMSS.wav
+#' @param recording.id.col Column name that contains recordingID with format
+#' 'LOCATIONID_YYYYMMDD_HHMMSS.wav'. Default = 'recordingID'.
+#' @param tz.recorder Olsen names timezone used by the audio recorder during data
+#' collection. For example, you may have collected data using a Wildlife Acoustics
+#'  SM4, and may have used UTC/GMT instead of setting a local time. Note
+#'  that 'UTC' and 'GMT' are synonymous and both acceptable for this function
+#'  argument. This argument accounts for the fact that recordings may have been
+#'  taken in UTC. The tz.local argument then allows us to convert the times to
+#'  local times that will make sense for analysis.
+#' @param tz.local Olsen names timezone for local time at the monitoring
+#' location (e.g., 'America/Anchorage').
+#' @return A data.table with the same columns as the input, but now including
+#' the following additional columns:
 #' \itemize{
-#' \item{\strong{dateTimeRecorder}: POSIXct-formatted date-time object used by the audio recorder (typically will be the same as UTC or local time, depending on recording configuration parameters used in the field). }
-#' \item{\strong{dateTimeUTC}: POSIXct-formatted date-time object in UTC time. }
-#' \item{\strong{dateTimeLocal}: POSIXct-formatted date-time object in local time. }
-#' }
+#' \item{\strong{dateTimeRecorder}: POSIXct-formatted date-time object used by
+#' the audio recorder (typically will be the same as UTC or local time, depending
+#' on recording configuration parameters used in the field).}
+#' \item{\strong{dateTimeUTC}: POSIXct-formatted date-time object for the recordingID, in UTC time.}
+#' \item{\strong{dateTimeLocal}: POSIXct-formatted date-time object for the recordingID in local time.}
+#' \item{\strong{date}: POSIXct-formatted date-time object in UTC time.}
+#' \item{\strong{year}: POSIXct-formatted date-time object in local time.}
+#' \item{\strong{detectionTimeLocal}: POSIXct-formatted date-time object for the precise time of a detection, in local time.}
+#' \item{\strong{locationID}: Character value for the locationID.}
 #'
-#' If the input data.frame or data.table contains a 'time' column as from an AMMonitor scores table, then the timestep argument is utilized in the function and the following two additional columns are returned:
-#'
-#' #' \itemize{
-#' \item{\strong{detectionTime}: POSIXct-formatted date-time object giving the exact detection time, to the second, of the detected event. }
-#' \item{\strong{detectionTimeMinute}: POSIXct-formatted date-time object giving the detection time rounded down to the nearest minute.}
 #' }
 #'
 #' @details
 #'
-#' This function was developed by the National Park Service Natural Sounds and Night Skies Division to support bioacoustics projects such as those related to acoustic indices and automated detection of focal species.
+#' This function was developed by the National Park Service Natural Sounds and
+#' Night Skies Division to support bioacoustics projects.
 #'
 #' @import data.table
 #' @importFrom lubridate floor_date with_tz
@@ -56,9 +68,9 @@ add_time_cols <- function(
     dt,
     recording.id.col = 'recordingID',
     tz.recorder,
-    tz.local,
-    timestep = 10
+    tz.local
 ) {
+
   dt <- as.data.table(dt)
   splt <- strsplit(x = dt[,get(recording.id.col)], fixed = TRUE, split = '_')
   locIDs <- sapply(splt, '[[', 1)
@@ -67,6 +79,11 @@ add_time_cols <- function(
                 x = sapply(splt, "[[", 3))
 
   dateTimes <- as.POSIXct(paste0(dates, times), tz = tz.recorder, format = '%Y%m%d%H%M%S')
+
+  if (all(is.na(dateTimes))) {
+    stop('Not able to parse recordingID. Your recordingIDs look like: ', dt[1, recordingID], '. Check to ensure your recordingID is in the format LOCATIONID_YYYYMMDD_HHMMSS.wav. If it contains additional elements or doesn\'t follow this format, try making an additional column to your data input (like "parseRecordingID") which follows this naming convention, and input that column to the `recordingID` argument for this function.')
+  }
+
   dt[,dateTimeRecorder := dateTimes]
 
   # Create a UTC time column for easier conversion
@@ -85,23 +102,10 @@ add_time_cols <- function(
     dt[,detectionTimeLocal := dateTimeLocal + start]
   }
 
-  # Add a locaitonID
+  # Add a locationID
   dt[,locationID := locIDs]
 
-  # Add additional columns for pairing with AI indices
-  if ('time' %in% colnames(dt)) {
-    if(missing(timestep)) {
-      stop('If adding columns to pair with acoustic indices data, please add the time increment used to generate the AI data (e.g., "10" for 10 minutes')
-    }
-
-    # If the DT contains the time column in the recording (i.e., when an event
-    # was detected during the recording, in seconds) then we add those additional columns
-    # for playing nicely with the acoustic indices
-    dt[,detectionTime := dateTimeLocal + time]
-    dt[, detectionTimeMinute := floor_date(detectionTime, '1 mins')] # round down to nearest minute of detection time to make start.at.beginning joins easier
-  } else {
-    return(dt)
-  }
+  return(dt)
 }
 
 
@@ -109,17 +113,34 @@ add_time_cols <- function(
 
 #' @name readable_julian_breaks
 #' @title Create human-readable labels for julian dates
-#' @description Create human-readable labels for julian dates, to be used downstream in plots. Particularly useful for generating plots that compare multiple years of data in one graph, especially when dealing with leap years (see Details).
-#' @param data A data.frame or data.table that must contain a column of class "POSIXct" "POSIXt".
+#' @description Create human-readable labels for julian dates, to be used
+#' downstream in plots. Particularly useful for generating plots that compare
+#' multiple years of data in one graph, especially when dealing with leap years
+#' (see Details).
+#' @param data A data.frame or data.table that must contain a column of class
+#'  "POSIXct" "POSIXt".
 #' @param posix.column Character name of the "POSIXct" "POSIXt" column in 'data'.
-#' @param format Character string containing your desired date label components; any options in c('%d', '%m', '%b', '%B', '%y', '%Y'). For example, c('%Y', '%m', '%d') used with sep = '-' results in labels like: '2022-01-28'. See Details. Do not use '%y' or '%Y' options if data contains multiple years.
-#' @param sep Character value used to separate options in format. Any value may be used, but common uses would be options in c(' ', '-', '/').
-#' @param timestep Integer specifying the number of days that should be spaced between each label. For example, a value of 14 means labels will occur every two weeks.
-#' @param julian.breaks Optional integer vector specifying the values of julian dates to use; will override timestep argument.
-#' @return A data.table with two columns: julian.date (integer) and date.lab (character) which can be used downstream in ggplot with the scale_x_continuous() element to customize human-readable dates on the x-axis.
+#' @param format Character string containing your desired date label components;
+#' any options in c('%d', '%m', '%b', '%B', '%y', '%Y'). For example,
+#' c('%Y', '%m', '%d')
+#' used with sep = '-' results in labels like: '2022-01-28'. See Details. Do not
+#' use '%y' or '%Y' options if data contains multiple years.
+#' @param sep Character value used to separate options in format. Any value may
+#' be used, but common uses would be options in c(' ', '-', '/').
+#' @param timestep Integer specifying the number of days that should be spaced
+#' between each label. For example, a value of 14 means labels will occur every
+#' two weeks.
+#' @param julian.breaks Optional integer vector specifying the values of julian
+#' dates to use; will override timestep argument.
+#' @return A data.table with two columns: julian.date (integer) and date.lab
+#' (character) which can be used downstream in ggplot with the scale_x_continuous()
+#'  element to customize human-readable dates on the x-axis.
 #' @details
 #'
-#' Note: to accommodate multi-year datasets that contain leap years (and thus, differing julian dates for the same human-readable date label), the behavior of this function is to remove leap year labels from the output data for clean plotting.
+#' Note: to accommodate multi-year datasets that contain leap years (and thus,
+#' differing julian dates for the same human-readable date label), the behavior
+#' of this function is to remove leap year labels from the output data for clean
+#' plotting.
 #'
 #' The format argument accepts any of the following options:
 #'
@@ -141,39 +162,39 @@ add_time_cols <- function(
 #' \dontrun{
 #'
 #' # Read in example data
-#' data(exampleAI)
+#' data(exampleHeatmapData)
 #'
-#' exampleAI <- data.table(exampleAI)
-#'
-#' # Add a posix date time column
-#' exampleAI[,dateTime := lubridate::ymd_hms(
-#'      paste0(Date,' ', Hr, ':', Min, ':', Sec),
-#'      tz = 'America/Anchorage')
-#' ]
-#'
-#' # Add year and julian.date columns
-#' exampleAI[, Year := factor(lubridate::year(dateTime))]
-#' exampleAI[,julian.date := lubridate::yday(dateTime)]
+#' # Add a posix.column either manually or with add_time_cols:
+#' dat <- exampleHeatmapData
+#' dat[ ,recordingID := basename(filepath)]
+#' dat <- add_time_cols(
+#'  dt = dat,
+#'  tz.recorder = 'America/Los_angeles',
+#'  tz.local = 'America/Los_angeles'
+#' )
 #'
 #' # Create human-readable julian breaks
 #' brks <- readable_julian_breaks(
-#'   data = exampleAI,
-#'   posix.column = 'dateTime',
+#'   data = dat,
+#'   posix.column = 'dateTimeLocal',
 #'   format = c('%B', '%d'),
 #'   sep = ' ',
 #'   timestep = 30
 #' )
 #'
-#' # Example plot of using breaks with human-readable data across years
-#' # WARNING: May take a moment to plot the following
-#' ggplot(exampleAI, aes(julian.date, ACIoutI, col = Year, group = Year)) +
-#'  geom_smooth(method = 'loess', aes(fill = Year)) +
+#' # Example plot using breaks with human-readable data across years
+#' dat[,julian.date := lubridate::yday(date)]
+#' plot.dat <- dat[,mean(confidence), by = c('julian.date', 'year')]
+#' ggplot(plot.dat, aes(julian.date, V1, color = factor(year))) +
+#'  geom_point() +
 #'  scale_x_continuous(expand = c(0, 0),
 #'                     breaks = brks$julian.date,
 #'                     labels = brks$date.lab) +
 #'  xlab('Date') +
-#'  ylab('Acoustic Complexity Index') +
-#'  theme(axis.text.x = element_text(angle = 90))
+#'  ylab('Mean BirdNET Confidence Value') +
+#'  theme(axis.text.x = element_text(hjust = 1, angle = 45),
+#'        legend.title = element_blank()
+#'  )
 #'
 #' }
 
@@ -257,7 +278,8 @@ birdnet_audio_embed <- function(
     recording.id.col,
     common.name,
     confidence.threshold,
-    year
+    year,
+    frq.lim = c(0, 12)
 ) {
 
   # Ensure forward slash at end ($) of directories
@@ -281,7 +303,7 @@ birdnet_audio_embed <- function(
                        sample(.N, size = 1, replace = FALSE)]
 
   if(nrow(one.res) == 0) {
-    stop('No results for this input combination. Check your inputs or try a lower confidence.threshold.')
+    stop('No results for this input combination. Check your inputs or try a lower `confidence.threshold`.')
   }
 
   # Get the date of the detection (fine to leave in UTC since these are just examples
@@ -306,11 +328,11 @@ birdnet_audio_embed <- function(
                              replacement = '',
                              x = one.res$filepath)
     one.res$recordingID <- gsub(pattern = '.wav|.WAV',
-                             replacement = '.mp3',
-                             x = one.res$recordingID)
+                                replacement = '.mp3',
+                                x = one.res$recordingID)
     one.res$recordingID <- gsub(pattern = 'temp-',
-                             replacement = '',
-                             x = one.res$recordingID)
+                                replacement = '',
+                                x = one.res$recordingID)
   }
 
   full.pth <- paste0(audio.directory, one.res$recordingID)
@@ -359,7 +381,37 @@ birdnet_audio_embed <- function(
   pth <- gsub(pattern = '.WAV', replacement = '.wav',
               ignore.case = FALSE, x = pth)
   writeWave(wav, filename = pth)
-  viewSpec(wav, main = paste0(locationID, ' ', common.name, ' (', one.res$date, ')'))
+
+  # Generate spectrogram
+  det.spec <- monitoR:::spectro(wave = wav)
+  image(
+    x = 1:length(det.spec$time),
+    y = 1:length(det.spec$freq),
+    t(det.spec$amp),
+    yaxt = 'n', xaxt = 'n', xlab = '', ylab = '', col = gray.3(),
+    main = paste0(locationID, ' ', common.name, ' (', one.res$date, ')')
+  )
+  box()
+
+  # Set up time axis (x)
+  t.bins <- det.spec$time
+  t.bin.ticks <- pretty(t.bins, n = 3)
+  t.step <- t.bins[2]-t.bins[1]
+  axis(1, at = t.bin.ticks/t.step,
+       labels = format(as.POSIXct(t.bin.ticks, origin = "1960-01-01", tz = "GMT"),
+                       format='%H:%M:%S'))
+
+  # Set up frequency axis (y)
+  if (missing(frq.lim)) {
+    frq.lim <- c(0, max(det.spec$freq))
+  }
+  which.frq.bins <- which(det.spec$freq >= frq.lim[1] & det.spec$freq <= frq.lim[2])
+  frq.bins <- det.spec$freq[which.frq.bins]
+  frq.bin.ticks <- pretty(det.spec$freq, n = 5)
+  frq.step <- frq.bins[2]-frq.bins[1]
+  axis(2, at = frq.bin.ticks/frq.step, labels = frq.bin.ticks, las = 1)
+
+  # Add embedded audio
   embed_audio(src = pth, type = 'wav')
 }
 
@@ -386,7 +438,9 @@ birdnet_audio_embed <- function(
 #'
 #' @details
 #'
-#' This function was developed by the National Park Service Natural Sounds and Night Skies Division Scientists in Parks intern Kayley Dillon to support species biodiversity characterization in bioacoustics projects.
+#' This function was developed by the National Park Service Natural Sounds and
+#' Night Skies Division Scientists in Parks intern Kayley Dillon to support
+#' species biodiversity characterization in bioacoustics projects.
 #'
 #' @import iNEXT
 #' @importFrom iNEXT iNEXT
@@ -537,6 +591,4 @@ birdnet_iNEXT <- function(
     knots = (samples * 2)
   )
 }
-
-
 

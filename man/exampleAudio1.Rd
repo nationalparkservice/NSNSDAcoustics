@@ -14,7 +14,8 @@ data(exampleAudio1)
 Sample recording (audio) data stored as a \code{Wave} file.
 }
 \details{
-The exampleAudio1 object can be used to experiment with functions that use audio data.
+The exampleAudio1 object can be used to experiment with functions
+that use audio data.
 }
 \examples{
 # Load the dataset

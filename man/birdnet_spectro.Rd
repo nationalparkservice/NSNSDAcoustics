@@ -18,17 +18,26 @@ birdnet_spectro(
 )
 }
 \arguments{
-\item{data}{Data.table or data.frame of subsetted detections that a user would like to plot \strong{for a single species}. This allows the user precise control over which detections to plot.}
+\item{data}{Data.table or data.frame of subsetted detections that a user would
+like to plot \strong{for a single species}. This allows the user precise control
+over which detections to plot.}
 
-\item{audio.directory}{Top-level input directory path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.}
+\item{audio.directory}{Top-level input directory path to audio files to be processed.
+Files are expected to have the naming convention LOCATIONID_YYYYMMDD_HHMMSS.wav.}
 
 \item{title}{Optional title describing which detections are being plotted (e.g., "Confidence > 0.5", "True Positives", "Alarm Calls").}
 
-\item{frq.lim}{Optional two-element numeric vector specifying frequency limits to the plotted spectrograms, in kHz. Default = c(0, 12).}
+\item{frq.lim}{Optional two-element numeric vector specifying frequency limits
+to the plotted spectrograms, in kHz. Default = c(0, 12).}
 
-\item{new.window}{Logical value for whether to use \code{dev.new} to produce new plot windows. Default = TRUE.}
+\item{new.window}{Logical value for whether to use \code{dev.new} to produce
+new plot windows. Default = TRUE.}
 
-\item{spec.col}{The colors used to plot verification spectrograms. Default = gray.3(). Spectrogram colors are adjustable, and users may create their own gradients for display. A few spectrogram color options are provided via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(), and topo.1(), all of which are based on existing R colors.}
+\item{spec.col}{The colors used to plot verification spectrograms.
+Default = gray.3(). Spectrogram colors are adjustable, and users may create
+their own gradients for display. A few spectrogram color options are provided
+via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(),
+and topo.1(), all of which are based on existing R colors.}
 
 \item{box}{Logical for whether to draw a box around each detection. Default = TRUE.}
 
@@ -45,7 +54,12 @@ Plot of verified detections
 Plot spectrograms of user-selected verified or unverified data
 }
 \details{
-This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data produced by BirdNET.
+This function was developed by the National Park Service Natural Sounds and
+Night Skies Division to visualize automated detections produced by BirdNET.
+For best results, use \code{\link{birdnet_format}} to produce data inputs for
+this function. Function will also attempt to plot unformatted data, but due
+to various changes in BirdNET-Analyzer output columns over the years, be
+aware that results may not be as intended if inputting unformatted data.
 }
 \examples{
 \dontrun{

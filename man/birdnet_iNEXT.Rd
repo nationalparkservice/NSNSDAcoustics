@@ -14,6 +14,8 @@ birdnet_iNEXT(data, confidence.threshold = 0, n.detections = 1)
 \item{confidence.threshold}{Threshold below which BirdNET results should be excluded.}
 
 \item{n.detections}{Number of detections of a species within a day to conclude presence.}
+
+\item{q}{A number or vector specifying the diversity order(s) of Hill numbers.}
 }
 \value{
 DESCRIBE...  additional columns:
@@ -38,7 +40,9 @@ TBD
 \details{
 This function was developed by the National Park Service Natural Sounds and Night Skies Division to support species biodiversity characterization in bioacoustics projects. This function is under development.
 
-This function was developed by the National Park Service Natural Sounds and Night Skies Division Scientists in Parks intern Kayley Dillon to support species biodiversity characterization in bioacoustics projects.
+This function was developed by the National Park Service Natural Sounds and
+Night Skies Division Scientists in Parks intern Kayley Dillon to support
+species biodiversity characterization in bioacoustics projects.
 }
 \examples{
 \dontrun{
@@ -56,7 +60,8 @@ dat <- add_time_cols(
 result <- birdnet_iNEXT(
   data = dat,
   confidence.threshold = 0,
-  n.detections = 3
+  n.detections = 3,
+  q = 0
 )
 
 # We can use this result to plot species rarefaction curves
@@ -116,11 +121,11 @@ ggplot() +
  geom_line(data = interp, mapping =
              aes(x = Days, y = Richness,
                  color = locationID,
-                 linetype = "dashed"), size = 1) +
+                 linetype = "dashed"), linewidth = 1) +
  geom_line(data = extrap, mapping =
              aes(x = Days, y = Richness,
                  color = locationID,
-                 linetype = "solid"), size = 1) +
+                 linetype = "solid"), linewidth = 1) +
  theme_classic() +
  scale_fill_manual(name = "locationID",
                    values = c("#66c2a5", "#fc8d62")) +
@@ -129,6 +134,50 @@ ggplot() +
  labs(x = "Days Sampled", y = "Species Richness") +
  guides(linetype = "none")
 
+
+
+# Or just use ggiNEXT() function
+ggiNEXT(x = result, type = 1, se = TRUE, facet.var = 'None',
+        color.var = 'Assemblage', grey = FALSE)
+ggiNEXT(x = result, type = 2, se = TRUE, facet.var = 'None',
+        color.var = 'Assemblage', grey = FALSE)
+ggiNEXT(x = result, type = 3, se = TRUE, facet.var = 'None',
+        color.var = 'Assemblage', grey = FALSE)
+
+
+# tweak the themes of ggiNEXT plots
+obj <- ggiNEXT(x = result, type = 1, se = TRUE, facet.var = 'None',
+        color.var = 'Assemblage', grey = FALSE)
+
+obj + theme_classic()
+
+
+result <- birdnet_iNEXT(
+  data = dat,
+  confidence.threshold = 0,
+  n.detections = 3,
+  q = c(0, 1, 2)
+)
+
+
+
+# Read in example BirdNET data
+data(exampleBarchartData)
+
+dat <- add_time_cols(
+  dt = exampleBarchartData,
+  recording.id.col = 'recordingID',
+  tz.recorder = 'America/Los_Angeles',
+  tz.local = 'America/Los_Angeles'
+)
+
+result <- birdnet_iNEXT(
+  data = dat,
+  confidence.threshold = 0,
+  n.detections = 3,
+  q = c(0, 1, 2)
+)
+ggiNEXT(result, type=1, facet.var = "Order.q"  )
 
 }
 \dontrun{

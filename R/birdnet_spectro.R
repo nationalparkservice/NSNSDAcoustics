@@ -3,19 +3,34 @@
 #' @name birdnet_spectro
 #' @title Plot spectrograms of BirdNET detections
 #' @description Plot spectrograms of user-selected verified or unverified data
-#' @param data Data.table or data.frame of subsetted detections that a user would like to plot \strong{for a single species}. This allows the user precise control over which detections to plot.
-#' @param audio.directory Top-level input directory path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.
+#' @param data Data.table or data.frame of subsetted detections that a user would
+#' like to plot \strong{for a single species}. This allows the user precise control
+#' over which detections to plot.
+#' @param audio.directory Top-level input directory path to audio files to be processed.
+#' Files are expected to have the naming convention LOCATIONID_YYYYMMDD_HHMMSS.wav.
 #' @param title Optional title describing which detections are being plotted (e.g., "Confidence > 0.5", "True Positives", "Alarm Calls").
-#' @param frq.lim Optional two-element numeric vector specifying frequency limits to the plotted spectrograms, in kHz. Default = c(0, 12).
-#' @param new.window Logical value for whether to use \code{dev.new} to produce new plot windows. Default = TRUE.
-#' @param spec.col The colors used to plot verification spectrograms. Default = gray.3(). Spectrogram colors are adjustable, and users may create their own gradients for display. A few spectrogram color options are provided via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(), and topo.1(), all of which are based on existing R colors.
+#' @param frq.lim Optional two-element numeric vector specifying frequency limits
+#'  to the plotted spectrograms, in kHz. Default = c(0, 12).
+#' @param new.window Logical value for whether to use \code{dev.new} to produce
+#' new plot windows. Default = TRUE.
+#' @param spec.col The colors used to plot verification spectrograms.
+#' Default = gray.3(). Spectrogram colors are adjustable, and users may create
+#' their own gradients for display. A few spectrogram color options are provided
+#' via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(),
+#' and topo.1(), all of which are based on existing R colors.
 #' @param box Logical for whether to draw a box around each detection. Default = TRUE.
 #' @param box.lwd Integer value for box line thickness. Default = 1.
 #' @param box.col  Box color. Default = 'black'.
 #' @param title.size Size of title. Default = 1.
 #' @return Plot of verified detections
 #' @details
-#' This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data produced by BirdNET.
+#'
+#' This function was developed by the National Park Service Natural Sounds and
+#' Night Skies Division to visualize automated detections produced by BirdNET.
+#' For best results, use \code{\link{birdnet_format}} to produce data inputs for
+#' this function. Function will also attempt to plot unformatted data, but due
+#' to various changes in BirdNET-Analyzer output columns over the years, be
+#' aware that results may not be as intended if inputting unformatted data.
 #'
 #' @seealso  \code{\link{birdnet_analyzer}}, \code{\link{birdnet_format}}, \code{\link{birdnet_verify}}
 #' @import monitoR tuneR
@@ -113,6 +128,15 @@ birdnet_spectro <- function(
 )
 {
 
+  # If using unformatted BirdNET v2 csv data, add reasonable column names
+  check.cols <- colnames(data)
+  if(all(!'recordingID' %in% check.cols & c('Start (s)', 'End (s)') %in% check.cols)) {
+    message('\nIt looks like you are using unformatted data. We\'ll try to plot your input data anyway, but please consider using the function birdnet_format() to ensure best data formatting, otherwise you may encounter unexpected results in this function and R package.')
+    data[,recordingID := basename(File)]
+    data[,start := `Start (s)`]
+    data[,end := `End (s)`]
+  }
+
   if(length(unique(data$common_name)) > 1) {
     stop("Please input data for one species at a time. You have input a dataset with ", length(unique(data$common_name)), " species.")
   }
@@ -149,7 +173,6 @@ birdnet_spectro <- function(
   for (n in 1:nrow(data)) {
     cat(n, ' ')
     dat <- data[n]
-
     det <- readWave(filename = wav.paths[grepl(pattern = dat$recordingID,
                                                x = wav.paths)],
                     from = dat$start, to = dat$end,

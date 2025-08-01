@@ -16,32 +16,72 @@ birdnet_heatmap(
 )
 }
 \arguments{
-\item{data}{Data.table or data.frame of BirdNET results that a user would like to plot. Generally, this data object may be preceded by a call to \code{\link{add_time_cols}}; all data should come from a single site and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct). Multiple years of data are allowed in one dataset to enable easy comparison of vocal activity by year at a site.}
+\item{data}{Data.table or data.frame of BirdNET results that a user would like to plot.
+Generally, this data object may be preceded by a call to \code{\link{add_time_cols}};
+all data should come from a single site and the object must contain columns named
+"locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct).
+Multiple years of data are allowed in one dataset to enable easy comparison of
+vocal activity by year at a site.}
 
 \item{locationID}{Character input of the locationID for which data should be plotted.}
 
 \item{common.name}{Character input of the target species for which data should be plotted.}
 
-\item{conf.threshold}{Numeric input of the BirdNET confidence threshold above which data should be plotted. All detections below this confidence threshold will be discarded.}
+\item{conf.threshold}{Numeric input of the BirdNET confidence threshold above
+which data should be plotted. All detections below this confidence threshold
+will be discarded.}
 
-\item{julian.breaks}{Optional numeric vector of julian date plotting breaks to use on the x axis. If omitted, will be computed automatically. Example inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9, and June 29 for non-leap year data); c(130:160) would graph every single date from May 10 to June 9 on the x axis (for non-leap year data). See also \code{\link{readable_julian_breaks}}. Please start with 1 for the first day of the year rather than 0.}
+\item{julian.breaks}{Optional numeric vector of julian date plotting breaks
+to use on the x axis. If omitted, will be computed automatically. Example
+inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9,
+and June 29 for non-leap year data); c(130:160) would graph every single date
+from May 10 to June 9 on the x axis (for non-leap year data). See also
+\code{\link{readable_julian_breaks}}. Please start with 1 for the first day
+of the year rather than 0. \href{https://www.cdfa.ca.gov/ahfss/mpes/pdfs/Julian_Calendar.pdf}{This chart}
+might be helpful for choosing julian breaks.}
 
-\item{dates.sampled}{Date or character vector of all dates sampled that should be visualized on the heat map. This information is required because your data input may only contain detection data, and not non-detection data (i.e., zeroes). For example, you might have recorded audio on 2021-03-14, but have no BirdNET detections in "data". This will result in an inaccurate visual. Since BirdNET results do not automatically contain non-detection data, it is incumbent on the user to input which dates were sampled.}
+\item{dates.sampled}{Date or character vector of all dates sampled that should
+be visualized on the heat map. This information is required because your data
+input may only contain detection data, and not non-detection data (i.e., zeroes).
+For example, you might have recorded audio on 2021-03-14, but have no BirdNET
+detections in "data". This will result in an inaccurate visual. Since BirdNET
+results do not automatically contain non-detection data, it is incumbent on
+the user to input which dates were sampled.}
 
-\item{tz.local}{Character Olsen names timezone for local time at the monitoring location (e.g., 'America/Los_angeles').}
+\item{tz.local}{Character Olsen names timezone for local time at the monitoring
+location (e.g., 'America/Los_angeles').}
 
-\item{comparable.color.breaks}{Logical flag for whether to create heat map color breaks based on all species in the input data set or based only on the species of interest in this plot. TRUE means it will be easier to make straightforward comparisons between species, FALSE means activity contrasts within a single species will be easier to see.}
+\item{comparable.color.breaks}{Logical flag for whether to create heat map
+color breaks based on all species in the input data set or based only on the
+species of interest in this plot. TRUE means it will be easier to make
+straightforward comparisons between species, FALSE means activity contrasts
+within a single species will be easier to see.}
 }
 \value{
-Heat map of BirdNET detections, where N is the number of detections for common.name above conf.threshold on any given day.
+Heat map of BirdNET detections, where N is the number of detections
+for \code{common.name} above \code{conf.threshold} on any given day.
 }
 \description{
-Plot heat maps of BirdNET results for a selected species and above a selected confidence threshold by date for multiple or single year data. See Details.
+Plot heat maps of BirdNET results for a selected species and
+above a selected confidence threshold by date for multiple or single year data.
+See Details.
 }
 \details{
-This function was developed by the National Park Service Natural Sounds and Night Skies Division. It is intended to provide exploratory plotting for summarizing and visualizing BirdNET results.
+This function was developed by the National Park Service Natural Sounds and
+Night Skies Division. It is intended to provide exploratory plotting for
+summarizing and visualizing BirdNET results.
 
-Function returns a heatmap of BirdNET detections, where N is the number of detections for common.name above conf.threshold on any given day. Note that if you have different sampling efforts on different days, the heat map "as is" may not accurately visualize your target species' vocalization effort. In this case, you may wish to do some preprocessing to your data input to control for differences in sampling effort on different days.
+Function returns a heatmap of BirdNET detections, where N is the number of
+detections for \code{common.name} above \code{conf.threshold} on any given day. Note that
+if you have different sampling efforts on different days, the heat map "as is"
+may not accurately visualize your target species' vocalization effort. In
+this case, you may wish to do some preprocessing to your data input to control
+for differences in sampling effort on different days.
+
+For best results, use \code{\link{birdnet_format}} to produce data inputs for
+this function. Function will also attempt to plot unformatted data, but due
+to various changes in BirdNET-Analyzer output columns over the years, be
+aware that results may not be as intended if inputting unformatted data.
 }
 \examples{
 \dontrun{

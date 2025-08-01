@@ -3,34 +3,89 @@
 
 #' @name birdnet_heatmap_time
 #' @title Plot heat maps of BirdNET detections by date and time of day
-#' @description Plot heat maps of BirdNET results for a selected species and above a selected confidence threshold by date and time of day for multiple or single year data. See Details.
-#' @param data Data.table or data.frame of BirdNET results that a user would like to plot. Generally, this data object should be preceded by a call to \code{\link{add_time_cols}}; all data should come from a single site and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct). Multiple years of data are allowed in one dataset to enable easy comparison of vocal activity by year at a site.
+#' @description Plot heat maps of BirdNET results for a selected species and
+#' above a selected confidence threshold by date and time of day for multiple or
+#' single year data. See Details.
+#' @param data Data.table or data.frame of BirdNET results that a user would like
+#' to plot. Generally, this data object should be preceded by a call to \code{\link{add_time_cols}};
+#'  all data should come from a single site and the object must contain columns
+#'  named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct).
+#'  Multiple years of data are allowed in one dataset to enable easy comparison of
+#'  vocal activity by year at a site.
 #' @param locationID Character input of the locationID for which data should be plotted.
-#' @param common.name Character input of the target species for which data should be plotted.
-#' @param conf.threshold Numeric input of the BirdNET confidence threshold above which data should be plotted. Detections below this confidence threshold will be discarded.
-#' @param dates.sampled Date or character vector of all dates sampled that should be visualized on the heat map. This information is required because your data input may only contain detection data, and not non-detection data (i.e., zeroes). For example, you might have recorded audio on 2021-03-14, but have no BirdNET detections in "data". This will result in an inaccurate visual. Since BirdNET results do not automatically contain non-detection data, it is incumbent on the user to input which dates were sampled.
-#' @param julian.breaks Optional numeric vector of julian date plotting breaks to use on the x axis. If omitted, will be computed automatically. Example inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9, and June 29 for non-leap year data); c(130:160) would graph every single date from May 10 to June 9 on the x axis (for non-leap year data). See also \code{\link{readable_julian_breaks}}. Please start with 1 for the first day of the year rather than 0.
-#' @param tz.local Character Olsen names timezone for local time at the monitoring location (e.g., 'America/Los_angeles').
-#' @param comparable.color.breaks Logical flag for whether to create heat map color breaks based on all species in the input data set or based only on the species of interest in this plot. TRUE means it will be easier to make straightforward comparisons between species, FALSE means activity contrasts within a single species will be easier to see.
-#' @param minute.timestep Integer input of how to summarize the data by minute. Any divisor of 60 is allowed in options c(1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60).
-#' @param hours.sampled Either an integer vector declaring which hours were sampled across the monitoring period (e.g., c(6:8, 18:20)), or a list declaring sun-based monitoring based on how many hours before and after sunset were recorded, e.g. list(sunrise = c(1.5, 1.5), sunset = c(1, 1)) means that the schedule recorded 1.5 hours before sunrise until 1.5 hours after, and 1 hour before sunset to 1 hour after. If missing hours.sampled, the function assumes continuous sampling and will display the plot as such; beware that this may misrepresent your data: if you did not sample during all hours, the plot will make it appear as if you did.
-#' @param y.axis.limits Length 2 integer vector of hourl limits to show. c(0, 23) is default.
+#' @param common.name Character input of the target species for which data should
+#' be plotted.
+#' @param conf.threshold Numeric input of the BirdNET confidence threshold above
+#' which data should be plotted. Detections below this confidence threshold will
+#'  be discarded.
+#' @param dates.sampled Date or character vector of all dates sampled that should
+#' be visualized on the heat map. This information is required because your data
+#'  input may only contain detection data, and not non-detection data (i.e., zeroes).
+#'  For example, you might have recorded audio on 2021-03-14, but have no BirdNET
+#'  detections in "data". This will result in an inaccurate visual. Since BirdNET
+#'  results do not automatically contain non-detection data, it is incumbent on
+#'  the user to input which dates were sampled.
+#' @param julian.breaks Optional numeric vector of julian date plotting breaks
+#' to use on the x axis. If omitted, will be computed automatically. Example
+#' inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9,
+#' and June 29 for non-leap year data); c(130:160) would graph every single date
+#' from May 10 to June 9 on the x axis (for non-leap year data). See also
+#' \code{\link{readable_julian_breaks}}. Please start with 1 for the first day
+#' of the year rather than 0. \href{https://www.cdfa.ca.gov/ahfss/mpes/pdfs/Julian_Calendar.pdf}{This chart}
+#' might be helpful for choosing julian breaks.
+#' @param tz.local Character Olsen names timezone for local time at the monitoring
+#'  location (e.g., 'America/Los_angeles').
+#' @param comparable.color.breaks Logical flag for whether to create heat map
+#' color breaks based on all species in the input data set or based only on the
+#' species of interest in this plot. TRUE means it will be easier to make straightforward
+#'  comparisons between species, FALSE means activity contrasts within a single
+#'  species will be easier to see.
+#' @param minute.timestep Integer input of how to summarize the data by minute.
+#' Any divisor of 60 is allowed in options c(1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60).
+#' @param hours.sampled Either an integer vector declaring which hours were sampled
+#'  across the monitoring period (e.g., c(6:8, 18:20)), or a list declaring sun-based
+#'  monitoring based on how many hours before and after sunset were recorded, e.g.
+#'  list(sunrise = c(1.5, 1.5), sunset = c(1, 1)) means that the schedule recorded
+#'  1.5 hours before sunrise until 1.5 hours after, and 1 hour before sunset to
+#'  1 hour after. If missing hours.sampled, the function assumes continuous
+#'  sampling and will display the plot as such; beware that this may misrepresent
+#'  your data: if you did not sample during all hours, the plot will make it
+#'  appear as if you did.
+#' @param y.axis.limits Length 2 integer vector of hourly limits to show. c(0, 23) is default.
 #' @param plot.title User input plot title if desired
-#' @param sun.lines Optional character vector of sun-based lines to plot, from suncalc::getSunlightTimes. Options include: c('sunrise', 'sunriseEnd', 'goldenHourEnd', 'solarNoon', 'goldenHour', 'sunsetStart', 'sunset', 'dusk', 'nauticalDusk', 'night', 'nadir', 'nightEnd', 'nauticalDawn', 'dawn')
-#' @param sun.linetypes If using sun.lines, include an accompanying equal-length character vector of linetypes in options: c('solid', 'dashed', 'dotted', 'dotdash', 'longdash', 'twodash')
+#' @param sun.lines Optional character vector of sun-based lines to plot, from \code{\link[suncalc]{getSunlightTimes}}.
+#' Options include: c('sunrise', 'sunriseEnd', 'goldenHourEnd', 'solarNoon',
+#' 'goldenHour', 'sunsetStart', 'sunset', 'dusk', 'nauticalDusk', 'night',
+#' 'nadir', 'nightEnd', 'nauticalDawn', 'dawn')
+#' @param sun.linetypes If using sun.lines, include an accompanying equal-length
+#' character vector of linetypes in options: c('solid', 'dashed', 'dotted',
+#' dotdash', 'longdash', 'twodash')
 #' @param latitude Numeric latitude. Required if using sun.lines argument.
 #' @param longitude Numeric longitude. Required if using sun.lines argument.
 #' @return Heat map of BirdNET detections across julian date and hour.
 #' @details
 #'
-#' This function was developed by the National Park Service Natural Sounds and Night Skies Division. It is intended to provide exploratory plotting for summarizing and visualizing BirdNET results.
+#' This function was developed by the National Park Service Natural Sounds and
+#' Night Skies Division. It is intended to provide exploratory plotting for
+#' summarizing and visualizing BirdNET results.
 #'
-#' Function returns a heatmap of BirdNET detections by julian date, where N is the number of detections in a timestep for common.name above conf.threshold on any given day. If multiple years of data are input to the function, an average is plotted for that timestep and day. The y-axis shows time of day. Optional inputs allow the user to graph sunrise and sunset-based times on the plot for additional context (see help documentation for \code{\link[suncalc]{getSunlightTimes}} for details). For multi-year data, all detections are summed and displayed for a given julian date.
+#' Function returns a heatmap of BirdNET detections by julian date, where N is
+#' the number of detections in a timestep for common.name above conf.threshold
+#' on any given day. If multiple years of data are input to the function, an average
+#' is plotted for that timestep and day. The y-axis shows time of day. Optional
+#' inputs allow the user to graph sunrise and sunset-based times on the plot for
+#' additional context (see help documentation for \code{\link[suncalc]{getSunlightTimes}} for details).
+#' For multi-year data, all detections are summed and displayed for a given julian date.
 #'
+#' For best results, use \code{\link{birdnet_format}} to produce data inputs for
+#' this function. Function will also attempt to plot unformatted data, but due
+#' to various changes in BirdNET-Analyzer output columns over the years, be
+#' aware that results may not be as intended if inputting unformatted data.
 #'
 #' @seealso  \code{\link{birdnet_heatmap}}
 #' @import data.table ggplot2 lubridate monitoR suncalc tuneR viridis
 #' @importFrom lubridate month day yday round_date
+#' @importFrom suncalc getSunlightTimes
 #' @export
 #' @examples
 #' \dontrun{
@@ -58,7 +113,7 @@
 #'   dates.sampled = exampleDatesSampled,
 #'   hours.sampled = list(sunrise = c(1.5, 1.5), sunset = c(0, 0)),
 #'   y.axis.limits = c(0, 23),
-#'   julian.breaks = c(30, 60, 90, 120, 150, 180, 210, 240, 270),
+#'   julian.breaks = c(30, 60, 90, 120, 150, 180, 210, 240),
 #'   minute.timestep = 5,
 #'   comparable.color.breaks = FALSE,
 #'   tz.local = 'America/Los_angeles',
@@ -130,9 +185,22 @@ birdnet_heatmap_time <- function(
   yrs <- unique(data$year)
   yrs <- yrs[!is.na(yrs)]
 
+  # Check and correct column type from previous birdnet column outputs
+  if (any(c('common.name', 'Common name', 'Confidence', 'Start (s)') %in% colnames(data))) {
+    colnames(data)[colnames(data) %in% c('common.name', 'Common name')] <- 'common_name'
+    colnames(data)[colnames(data) %in% c('Confidence')] <- 'confidence'
+    colnames(data)[colnames(data) %in% c('Start (s)')] <- 'start'
+    message('\nIt looks like you are using unformatted data. We\'ll try to plot your input data anyway, but please consider using the function birdnet_format() to ensure best data formatting, otherwise you may encounter unexpected results in this function and R package.')
+  }
+
+  if(missing(tz.local)) {
+    tz.local <- tz(data$dateTimeLocal)
+    message('\nYou didn\'t put anything in the `tz.local` argument; using `tz.local = ', tz.local, '` based on your data. If this is wrong, quit function and input your desired value.')
+  }
+
   if (length(yrs) > 1) {
     message(
-      'Multiple years of data are detected: ',
+      '\nMultiple years of data are detected: ',
       paste0(yrs, collapse = ', '),
       '\n',
       'Data will be averaged across all years. Restart function and check your data inputs if this is not desired.\n'
@@ -144,7 +212,7 @@ birdnet_heatmap_time <- function(
   }
 
   if (!missing(sun.lines) & missing(sun.linetypes)) {
-    warning("You used argument sun.lines but did not include sun.linetypes, so we are randomly choosing them for you. To customize these, use the sun.linetypes argument. See ?birdnet_heatmap_time for details and examples.\n")
+    message("\nYou used argument `sun.lines` but did not include `sun.linetypes`, so we are randomly choosing them for you. To customize these, use the `sun.linetypes` argument. See ?birdnet_heatmap_time for details and examples.")
     sun.linetypes <- sample(x = valid.lty, size = length(sun.lines), replace = TRUE)
   }
 
@@ -180,6 +248,7 @@ birdnet_heatmap_time <- function(
 
   # Create readable julian breaks
   if(missing(julian.breaks)) {
+    message('\nMissing `julian.breaks` argument, so we are making an educated guess for you. If you do not like how the x-axis looks, consider customizing the `julian.breaks` argument.')
     brks <- readable_julian_breaks(
       data = data[locationID == locid], # base off largest breadth of input data?
       posix.column = 'date',
@@ -239,7 +308,7 @@ birdnet_heatmap_time <- function(
       c(0,
         seq(from = min(0, na.rm = TRUE),
             to = max(prep$V1, na.rm = TRUE))))
-     }
+  }
 
   # If comparable.color.breaks == FALSE
   # Create heatmap color breaks based only on this species, so that patterns in this species
@@ -273,8 +342,7 @@ birdnet_heatmap_time <- function(
 
   if (missing(hours.sampled)) {
     hours.sampled <- 0:23
-
-    message('You did not use the hours.sampled argument. As a result, this plot will imply that all hours from 0:23 were sampled. See ?birdnet_heatmap_time helpfile for details if this is not desired.\n')
+    message('\nYou did not use the `hours.sampled` argument. As a result, this plot will imply that all hours from 0:23 were sampled. See ?birdnet_heatmap_time helpfile for details if this is not desired.')
   }
 
   sampled.times <- data.table(tbin = tseq)
@@ -436,6 +504,10 @@ birdnet_heatmap_time <- function(
   hours.plot <- hours.plot[hour %in% seq(from = y.axis.limits[1], to = y.axis.limits[2], by = 1)]
   y.lims <- range(hours.plot$y.brks)
 
+  # Limits must encompass 1 minute.timestep beyond range to plot correctly in hour 0 & 23
+  y.lims[1] <- y.lims[1] - minute.timestep
+  y.lims[2] <- y.lims[2] + minute.timestep
+
   if (missing(plot.title)) plot.title <- paste0('Total BirdNET Detections, ', locid, ': ', common.name)
 
   # Generate the plot
@@ -449,26 +521,10 @@ birdnet_heatmap_time <- function(
       na.value = 'white'
     ) +
 
-    #   # FOR DEBUGGING
-    #   # Plot sun.lines if indicated by user
-    # #  {if (!missing(sun.lines))
-    #     geom_line(data = sun.dt, aes(x = julian, y = minute, linetype = variable)) +
-    #  # } +
-    #
-    #   # Customize sun.linetypes if indicated by user
-    #   #{if (!missing(sun.lines))
-    #     scale_linetype_manual(
-    #       name = 'Sun Times',
-  #       values = sun.dt$sun.lty,
-  #       labels = sun.dt$variable
-  #     ) +
-  #  # } +
-
-  # # UNCOMMENT AFTER DEBUG
-  # # Plot sun.lines if indicated by user
-  {if (!missing(sun.lines))
-    geom_line(data = sun.dt, aes(x = julian, y = minute, linetype = variable))
-  } +
+    # Plot sun.lines if indicated by user
+    {if (!missing(sun.lines))
+      geom_line(data = sun.dt, aes(x = julian, y = minute, linetype = variable))
+    } +
 
     # Customize sun.linetypes if indicated by user
     {if (!missing(sun.lines))
@@ -482,7 +538,8 @@ birdnet_heatmap_time <- function(
     scale_x_continuous(
       expand = c(0, 0),
       breaks = brks$julian.date,
-      labels = brks$date.lab) +
+      labels = brks$date.lab,
+      limits = range(yday(dates.sampled), na.rm = TRUE)) +
 
     scale_y_continuous(
       expand = c(0, 0),

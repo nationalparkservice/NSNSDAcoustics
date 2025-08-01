@@ -2,26 +2,73 @@
 
 #' @name birdnet_verify
 #' @title Verify BirdNET detections
-#' @description Interactive function that produces spectrograms and wave clips enabling a user to verify BirdNET detections. Underlying files are updated with user verifications.
-#' @param data Data.table or data.frame of subsetted detections that a user would like to verify \strong{for a single species}. Accepts formatted results only (see: \code{\link{birdnet_format}}).
-#' @param verification.library Character vector specifying which verification options should be shown to the user. Allows finer control to fit user's needs: user may specify whether a detection is a song, a call, a certain song or call type of interest, false alarm, unsure, or whatever the user needs. This enables maximum flexibility for the user, but also requires some thoughtfulness so that verification options remain consistent. BirdNET provides only species-level confidence and does not classify to song or call types. Thus, depending on the underlying research question and a verifier's expertise and familiarity with a focal species, a user may find themselves in a situation where songs are easily verified, but calls are not. Verification library provides the flexibility to accommodate varying questions and levels of expertise, but must be thought through by the user beforehand.
-#' @param audio.directory Top-level input directory path to audio files to be processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.
-#' @param results.directory Path to directory where formatted BirdNET results have been stored.
-#' @param overwrite Logical flag for whether to overwrite existing verifications contained in a txt or csv file. Default = FALSE. If FALSE, no overwriting occurs, and the user only verifies detections that are currently unverified. If TRUE, the user is choosing to overwrite existing verifications.
-#' @param play Logical value specifying whether a temporary wave file should be written to the working directory for the user to check during verification. If TRUE, a temporary wave file for the detection is written to the working directory, available for the user to listen to, and is deleted after the user closes the player window and adds a verification. If FALSE, no temporary wave file is written.
-#' @param frq.lim Optional two-element numeric vector specifying frequency limits, in kHz, to apply to the plotted spectrograms. Default = c(0, 12).
-#' @param buffer Numeric buffer, in seconds, to place around BirdNET's 3 second detection area (default = 1). Generally useful for providing acoustic "context" around a detected event; of particular utility in cases where the target signal exceeds BirdNET's 3 second detection window, or in which the detection window overlaps with a partial signal.
+#' @description Interactive function that produces spectrograms and wave clips
+#' enabling a user to verify BirdNET detections. Underlying files are updated
+#' with user verifications.
+#' @param data Data.table or data.frame of subsetted detections that a user would
+#'  like to verify \strong{for a single species}. Accepts formatted results
+#'  only (see: \code{\link{birdnet_format}}).
+#' @param verification.library Character vector specifying which verification
+#' options should be shown to the user. Allows finer control to fit user's needs:
+#' user may specify whether a detection is a song, a call, a certain song or call
+#' type of interest, false alarm, unsure, or whatever the user needs. This enables
+#'  maximum flexibility for the user, but also requires some thoughtfulness so
+#'  that verification options remain consistent. BirdNET provides only species-level
+#'  confidence and does not classify to song or call types. Thus, depending on
+#'  the underlying research question and a verifier's expertise and familiarity
+#'  with a focal species, a user may find themselves in a situation where songs
+#'  are easily verified, but calls are not. Verification library provides the
+#'  flexibility to accommodate varying questions and levels of expertise, but
+#'  must be thought through by the user beforehand.
+#' @param audio.directory Top-level input directory path to audio files to be
+#' processed. Files are expected to have the naming convention SITEID_YYYYMMDD_HHMMSS.wav.
+#' @param results.directory Path to directory where formatted BirdNET results
+#'  have been stored.
+#' @param overwrite Logical flag for whether to overwrite existing verifications
+#' contained in a txt or csv file. Default = FALSE. If FALSE, no overwriting occurs,
+#'  and the user only verifies detections that are currently unverified. If TRUE,
+#'   the user is choosing to overwrite existing verifications.
+#' @param play Logical value specifying whether a temporary wave file should be
+#'  written to the working directory for the user to check during verification.
+#'  If TRUE, a temporary wave file for the detection is written to the working
+#'  directory, available for the user to listen to, and is deleted after the
+#'  user closes the player window and adds a verification. If FALSE, no temporary
+#'   wave file is written.
+#' @param frq.lim Optional two-element numeric vector specifying frequency limits,
+#'  in kHz, to apply to the plotted spectrograms. Default = c(0, 12).
+#' @param buffer Numeric buffer, in seconds, to place around BirdNET's 3 second
+#' detection area (default = 1). Generally useful for providing acoustic "context"
+#'  around a detected event; of particular utility in cases where the target signal
+#'   exceeds BirdNET's 3 second detection window, or in which the detection window
+#'    overlaps with a partial signal.
 #' @param box.col Color of border box drawn around 3-second detection area.
-#' @param spec.col The colors used to plot verification spectrograms. Default = gray.3(). Spectrogram colors are adjustable, and users may create their own gradients for display. A few spectrogram color options are provided via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(), and topo.1(), all of which are based on existing R colors.
-#' @return Updates the 'verify' column of formatted BirdNET txt or csv files with user-input verifications.
+#' @param spec.col The colors used to plot verification spectrograms. Default = gray.3().
+#' Spectrogram colors are adjustable, and users may create their own gradients for
+#'  display. A few spectrogram color options are provided via the R package monitoR,
+#'  including gray.1(), gray.2(), gray.3(), rainbow.1(), and topo.1(), all of
+#'  which are based on existing R colors.
+#' @return Updates the 'verify' column of formatted BirdNET txt or csv files with
+#'  user-input verifications.
 #' @details
 #'
-#' This function was developed by the National Park Service Natural Sounds and Night Skies Division to process audio data using BirdNET. The "data" argument allows the user precise control over which detections to verify (e.g., a user could input only detections that exceed a desired confidence threshold, or only detections that have been identified for verification using a stratified sampling scheme).
+#' This function was developed by the National Park Service Natural Sounds and
+#' Night Skies Division to process audio data using BirdNET. The "data" argument
+#'  allows the user precise control over which detections to verify (e.g., a user
+#'  could input only detections that exceed a desired confidence threshold, or
+#'  only detections that have been identified for verification using a stratified
+#'  sampling scheme).
 #'
 #'
-#' Spectrograms show 3-second segment detected by BirdNET. Title of spectrogram indicates the recordingID of the file name, the start and end times of the detection in seconds, the species detection, and the confidence level of the detection from 0 to 1.
+#' Spectrograms show 3-second segment detected by BirdNET. Title of spectrogram
+#' indicates the recordingID of the file name, the start and end times of the
+#' detection in seconds, the species detection, and the confidence level of the
+#' detection from 0 to 1.
 #'
-#' MP3 files create issues in R unless you install 3rd party software (see ?monitoR::readMP3 for details), so this function will operate very slowly on MP3 files since they have to be converted to wave first. For a faster way to deal with verification of MP3 files, consider using the segments.py routine from the command line, as described at the \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer Github page}.
+#' MP3 files create issues in R unless you install 3rd party software (see
+#' ?monitoR::readMP3 for details), so this function will operate very slowly on
+#' MP3 files since they have to be converted to wave first. For a faster way to
+#' deal with verification of MP3 files, consider using the BirdNET Analyzer GUI
+#' "Segments" and "Review" options.
 #'
 #' @seealso  \code{\link{birdnet_analyzer}}, \code{\link{birdnet_format}}
 #' @import data.table monitoR tuneR
@@ -125,8 +172,13 @@ birdnet_verify <- function(
 {
 
   # TO DO-- a better way to "break" instead of esc?
+
   if(missing(verification.library)) {
     stop('Please input verification.library argument. See ?birdnet_verify.')
+  }
+
+  if(!'verify' %in% colnames(data)) {
+    stop('These data appear to be unformatted. To use this function, please format your data. See ?birdnet_format.')
   }
 
   if ('s' %in% verification.library) {

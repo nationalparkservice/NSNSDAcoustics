@@ -2,21 +2,60 @@
 
 #' @name birdnet_heatmap
 #' @title Plot heat maps of BirdNET detections by date
-#' @description Plot heat maps of BirdNET results for a selected species and above a selected confidence threshold by date for multiple or single year data. See Details.
-#' @param data Data.table or data.frame of BirdNET results that a user would like to plot. Generally, this data object may be preceded by a call to \code{\link{add_time_cols}}; all data should come from a single site and the object must contain columns named "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct). Multiple years of data are allowed in one dataset to enable easy comparison of vocal activity by year at a site.
+#' @description Plot heat maps of BirdNET results for a selected species and
+#' above a selected confidence threshold by date for multiple or single year data.
+#' See Details.
+#' @param data Data.table or data.frame of BirdNET results that a user would like to plot.
+#'  Generally, this data object may be preceded by a call to \code{\link{add_time_cols}};
+#'  all data should come from a single site and the object must contain columns named
+#'  "locationID" (character), "recordingID" (character), and "dateTimeLocal" (POSIXct).
+#'  Multiple years of data are allowed in one dataset to enable easy comparison of
+#'   vocal activity by year at a site.
 #' @param locationID Character input of the locationID for which data should be plotted.
 #' @param common.name Character input of the target species for which data should be plotted.
-#' @param conf.threshold Numeric input of the BirdNET confidence threshold above which data should be plotted. All detections below this confidence threshold will be discarded.
-#' @param dates.sampled Date or character vector of all dates sampled that should be visualized on the heat map. This information is required because your data input may only contain detection data, and not non-detection data (i.e., zeroes). For example, you might have recorded audio on 2021-03-14, but have no BirdNET detections in "data". This will result in an inaccurate visual. Since BirdNET results do not automatically contain non-detection data, it is incumbent on the user to input which dates were sampled.
-#' @param julian.breaks Optional numeric vector of julian date plotting breaks to use on the x axis. If omitted, will be computed automatically. Example inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9, and June 29 for non-leap year data); c(130:160) would graph every single date from May 10 to June 9 on the x axis (for non-leap year data). See also \code{\link{readable_julian_breaks}}. Please start with 1 for the first day of the year rather than 0.
-#' @param tz.local Character Olsen names timezone for local time at the monitoring location (e.g., 'America/Los_angeles').
-#' @param comparable.color.breaks Logical flag for whether to create heat map color breaks based on all species in the input data set or based only on the species of interest in this plot. TRUE means it will be easier to make straightforward comparisons between species, FALSE means activity contrasts within a single species will be easier to see.
-#' @return Heat map of BirdNET detections, where N is the number of detections for common.name above conf.threshold on any given day.
+#' @param conf.threshold Numeric input of the BirdNET confidence threshold above
+#' which data should be plotted. All detections below this confidence threshold
+#' will be discarded.
+#' @param dates.sampled Date or character vector of all dates sampled that should
+#'  be visualized on the heat map. This information is required because your data
+#'  input may only contain detection data, and not non-detection data (i.e., zeroes).
+#'  For example, you might have recorded audio on 2021-03-14, but have no BirdNET
+#'  detections in "data". This will result in an inaccurate visual. Since BirdNET
+#'  results do not automatically contain non-detection data, it is incumbent on
+#'  the user to input which dates were sampled.
+#' @param julian.breaks Optional numeric vector of julian date plotting breaks
+#' to use on the x axis. If omitted, will be computed automatically. Example
+#' inputs: c(140, 160, 180) would graph 3 breaks on the x axis (May 20, June 9,
+#' and June 29 for non-leap year data); c(130:160) would graph every single date
+#' from May 10 to June 9 on the x axis (for non-leap year data). See also
+#' \code{\link{readable_julian_breaks}}. Please start with 1 for the first day
+#' of the year rather than 0. \href{https://www.cdfa.ca.gov/ahfss/mpes/pdfs/Julian_Calendar.pdf}{This chart}
+#' might be helpful for choosing julian breaks.
+#' @param tz.local Character Olsen names timezone for local time at the monitoring
+#' location (e.g., 'America/Los_angeles').
+#' @param comparable.color.breaks Logical flag for whether to create heat map
+#' color breaks based on all species in the input data set or based only on the
+#' species of interest in this plot. TRUE means it will be easier to make
+#' straightforward comparisons between species, FALSE means activity contrasts
+#' within a single species will be easier to see.
+#' @return Heat map of BirdNET detections, where N is the number of detections
+#' for `common.name` above `conf.threshold` on any given day.
 #' @details
-#' This function was developed by the National Park Service Natural Sounds and Night Skies Division. It is intended to provide exploratory plotting for summarizing and visualizing BirdNET results.
+#' This function was developed by the National Park Service Natural Sounds and
+#' Night Skies Division. It is intended to provide exploratory plotting for
+#' summarizing and visualizing BirdNET results.
 #'
-#' Function returns a heatmap of BirdNET detections, where N is the number of detections for common.name above conf.threshold on any given day. Note that if you have different sampling efforts on different days, the heat map "as is" may not accurately visualize your target species' vocalization effort. In this case, you may wish to do some preprocessing to your data input to control for differences in sampling effort on different days.
+#' Function returns a heatmap of BirdNET detections, where N is the number of
+#' detections for `common.name` above `conf.threshold` on any given day. Note that
+#' if you have different sampling efforts on different days, the heat map "as is"
+#' may not accurately visualize your target species' vocalization effort. In
+#' this case, you may wish to do some preprocessing to your data input to control
+#' for differences in sampling effort on different days.
 #'
+#' For best results, use \code{\link{birdnet_format}} to produce data inputs for
+#' this function. Function will also attempt to plot unformatted data, but due
+#' to various changes in BirdNET-Analyzer output columns over the years, be
+#' aware that results may not be as intended if inputting unformatted data.
 #'
 #' @seealso  \code{\link{birdnet_barchart}} \code{\link{birdnet_heatmap_time}}
 #' @import data.table ggplot2 lubridate monitoR tuneR viridis
@@ -94,11 +133,16 @@ birdnet_heatmap <- function(
     stop('Missing input dates.sampled. See ?birdnet_heatmap for details. Please input dates.sampled, a Date vector or character vector of all dates sampled that should be visualized on the heatmap. This information is required because your data input may only contain detection data, and not non-detection data (i.e., zeroes). For example, you might have recorded audio on 2021-03-14, but have no BirdNET detections in "data". This will result in an inaccurate visual. Since BirdNET results do not automatically contain non-detection data, it is incumbent on the user to input which dates were sampled.')
   }
 
+  if(missing(tz.local)) {
+    tz.local <- tz(data$dateTimeLocal)
+    message('\nYou didn\'t put anything in the `tz.local` argument; using `tz.local = ', tz.local, '` based on your data. If this is wrong, quit function and input your desired value.')
+  }
+
   data <- as.data.table(data)
 
   # Make sure dat has year, date, and julian.date
   data[,year := year(dateTimeLocal)]
-  data[,date := as.Date(dateTimeLocal)]
+  data[,date := as.Date(dateTimeLocal, tz = tz.local)]
   data[,julian.date := yday(dateTimeLocal)]
 
   # Ensure date data type
@@ -107,8 +151,16 @@ birdnet_heatmap <- function(
   # Avoid any strange behavior with data.table by reference
   locid <- locationID
 
+  # Check and correct column type from previous birdnet column outputs
+  if (any(c('common.name', 'Common name', 'Confidence') %in% colnames(data))) {
+    colnames(data)[colnames(data) %in% c('common.name', 'Common name')] <- 'common_name'
+    colnames(data)[colnames(data) %in% c('Confidence')] <- 'confidence'
+    message('\nIt looks like you are using unformatted data. We\'ll try to plot your input data anyway, but please consider using the function birdnet_format() to ensure best data formatting, otherwise you may encounter unexpected results in this function and R package.')
+  }
+
   # Create readable julian breaks
   if(missing(julian.breaks)) {
+    message('\nMissing `julian.breaks` argument, so we are making an educated guess for you. If you do not like how the x-axis looks, consider customizing the `julian.breaks` argument.')
     brks <- readable_julian_breaks(
       data = data[locationID == locid], # base off largest breadth of input data?
       posix.column = 'date',
@@ -138,7 +190,7 @@ birdnet_heatmap <- function(
               & locationID == locid]
 
   if (nrow(dts) == 0) {
-    message(paste0('No detections to graph for common.name = ', common.name, ', conf.threshold = ', conf.threshold, ', and locationID = ', locationID, '.'))
+    message(paste0('\nNo detections to graph for common.name = ', common.name, ', conf.threshold = ', conf.threshold, ', and locationID = ', locationID, '.'))
     return(NULL)
   }
 
@@ -202,6 +254,7 @@ birdnet_heatmap <- function(
     scale_x_continuous(expand = c(0, 0),
                        breaks = brks$julian.date,
                        labels = brks$date.lab,
+                       # limits = range(brks$julian.date)
                        limits = range(yday(dates.sampled), na.rm = TRUE)) +
     scale_y_discrete(expand = c(0, 0)) +
     labs(title = paste0(unique(dtn$locationID), ' - ', common.name),

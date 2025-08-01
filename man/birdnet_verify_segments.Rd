@@ -30,11 +30,11 @@ Returns a CSV of user-input verifications.
 (BETA) Interactive function that produces spectrograms and wave clips enabling a user to verify BirdNET "segments".
 }
 \details{
-This function was developed by the National Park Service Natural Sounds and Night Skies Division to process and explore audio data using BirdNET.
+This function was developed by the National Park Service Natural Sounds and
+Night Skies Division to process and explore audio data using BirdNET.
 
-Spectrograms show a segment detected by BirdNET. Title of spectrogram indicates the segment audio file name.
-
-MP3 files create issues in R unless you install 3rd party software (see ?monitoR::readMP3 for details), so this function will operate very slowly on MP3 files since they have to be converted to wave first. For a faster way to deal with verification of MP3 files, consider using the segments.py routine from the command line, as described at the \href{https://github.com/kahst/BirdNET-Analyzer}{BirdNET-Analyzer Github page}.
+Spectrograms show a segment detected by BirdNET. Title of spectrogram indicates
+the segment audio file name.
 }
 \examples{
 \dontrun{

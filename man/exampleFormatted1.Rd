@@ -14,7 +14,8 @@ data(exampleFormatted1)
 Sample of formatted BirdNET output.
 }
 \details{
-The exampleFormatted1 object can be used to experiment with birdnet_* functions, such as \code{\link{birdnet_gather}}
+The exampleFormatted1 object can be used to experiment with birdnet_*
+functions, such as \code{\link{birdnet_gather}}
 }
 \examples{
 # Load the dataset

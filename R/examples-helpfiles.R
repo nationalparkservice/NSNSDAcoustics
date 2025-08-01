@@ -3,7 +3,8 @@
 #' @title exampleAudio1
 #' @description Sample recording (audio) data stored as a \code{Wave} file.
 #' @format An object of class \code{Wave} containing 6 slots.
-#' @details The exampleAudio1 object can be used to experiment with functions that use audio data.
+#' @details The exampleAudio1 object can be used to experiment with functions
+#' that use audio data.
 #' @docType data
 #' @keywords datasets
 #' @name exampleAudio1
@@ -20,7 +21,8 @@ NULL
 #' @title exampleAudio2
 #' @description Sample recording (audio) data stored as a \code{Wave} file.
 #' @format An object of class \code{Wave} containing 6 slots.
-#' @details The exampleAudio2 object can be used to experiment with functions that use audio data.
+#' @details The exampleAudio2 object can be used to experiment with functions
+#' that use audio data.
 #' @docType data
 #' @keywords datasets
 #' @name exampleAudio2
@@ -39,7 +41,8 @@ NULL
 #' @title exampleNVSPL
 #' @description Sample NVSPL data stored as data.frames within a list object.
 #' @format An object of class \code{list} containing 9 data.frames.
-#' @details The exampleNVSPL object can be used to experiment with functions that use NVSPL data. See the example code given in \code{\link{nvspl_to_ai}}.
+#' @details The exampleNVSPL object can be used to experiment with functions
+#' that use NVSPL data. See the example code given in \code{\link{nvspl_to_ai}}.
 #' @docType data
 #' @keywords datasets
 #' @name exampleNVSPL
@@ -72,7 +75,8 @@ NULL
 #' @title exampleBirdNET1
 #' @description Sample of raw BirdNET output.
 #' @format An object of class \code{data.frame} containing 14 columns.
-#' @details The exampleBirdNET1 object can be used to experiment with birdnet_* functions, such as \code{\link{birdnet_format}}
+#' @details The exampleBirdNET1 object can be used to experiment with birdnet_*
+#' functions, such as \code{\link{birdnet_format}}
 #' @docType data
 #' @keywords datasets
 #' @name exampleBirdNET1
@@ -104,7 +108,8 @@ NULL
 #' @title exampleBirdNET2
 #' @description Sample of raw BirdNET output.
 #' @format An object of class \code{data.frame} containing 14 columns.
-#' @details The exampleBirdNET2 object can be used to experiment with birdnet_* functions, such as \code{\link{birdnet_format}}
+#' @details The exampleBirdNET2 object can be used to experiment with birdnet_*
+#' functions, such as \code{\link{birdnet_format}}
 #' @docType data
 #' @keywords datasets
 #' @name exampleBirdNET2
@@ -137,7 +142,8 @@ NULL
 #' @title exampleFormatted1
 #' @description Sample of formatted BirdNET output.
 #' @format An object of class \code{data.frame} containing 17 columns.
-#' @details The exampleFormatted1 object can be used to experiment with birdnet_* functions, such as \code{\link{birdnet_gather}}
+#' @details The exampleFormatted1 object can be used to experiment with birdnet_*
+#' functions, such as \code{\link{birdnet_gather}}
 #' @docType data
 #' @keywords datasets
 #' @name exampleFormatted1
@@ -167,7 +173,8 @@ NULL
 #' @title exampleFormatted2
 #' @description Sample of formatted BirdNET output.
 #' @format An object of class \code{data.frame} containing 17 columns.
-#' @details The exampleFormatted2 object can be used to experiment with birdnet_* functions, such as \code{\link{birdnet_gather}}
+#' @details The exampleFormatted2 object can be used to experiment with birdnet_*
+#' functions, such as \code{\link{birdnet_gather}}
 #' @docType data
 #' @keywords datasets
 #' @name exampleFormatted2
@@ -256,7 +263,8 @@ NULL
 #' @title exampleHeatmapData
 #' @description Example data for \code{\link{birdnet_heatmap}} and \code{\link{birdnet_heatmap_time}}
 #' @format An object of class \code{data.table} and \code{data.frame} containing 14 columns.
-#' @details The exampleHeatmapData object can be used to experiment with birdnet_heatmap* functions.
+#' @details The exampleHeatmapData object can be used to experiment with
+#' birdnet_heatmap* functions.
 #' @docType data
 #' @keywords datasets
 #' @name exampleHeatmapData
@@ -274,7 +282,8 @@ NULL
 #' @title exampleDatesSampled
 #' @description Example data for \code{\link{birdnet_heatmap}} and \code{\link{birdnet_heatmap_time}}
 #' @format An object of class \code{Date} of length 430.
-#' @details The exampleDatesSampled object can be used to experiment with birdnet_heatmap* functions.
+#' @details The exampleDatesSampled object can be used to experiment with
+#' birdnet_heatmap* functions.
 #' @docType data
 #' @keywords datasets
 #' @name exampleDatesSampled
@@ -306,3 +315,26 @@ NULL
 #'
 #'
 NULL
+
+#' @title exampleVerified
+#' @description Example data for \code{\link{birdnet_conf_threshold}}
+#' @format An object of class \code{data.table} and \code{data.frame} with 828
+#' rows and 17 variables.
+#' @details The exampleVerified object illustrates what a typical data.frame /
+#' data.table looks like with a column of verification data from the \code{\link{birdnet_verify}}
+#' function. It can also be used to test the \code{\link{birdnet_conf_threshold}}
+#' function.
+#' @docType data
+#' @keywords datasets
+#' @name exampleVerified
+#' @usage data(exampleVerified)
+#' @examples
+#' # Load the dataset
+#' data(exampleVerified)
+#'
+#' # View structure
+#' str(exampleVerified, max.level = 1)
+#'
+#'
+NULL
+

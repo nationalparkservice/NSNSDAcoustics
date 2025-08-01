@@ -14,26 +14,43 @@ readable_julian_breaks(
 )
 }
 \arguments{
-\item{data}{A data.frame or data.table that must contain a column of class "POSIXct" "POSIXt".}
+\item{data}{A data.frame or data.table that must contain a column of class
+"POSIXct" "POSIXt".}
 
 \item{posix.column}{Character name of the "POSIXct" "POSIXt" column in 'data'.}
 
-\item{format}{Character string containing your desired date label components; any options in c('\%d', '\%m', '\%b', '\%B', '\%y', '\%Y'). For example, c('\%Y', '\%m', '\%d') used with sep = '-' results in labels like: '2022-01-28'. See Details. Do not use '\%y' or '\%Y' options if data contains multiple years.}
+\item{format}{Character string containing your desired date label components;
+any options in c('\%d', '\%m', '\%b', '\%B', '\%y', '\%Y'). For example,
+c('\%Y', '\%m', '\%d')
+used with sep = '-' results in labels like: '2022-01-28'. See Details. Do not
+use '\%y' or '\%Y' options if data contains multiple years.}
 
-\item{sep}{Character value used to separate options in format. Any value may be used, but common uses would be options in c(' ', '-', '/').}
+\item{sep}{Character value used to separate options in format. Any value may
+be used, but common uses would be options in c(' ', '-', '/').}
 
-\item{timestep}{Integer specifying the number of days that should be spaced between each label. For example, a value of 14 means labels will occur every two weeks.}
+\item{timestep}{Integer specifying the number of days that should be spaced
+between each label. For example, a value of 14 means labels will occur every
+two weeks.}
 
-\item{julian.breaks}{Optional integer vector specifying the values of julian dates to use; will override timestep argument.}
+\item{julian.breaks}{Optional integer vector specifying the values of julian
+dates to use; will override timestep argument.}
 }
 \value{
-A data.table with two columns: julian.date (integer) and date.lab (character) which can be used downstream in ggplot with the scale_x_continuous() element to customize human-readable dates on the x-axis.
+A data.table with two columns: julian.date (integer) and date.lab
+(character) which can be used downstream in ggplot with the scale_x_continuous()
+element to customize human-readable dates on the x-axis.
 }
 \description{
-Create human-readable labels for julian dates, to be used downstream in plots. Particularly useful for generating plots that compare multiple years of data in one graph, especially when dealing with leap years (see Details).
+Create human-readable labels for julian dates, to be used
+downstream in plots. Particularly useful for generating plots that compare
+multiple years of data in one graph, especially when dealing with leap years
+(see Details).
 }
 \details{
-Note: to accommodate multi-year datasets that contain leap years (and thus, differing julian dates for the same human-readable date label), the behavior of this function is to remove leap year labels from the output data for clean plotting.
+Note: to accommodate multi-year datasets that contain leap years (and thus,
+differing julian dates for the same human-readable date label), the behavior
+of this function is to remove leap year labels from the output data for clean
+plotting.
 
 The format argument accepts any of the following options:
 
@@ -51,39 +68,39 @@ The format argument accepts any of the following options:
 \dontrun{
 
 # Read in example data
-data(exampleAI)
+data(exampleHeatmapData)
 
-exampleAI <- data.table(exampleAI)
-
-# Add a posix date time column
-exampleAI[,dateTime := lubridate::ymd_hms(
-     paste0(Date,' ', Hr, ':', Min, ':', Sec),
-     tz = 'America/Anchorage')
-]
-
-# Add year and julian.date columns
-exampleAI[, Year := factor(lubridate::year(dateTime))]
-exampleAI[,julian.date := lubridate::yday(dateTime)]
+# Add a posix.column either manually or with add_time_cols:
+dat <- exampleHeatmapData
+dat[ ,recordingID := basename(filepath)]
+dat <- add_time_cols(
+ dt = dat,
+ tz.recorder = 'America/Los_angeles',
+ tz.local = 'America/Los_angeles'
+)
 
 # Create human-readable julian breaks
 brks <- readable_julian_breaks(
-  data = exampleAI,
-  posix.column = 'dateTime',
+  data = dat,
+  posix.column = 'dateTimeLocal',
   format = c('\%B', '\%d'),
   sep = ' ',
   timestep = 30
 )
 
-# Example plot of using breaks with human-readable data across years
-# WARNING: May take a moment to plot the following
-ggplot(exampleAI, aes(julian.date, ACIoutI, col = Year, group = Year)) +
- geom_smooth(method = 'loess', aes(fill = Year)) +
+# Example plot using breaks with human-readable data across years
+dat[,julian.date := lubridate::yday(date)]
+plot.dat <- dat[,mean(confidence), by = c('julian.date', 'year')]
+ggplot(plot.dat, aes(julian.date, V1, color = factor(year))) +
+ geom_point() +
  scale_x_continuous(expand = c(0, 0),
                     breaks = brks$julian.date,
                     labels = brks$date.lab) +
  xlab('Date') +
- ylab('Acoustic Complexity Index') +
- theme(axis.text.x = element_text(angle = 90))
+ ylab('Mean BirdNET Confidence Value') +
+ theme(axis.text.x = element_text(hjust = 1, angle = 45),
+       legend.title = element_blank()
+ )
 
 }
 }
