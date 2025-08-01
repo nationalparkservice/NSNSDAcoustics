@@ -2,6 +2,8 @@
 
 This repository provides a place for National Park Service [Natural Sounds and Night Skies Division (NSNSD)](https://www.nps.gov/orgs/1050/index.htm) staff to develop and modernize several bioacoustics workflows. 
 
+**This worfklow was developed for Windows 10 and 11, BirdNET-Analyzer releases V1.1.x through 2.1.1, and model version V2.4. It has not been tested on other systems. Breaking changes were introduced between BirdNET Analyzer v1 and v2, and the latest commits to this repository reflect a development phase in which we are attempting to maintain backward compatibility between BirdNET Analyzer v1.5.1 and v2.1.1.** 
+
 If you encounter a problem, please submit it to [Issues](https://github.com/nationalparkservice/NSNSDAcoustics/issues).
 
 # Table of Contents
@@ -61,17 +63,15 @@ NSNSDAcoustics depends on the R package `data.table`, which enables fast queryin
 
 ## Running BirdNET from RStudio
 
-**This worfklow was developed for Windows 10, BirdNET-Analyzer releases V1.1.x through 1.5.x, and model version V2.4. It has not been tested on other systems.** 
-
 [BirdNET](https://birdnet.cornell.edu/) is a bird sound recognition program developed by the [Cornell Center for Conservation Bioacoustics](https://www.birds.cornell.edu/ccb/). The [BirdNET-Analyzer Github repository](https://github.com/kahst/BirdNET-Analyzer) provides a promising free tool for quickly processing large volumes of audio data and detecting sounds. 
 
 ### (1) Step 1. Download the fully packaged BirdNET Analyzer for Windows. 
 
-As of this writing, [version 1.5.1](https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.5.1) is the approved version for NPS. For a signed version of this software, NPS staff please reach out to Cathleen. 
+As of this writing, [version 1.5.1](https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.5.1) is the approved version for NPS. For a signed version of this software, NPS staff please reach out to Cathleen. We are currently testing [version 2.1.1](https://github.com/birdnet-team/BirdNET-Analyzer/releases/tag/v2.1.1) and the latest commits to this repository should be considered in development phase.
 
 ### (2) Step 2. Familiarize yourself with the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html#birdnet_analyzer.cli-analyzer_parser-named-arguments).
 
-These command line arguments are the building blocks needed to construct a statement that tells BirdNET where to find your audio (--i), where to place result files (--o), what detection sensitivity to use (--sensitivity), where to find a species list if you are using one (--slist), how many CPU threads to use (--threads), what type of result to produce (--rtype) and more. **To use the functions in this package, you will need to specify --rtype 'r'.** Once you understand the command line arguments, you are ready to try using BirdNET from the Windows command line. 
+These command line arguments are the building blocks needed to construct a statement that tells BirdNET where to find your audio, where to place result files, what detection sensitivity to use, where to find a species list if you are using one, how many CPU threads to use, what type of result to produce, and more. **To use the functions in this package, if you are using v1 of BirdNET Analyzer, please specify rtype = "r". If you are using v2 of BirdNET Analyzer, please specify rtype = "csv" and additional.columns = c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model").** 
 
 ### (3) Step 3. (Optional) Test your BirdNET Installation. 
 
@@ -82,9 +82,15 @@ Test that BirdNET is functional by opening up a Windows Command Prompt (see belo
 </p>
 
 
-Next, you can construct a statement for the command prompt. First, you'll need to know the full file path for your BirdNET-Analyzer.exe. This file path should end in "../Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe". Your statement might look something like the following example, or it might include additional command line arguments: 
+Next, you can construct a statement for the command prompt. First, you'll need to know the full file path for your BirdNET-Analyzer.exe. This file path should end in "../Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe". Your statement might look something like the following examples, or it might include additional command line arguments:
+
+**BirdNET Analyzer v1 example:**
 
 `"C:/your-path-here/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe" --i "D:/AUDIO" --o "D:/RESULTS" --lat -1 --lon -1 --week -1 --slist "D:/species_list.txt" --rtype "r" --min_conf 0.1 --sensitivity 1.0 --threads 4`
+
+**BirdNET Analyzer v2 example:**
+
+`"C:/your-path-here/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe" "D:/AUDIO" --output "D:/RESULTS" --lat -1 --lon -1 --week -1 --slist "D:/species_list.txt" --rtype "csv" --min_conf 0.1 --sensitivity 1.0 --threads 4 --additional_columns "lat" "lon" "week" "overlap" "sensitivity" "min_conf" "species_list" "model"`
 
 Please edit this example to reflect file paths and folder names on your machine, and then modify, omit, or include command line arguments as desired. If BirdNET-Analyzer writes files to your results folder, you were successful in getting everything installed. 
 
@@ -135,9 +141,9 @@ write.table(
 )
 ```
 
-Now, we're set up to run the function. `birdnet_analyzer()` takes a large number of arguments. First, `birdnet.version` specifies which release of BirdNET-Analyzer you are using (e.g., 'v1.5.1'). In `birdnet.path`, 	specify the absolute path to the BirdNET-Analyzer.exe installation on your machine. e.g., "C:/your-path-here/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe". All of the remaining arguments will look very similar to the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html). For example, `i.audio` requires an absolute path to an input file or folder, and `o.results` requires an absolute path to an output file or folder. See `?birdnet_analyzer()` help documentation or BirdNET-Analyzer's documentation for more details. 
+Now, we're set up to run the function. `birdnet_analyzer()` takes a large number of arguments. First, `birdnet.version` specifies which release of BirdNET-Analyzer you are using (e.g., "v2.1.1", "v1.5.1"). In `birdnet.path`, 	specify the absolute path to the BirdNET-Analyzer.exe installation on your machine. e.g., "C:/your-path-here/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe". All of the remaining arguments will look very similar to the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html). For example, `i.audio` requires an absolute path to an input file or folder, and `o.results` requires an absolute path to an output file or folder. See `?birdnet_analyzer()` help documentation or BirdNET-Analyzer's documentation for more details. 
 
-Below, we show pseudocode that you can modify to test the function. Note that many arguments are missing because many use defaults. Be sure to familiarize yourself with each argument. You may wish to test various combinations of parameters and observe how they affect results.
+Below, we show pseudocode that you can modify to test the function. Note that many arguments are missing because many use defaults. Be sure to familiarize yourself with each argument. You may wish to test various combinations of parameters and observe how they affect results. **To use the functions in this package, if you are using v1 of BirdNET Analyzer, please specify rtype = "r". If you are using v2 of BirdNET Analyzer, please specify rtype = "csv" and additional.columns = c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model").** 
 
 ```r
 
@@ -145,18 +151,18 @@ Below, we show pseudocode that you can modify to test the function. Note that ma
 
 # Because this function calls an external program (BirdNET-Analyzer.exe),
 # the example function below will not be modifiable to run for you unless
-# you have already installed BirdNET-Analyzer V1.x.x for Windows.
+# you follow the instructions given in the NSNSDAcoustics documentation here:
+# https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md
 
 # Run all audio data in a directory through BirdNET
-# Modify the birdnet.path, i.audio, o.results, and
-# slist arguments with appropriate paths for your machine
-
 birdnet_analyzer(
- birdnet.version = 'v1.5.1',
- birdnet.path = 'absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe',
- i.audio = 'absolute/path/example-audio-directory',
- o.results = 'absolute/path/example-results-directory',
- slist = 'absolute/path/species_list.txt',
+ birdnet.version = "v2.1.1",
+ birdnet.path = "absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe",
+ i.audio = "absolute/path/example-audio-directory",
+ o.results = "absolute/path/example-results-directory",
+ slist = "absolute/path/species_list.txt",
+ rtype = "csv",
+ additional.columns =  additional.columns = c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model")
 )
 
 ```
@@ -173,7 +179,7 @@ species.list.path <- 'D:/species_list.txt'
 
 for (i in 1:length(audio.folders)) {
  birdnet_analyzer(
-  birdnet.version = 'v1.5.1',
+  birdnet.version = 'v2.1.1',
   birdnet.path = my.birdnet.path,
   i.audio = audio.folders[i],    
   o.results = result.folders[i], 
@@ -185,7 +191,7 @@ for (i in 1:length(audio.folders)) {
 
 ### Additional Tips and Notes: 
 
-* You can specify any option in `rtype`, but to use other functions in this package, please set `rtype = 'r'`.
+* You can specify any option in `rtype`, but to use other functions in this package, please set `rtype = 'r'` if you are using BirdNET Analyzer v1, and set `rtype = 'csv'` and `additional.columns = c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model")` if you are using BirdNET Analyzer v2.
 * The `threads` argument specifies how many files BirdNET will work on at once, and it depends on the number of logical processors your machine has. On a Windows machine, to figure out how many cores your processor has, press **CTRL + SHIFT + ESC** to open Task Manager. Select the **Performance** tab to see how many cores and logical processors your PC has. A rule of thumb is to never set "threads" to more than the number of logical processors minus 1. For example, your machine might have 8 logical processors, in which case you would set "threads" to no higher than 7. 
 
 If you're having trouble running `birdnet_analyzer()`, note that under the hood, it is simply constructing a statement for the command line and wrapping a `system()` call around the statement to send it to BirdNET-Analyzer.exe. You can construct your own similar commands and loop through them like so: 
@@ -229,7 +235,7 @@ If you have a large number of audio files, and plan to monitor for a long time a
 
 ### Reformat raw BirdNET results
 
-`birdnet_format()` is a simple function that reformats the raw BirdNET `rtype = 'r'` results with a "recordingID" column for easier data manipulation, a "verify" column to support manual verification of detection results, and a "timezone" column to clarify the timezone setting used by the audio recorder. 
+`birdnet_format()` is a simple function that reformats the raw BirdNET results with a "recordingID" column for easier data manipulation, a "verify" column to support manual verification of detection results, and a "timezone" column to clarify the timezone setting used by the audio recorder. This function will only work if you have set `rtype = 'r'` when using BirdNET Analyzer v1, or `rtype = 'csv'` and `additional.columns = c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model")` when using BirdNET Analyzer v2.
 
 Below, we'll walk through the documentation and example helpfiles for `birdnet_format()`. Always start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
 
