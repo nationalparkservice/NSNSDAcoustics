@@ -7,7 +7,7 @@
 #' and/or (2) common machine learning performance evaluation metrics (i.e., choose
 #'  the lowest BirdNET confidence threshold that maximizes the precision score or F1
 #'  score, or the highest confidence threshold that maximizes the recall score)
-#'  as in \href{https://irma.nps.gov/DataStore/Reference/Profile/2309071}{Balantic (2025)}..
+#'  as in \href{https://irma.nps.gov/DataStore/Reference/Profile/2309071}{Balantic (2025)}.
 #' @param data Data.table or data.frame of detection data with verifications.
 #' Columns must include `common_name` (character), `confidence` (numeric) and a
 #'  `verify` column that indicates 1 for true positive and 0 for false positive.
