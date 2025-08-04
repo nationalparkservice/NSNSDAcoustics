@@ -10,7 +10,7 @@ If you encounter a problem, please submit it to [Issues](https://github.com/nati
 
 - **[Installing NSNSDAcoustics](#installing-nsnsdacoustics)**
 - **[Running BirdNET from RStudio](#running-birdnet-from-rstudio)**: Go here if you want to use your Windows machine to process files through RStudio [BirdNET-Analyzer]([https://birdnet.cornell.edu/](https://github.com/kahst/BirdNET-Analyzer)). Requires some setup. 
-- **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET outputs in hand from rtype = 'r', and want to use R to wrangle, visualize, and verify the results.
+- **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET outputs in hand from `rtype = 'r'` (v1) or `rtype = 'csv'` (v2), and want to use R to wrangle, visualize, and verify the results.
   * **[Reformat raw BirdNET results](#reformat-raw-birdnet-results)**
   * **[Gather BirdNET results](#gather-birdnet-results)**
   * **[Verify BirdNET results](#verify-birdnet-results)**
@@ -18,6 +18,7 @@ If you encounter a problem, please submit it to [Issues](https://github.com/nati
   * **[Create barcharts of BirdNET detections](#create-barcharts-of-birdnet-detections)**
   * **[Create heat maps of BirdNET detections by date](#create-heat-maps-of-birdnet-detections-by-date)**
   * **[Create heat maps of BirdNET detections by date and time](#create-heat-maps-of-birdnet-detections-by-date-and-time)**
+  * **[Generate options for BirdNET confidence thresholds](#generate-options-for-birdnet-confidence-thresholds)**
 
 - **[Converting wave audio files to NVSPL tables with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-tables-with-wave_to_nvspl)**: Go here for a PAMGuide wrapper function to convert wave files to NVSPL formatted tables.
 - **[Converting NVSPL files to acoustic indices with nvspl_to_ai](#converting-nvspl-files-to-acoustic-indices-with-nvspl_to_ai)**: Go here to convert NVSPL.txt files into a CSV of acoustic indices.
@@ -928,6 +929,75 @@ for (i in 1:length(sp)) {
 <p align="center">
 <img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/heatmap-date-time-loop.png 
      alt="Heatmaps of detections of focal species at a monitoring location. The x axis shows date, the y axis shows time of day, and daily detection value is visualized from low (purple) to high (yellow)."><br>
+</p>
+
+
+
+### Generate options for BirdNET confidence thresholds
+
+`birdnet_conf_threshold()` allows the user to generate options for BirdNET confidence thresholds based on (1) logistic regression as in [Wood and Kahl (2024)](https://link.springer.com/article/10.1007/s10336-024-02144-5) and/or (2) common machine learning performance evaluation metrics (i.e., choose the lowest BirdNET confidence threshold that maximizes the precision score or F1 score, or the highest confidence threshold that maximizes the recall score) as in [Balantic (2025)](https://irma.nps.gov/DataStore/Reference/Profile/2309071).
+
+Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
+
+```r
+
+?birdnet_conf_threshold
+
+```
+The most important input to `birdnet_conf_threshold()` is a data.table or data.frame that includes BirdNET detection data with expert verifications. Your input data must include the columns `common_name` (character), `confidence` (numeric) and a `verify` column that indicates 1 for true positive and 0 for false positive. The data type of the verify column does not matter as long as it is composed of 1 and 0. You may need to do some minor reformatting of your data.table/data.frame to get the inputs ready. We illustrate below with example data: 
+
+```r
+data(exampleVerified)
+vers <- exampleVerified
+
+# Modify the verification column to become 0s and 1s
+vers[verify == 'n', verify := 0]
+vers[verify == 'y', verify := 1]
+```
+
+Additional arguments to the function include `probabilities`, which takes a vector of probability cutoffs to investigate for logistic regression, and `min.conf`, which requires the minimum BirdNET confidence value that you originally used when processing your data through BirdNET Analyzer. If `min.conf` is left blank, the function attempts to find a column named min_conf in your input data. 
+
+Finally, a few arguments allow you to control whether to produce output plots (`plot = TRUE`), or save plots to a folder of your choice (`plot.folder`) which is the recommended option if you have many species. If the plotting arguments are used, three plots are produced for each species: (1) plot showing logistic regression BirdNET score thresholds at the cutoffs given by the user in the probabilities argument, (2) plot illustrating machine learning performance metric scores at different BirdNET confidence thresholds, and (3) histograms showing BirdNET detection confidence score distributions for verified true positives (1) and false positives (0).
+
+```r
+# Generate confidence thresholds without generating plots
+birdnet_conf_threshold(
+   data = vers,
+   probabilities = c(0.85, 0.90, 0.95, 0.99),
+   plot = FALSE
+)
+```
+
+
+```r
+# Generate confidence thresholds and plots
+birdnet_conf_threshold(
+   data = vers,
+   probabilities = c(0.85, 0.90, 0.95, 0.99),
+   plot = TRUE
+)
+```
+
+```r
+# Generate confidence thresholds; save plots to folder instead of plotting in R
+dir.create('example-conf-threshold-plots') # create example folder
+birdnet_conf_threshold(
+   data = vers,
+   probabilities = c(0.75, 0.85, 0.90, 0.95, 0.99),
+   plot = FALSE,
+   plot.folder = 'example-conf-threshold-plots'
+)
+
+# Delete all temporary example files when finished
+unlink(x = 'example-conf-threshold-plots', recursive = TRUE)
+
+```
+Example of the trio of plots generated for each species: 
+
+**Click image for a larger version.**
+<p align="center">
+<img src=https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/images/conf-threshold-plots-single.png 
+     alt="Three plots generated from the birdnet_conf_threshold function, showing logistic regression score thresholds, machine learning performance metrics, and a histogram of true and false positive scores. Illustrated for Western Tanager."><br>
 </p>
 
 
