@@ -1,21 +1,22 @@
 # birdnet_conf_threshold ===============================================================
 
 #' @name birdnet_conf_threshold
-#' @title (BETA) Generate options for BirdNET confidence thresholds
+#' @title Generate options for BirdNET confidence thresholds
 #' @description Generate options for BirdNET confidence thresholds based on
-#' logistic regression a la \href{https://link.springer.com/article/10.1007/s10336-024-02144-5}{Wood and Kahl (2024)}
-#' and/or standard machine learning performance evaluation metrics (i.e., choose
-#'  the lowest BirdNET confidence threshold that maximizes the precision and F1
-#'  score, or the highest confidence threshold that maximizes the recall score).
+#' (1) logistic regression as in \href{https://link.springer.com/article/10.1007/s10336-024-02144-5}{Wood and Kahl (2024)}
+#' and/or (2) common machine learning performance evaluation metrics (i.e., choose
+#'  the lowest BirdNET confidence threshold that maximizes the precision score or F1
+#'  score, or the highest confidence threshold that maximizes the recall score)
+#'  as in \href{https://irma.nps.gov/DataStore/Reference/Profile/2309071}{Balantic (2025)}..
 #' @param data Data.table or data.frame of detection data with verifications.
 #' Columns must include `common_name` (character), `confidence` (numeric) and a
 #'  `verify` column that indicates 1 for true positive and 0 for false positive.
 #'  The data type of the `verify` column does not matter as long as it is
 #'  composed of 1 and 0.
-#' @param probabilities Vector of probability cutoffs to investigate.
-#' Default = `c(0.85, 0.90, 0.95)`.
-#' @param min.conf Input the minimum BirdNET confidence value that you
-#' originally used for your data in BirdNET Analyzer. If left blank, the
+#' @param probabilities Vector of probability cutoffs to investigate for logistic
+#' regression. Default = `c(0.85, 0.90, 0.95)`.
+#' @param min.conf Input the minimum BirdNET confidence value (`min_conf`) that you
+#' originally used when processing your data through BirdNET Analyzer. If left blank, the
 #' function attempts to find a `min_conf` column from your BirdNET results in `data`.
 #' @param plot Logical for whether to produce and display plot(s) in R.
 #' Default = `TRUE`. Note: if you have many species, see `plot.folder` argument
@@ -33,6 +34,8 @@
 #' \item{\strong{pr_true}: Probability that a detection is a true positive.}
 #' \item{\strong{confidence}: BirdNET confidence value to achieve the associated
 #'  probability of true positive.}
+#' \item{\strong{note}: Notes whether the confidence value for this row is below
+#'  the minimum confidence value in your data.}
 #' }
 #'
 #' \strong{machine_learning_performance_results}: Table of confidence score
@@ -63,11 +66,12 @@
 #'
 #' This function was developed by the National Park Service Natural Sounds and
 #' Night Skies Division to assist with choosing BirdNET confidence thresholds
-#' either based on logistic regression or based on machine learning performance
-#' evaluation metrics (F1, precision, recall). Note that there may be multiple
-#' BirdNET confidence thresholds that maximize the F1, precision, or recall. This
+#' either based on logistic regression as in \href{https://link.springer.com/article/10.1007/s10336-024-02144-5}{Wood and Kahl (2024)}
+#' or based on common machine learning performance evaluation metrics (F1, precision, recall) as in \href{https://irma.nps.gov/DataStore/Reference/Profile/2309071}{Balantic (2025)}.
+#' Note that there may be multiple
+#' BirdNET confidence thresholds that maximize the F1, precision, or recall score. This
 #' function returns the lowest possible BirdNET confidence threshold you can choose
-#' that will still maximize the precision and the F1 score. It also returns the
+#' that will still maximize the precision score or F1 score. It also returns the
 #' highest possible BirdNET confidence threshold you can use while still maximizing
 #' recall.
 #'
@@ -142,13 +146,13 @@ birdnet_conf_threshold <- function(
   if (sum(check.cols) != 3) {
     stop('Your input to the `data` argument is missing required column name(s): ',
          req.cols[!(req.cols %in% colnames(data))],
-         '\nSee `?birdnet_conf_threshold` for details')
+         '\nSee `?birdnet_conf_threshold` for details.')
   }
 
   if(setequal(check.verify, c("0", "1")) == FALSE) {
     stop('Please ensure `verify` column only contains 0 or 1. Your `verify` column has the following invalid values: ',
          paste0(check.verify[!(check.verify %in% c('0', '1'))], collapse = ', '),
-         '\nSee `?birdnet_conf_threshold` for details')
+         '\nSee `?birdnet_conf_threshold` for details.')
   }
 
   message('Found ', length(sp), ' species in this dataset. Computing confidence thresholds and machine learning performance metrics... \n')
@@ -159,13 +163,13 @@ birdnet_conf_threshold <- function(
 
   sp.results.lr <- sp.results.ml <- warnings.for <- list()
 
- # Establish minimum confidence value
+  # Establish minimum confidence value
   if(missing(min.conf)) {
     min.conf <- unique(data$min_conf)
     if (is.null(min.conf)) {
-      stop('You did not input a minimum BirdNET confidence value in the `min.conf` argument, and we can\'t find one in your `data` input columns. Please input desired value to `min.conf`.\n')
+      stop('You did not input a minimum BirdNET confidence value in the `min.conf` argument, and we can\'t find one in your `data` input columns. Please input desired value to `min.conf`. See `?birdnet_conf_threshold` for details.\n')
     } else {
-      message('Using `min.conf = `', min.conf, ' based on your data input. If this behavior is undesired, please exit the function and input desired value to `min.conf`.\n')
+      message('Using `min.conf` = ', min.conf, ' based on your data input. If this behavior is undesired, please exit the function and input desired value to `min.conf`.\n')
     }
   }
 
@@ -184,12 +188,11 @@ birdnet_conf_threshold <- function(
 
     if (plot == TRUE) {
 
-      hist.plot <- ggplot(data = vers, aes(x = confidence)) +
+      hist.plot <- ggplot2::ggplot(data = vers, aes(x = confidence)) +
         geom_histogram(bins = 30) +
         facet_grid(~verify) +
         ggtitle(paste0('Score Distribution for ', this.sp)) +
-        scale_x_continuous(#breaks = pretty(seq(from = min.conf, to = 1, by = 0.1)),
-                           expand = c(0,0)) +
+        scale_x_continuous(expand = c(0,0)) +
         scale_y_continuous(expand = c(0,0)) +
         xlab('BirdNET Confidence Value') +
         ylab('Count') +
@@ -208,20 +211,18 @@ birdnet_conf_threshold <- function(
     }
 
     # Generate regression curve to see the probability of a true positive
-    # if we use certain birdnet confidence thresholds.
-    # Compute the logit of the confidence -- we do this because the confidence
-    # variable needs be transformed so that it's not bound between 0 & 1
+    # for different birdnet confidence thresholds
+    # Compute logit of confidence -- make sure it is not bound between 0 & 1
     vers[,logit.confs := log(confidence/(1 - confidence))]
 
-    # Run the logistic regression model
-    vers[,verify := factor(verify)] # 0/1 verify becomes a factor data type for the model
+    # 0/1 verify variable becomes a factor data type for the model
+    vers[,verify := factor(verify)]
 
-    # Run logistic regression, catch any warnings and print to console for the user
+    # Run logistic regression, catch any warnings and print to console for user
     x <- tryCatch({
       mylogit <- glm(verify ~ logit.confs, data = vers, family = 'binomial')
     }, warning = function(w) {
-      ## do something about the warning, maybe return 'NA'
-      message('     ==> ', this.sp, ' logistic regression has a warning: ', conditionMessage(w))
+      message('     ==> ', this.sp, ' logistic regression has a warning: ', conditionMessage(w), '\n')
       NA
     })
     suppressWarnings(mylogit <- glm(verify ~ logit.confs, data = vers, family = 'binomial'))
@@ -242,19 +243,27 @@ birdnet_conf_threshold <- function(
                      pr.true = probabilities,
                      confidence = confs)
 
-    # Add some labels and colors to make the graph interpretable
+    # Notify user if regression confidence thresholds fall below min.conf
+    check.mc <- pr[confidence <= min.conf]
+    if(nrow(check.mc > 0)) {
+      message('     ==> The following logistic regression-based confidence thresholds fall below the `min.conf` value. These lines will still be graphed on the regression plot, but note that your sample data does not contain values below `min.conf` = ', min.conf, ':')
+      message(paste0(capture.output(check.mc[,c('common_name', 'pr.true', 'confidence')]), collapse = '\n        '))
+      message('\n')
+    }
+
+    # Add labels and colors to make graph interpretable
     pr[,cols := viridis::viridis(n = nrow(pr))]
 
-    #pr[,cols := c('#440154FF','#2C728EFF','#75D054FF')]
-    pr[,`Pr(True) [BirdNET Confidence]:` := paste0('Pr(',
-                                                   # use format() to show 2 digits even if ends in 0 like 0.9
-                                                   format(round(pr.true, digits = 2), nsmall = 2),
-                                                   ') [', format(round(confidence, digits = 2), nsmall = 2), ']')]
+    pr[,`Pr(True) [BirdNET Confidence]:` :=
+         paste0('Pr(',
+                # use format() to show 2 digits even if ends in 0 like 0.9
+                format(round(pr.true, digits = 2), nsmall = 2),
+                ') [', format(round(confidence, digits = 2), nsmall = 2), ']')]
 
     if (plot == TRUE) {
 
-      # Plot the probability of true positive at different values
-      logreg.plot <- ggplot(vers, aes(logit.confs, mylogit$fitted.values)) +
+      # Plot probability of true positive at different values
+      logreg.plot <- ggplot2::ggplot(vers, aes(logit.confs, mylogit$fitted.values)) +
         geom_line(color = 'gray44', linewidth = 1.5) +
         geom_point(data = vers,
                    mapping = aes(logit.confs,
@@ -265,7 +274,7 @@ birdnet_conf_threshold <- function(
         geom_vline(data = pr, aes(xintercept = logit.confs,
                                   color = `Pr(True) [BirdNET Confidence]:` ,
                                   linetype = `Pr(True) [BirdNET Confidence]:` ),
-                   size = 1.25) +
+                   linewidth = 1.25) +
         scale_color_manual(values = rev(viridis::viridis(nrow(pr)))) +
 
         xlab('Logit(BirdNET Confidence)') +
@@ -273,11 +282,6 @@ birdnet_conf_threshold <- function(
         ggtitle(paste0('Logistic Regression Score Thresholds for ', this.sp)) +
         theme_bw() +
         theme(panel.grid = element_blank(),
-
-              # This previous i
-              #  legend.position = c(1,0), # deprecated?
-              # legend.justification = c(1,0), # puts legend in lower right-hand corner
-
               legend.position = 'inside',
               legend.position.inside = c(0.87217, 0.16),
 
@@ -302,7 +306,7 @@ birdnet_conf_threshold <- function(
     }
 
     # Look at how the model performs if we set birdnet confidence threshold from min.conf to 1.
-    confs <- seq(from = min.conf, to = 1, by = 0.001) # or do 0.01?
+    confs <- seq(from = min.conf, to = 1, by = 0.001)
     ml.results <- data.table(
       common_name = this.sp,
       confidence = confs,
@@ -315,14 +319,14 @@ birdnet_conf_threshold <- function(
     for (k in 1:length(confs)) {
 
       threshold.prep <- vers[common_name == this.sp, c('common_name', 'confidence', 'verify')]
-      threshold.prep[verify == 0, verify := 'n'] # pos arg to caret::confusionMatrix must be char
+      threshold.prep[verify == 0, verify := 'n'] # positive arg to caret::confusionMatrix must be char
       threshold.prep[verify == 1, verify := 'y']
 
       # For anything that falls below this confidence value, we "miss" it
-      # so it becomes a false negative, and we'll mark it as 'n'
+      # so it becomes a false negative, mark as 'n'
       threshold.prep[confidence <= confs[k], threshold := 'n']
 
-      # And if it exceeds this threshold, it becomes a y
+      # If it exceeds this threshold, it becomes a y
       threshold.prep[confidence > confs[k], threshold := 'y']
 
       cm <- caret::confusionMatrix(
@@ -357,9 +361,9 @@ birdnet_conf_threshold <- function(
       # If multiple values maximize it, we choose the lowest
       # birdnet confidence value that maximizes the F1 and the precision,
       # and the highest birdnet confidence value that will still maximize recall...
-      confidence = c(min(max.f1.full$confidence), # choose lowest conf
-                     min(max.prec.full$confidence), # choose lowest conf
-                     max(max.recall.full$confidence)), # choose HIGHEST conf for recall!
+      confidence = c(min(max.f1.full$confidence), # choose LOWEST conf
+                     min(max.prec.full$confidence), # choose LOWEST conf
+                     max(max.recall.full$confidence)), # choose HIGHEST conf
       metric_score = c(unique(max.f1.full$F1),
                        unique(max.prec.full$Precision),
                        unique(max.recall.full$Recall))
@@ -373,7 +377,7 @@ birdnet_conf_threshold <- function(
       # Drop NA values from plotting
       thresh.long <- thresh.long[!is.na(metric_score)]
 
-      # Visualize how accuracy, F1, precision, and recall change based on
+      # Visualize how F1, precision, and recall change based on
       # different birdnet confidence thresholds
       cols <- rev(viridis::magma(n = nrow(ml.results[common_name == this.sp])))
 
@@ -387,11 +391,11 @@ birdnet_conf_threshold <- function(
       thresh.long[,plot_anno := factor(plot_anno,
                                        levels = c('Maximized Score', 'Other Scores'))]
 
-      ml.plot <- ggplot(data = thresh.long,
-                        aes(maximization_metric,
-                            metric_score,
-                            color = confidence,
-                            size = plot_anno)) +
+      ml.plot <- ggplot2::ggplot(data = thresh.long,
+                                 aes(maximization_metric,
+                                     metric_score,
+                                     color = confidence,
+                                     size = plot_anno)) +
         geom_point(data = thresh.long) +
         annotate("text",
                  x = 2,
@@ -435,7 +439,7 @@ birdnet_conf_threshold <- function(
       }
     }
 
-    # Here's the confidence threshold that maximizes F1, precision, recall
+    # Find confidence threshold that maximizes F1, precision, recall
     # (There may be many confidence thresholds that meet these criteria)
     max.f1.full <- ml.results[F1 == max(F1, na.rm = TRUE)]
     max.prec.full <- ml.results[Precision == max(Precision, na.rm = TRUE)]
@@ -445,7 +449,8 @@ birdnet_conf_threshold <- function(
                             maximization_metric = c('F1', 'Precision', 'Recall'),
 
                             # If multiple values maximize it, we choose the lowest
-                            # birdnet confidence value that maximizes the score of interest
+                            # birdnet confidence value that maximizes prec of F1,
+                            # and the highest value that maximizes the recall
                             confidence = c(min(max.f1.full$confidence),
                                            min(max.prec.full$confidence),
                                            max(max.recall.full$confidence)),
@@ -454,35 +459,17 @@ birdnet_conf_threshold <- function(
                                              unique(max.recall.full$Recall))
     )
 
-    # Gather up regression results
     sp.res.lr <- pr[,c('common_name', 'pr.true', 'confidence')]
     sp.res.lr[,common_name := this.sp]
     colnames(sp.res.lr)[2] <- 'pr_true'
-
-    # Gather up standard ML performance evaluation results
-    ## code here
-
     sp.results.lr[[i]] <- sp.res.lr
     sp.results.ml[[i]] <- sp.res.ml
-
   }
 
+  lr.res <- rbindlist(sp.results.lr)
+  lr.res[confidence < min.conf, note := 'Confidence value is below min.conf in your data']
+  results <- list(logistic_regression_results = lr.res,
+                  machine_learning_metric_maximization_results = rbindlist(sp.results.ml))
   message('\nDone!')
-
-  # FUNCTION GIVE FEEDBACK IF NOT ALL PR ARE PLOTTED??
-  results <- list(logistic_regression_results = rbindlist(sp.results.lr),
-       machine_learning_metric_maximization_results = rbindlist(sp.results.ml))
-
   return(results)
-
-  # Add helpful interp messaging for user?
-  # The logit of the birdnet confidence value is plotted on the x axis.
-  # The probability of true positive is on the y axis.
-  # The gray/black dots at 1 and 0 on the y-axis are the verified true and false positives
-  #  graphed according to their logit confidence values
-  # The legend helps us interpret these logit confidence values (I back-transformed them for the legend display)
-  # * Red solid line: 0.85 probability of true positive occurs above a birdnet confidence value of [x]
-  # * Yellow dotted line: 0.9 prob of true positive occurs above a birdnet confidence value of [x]
-  # * Green dash line: 0.95 prob of true positive occurs above a birdnet confidence value of [x]
-  # * Black dash line: 0.99 prob of true positive occurs above a birdnet confidence value of [x]
 }

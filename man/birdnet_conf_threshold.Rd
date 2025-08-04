@@ -2,7 +2,7 @@
 % Please edit documentation in R/birdnet_conf_threshold.R
 \name{birdnet_conf_threshold}
 \alias{birdnet_conf_threshold}
-\title{(BETA) Generate options for BirdNET confidence thresholds}
+\title{Generate options for BirdNET confidence thresholds}
 \usage{
 birdnet_conf_threshold(
   data,
@@ -19,11 +19,11 @@ Columns must include \code{common_name} (character), \code{confidence} (numeric)
 The data type of the \code{verify} column does not matter as long as it is
 composed of 1 and 0.}
 
-\item{probabilities}{Vector of probability cutoffs to investigate.
-Default = \code{c(0.85, 0.90, 0.95)}.}
+\item{probabilities}{Vector of probability cutoffs to investigate for logistic
+regression. Default = \code{c(0.85, 0.90, 0.95)}.}
 
-\item{min.conf}{Input the minimum BirdNET confidence value that you
-originally used for your data in BirdNET Analyzer. If left blank, the
+\item{min.conf}{Input the minimum BirdNET confidence value (\code{min_conf}) that you
+originally used when processing your data through BirdNET Analyzer. If left blank, the
 function attempts to find a \code{min_conf} column from your BirdNET results in \code{data}.}
 
 \item{plot}{Logical for whether to produce and display plot(s) in R.
@@ -45,6 +45,8 @@ use for different probability cutoffs.
 \item{\strong{pr_true}: Probability that a detection is a true positive.}
 \item{\strong{confidence}: BirdNET confidence value to achieve the associated
 probability of true positive.}
+\item{\strong{note}: Notes whether the confidence value for this row is below
+the minimum confidence value in your data.}
 }
 
 \strong{machine_learning_performance_results}: Table of confidence score
@@ -73,19 +75,21 @@ distributions for verified true positives (1) and false positives (0).}
 }
 \description{
 Generate options for BirdNET confidence thresholds based on
-logistic regression a la \href{https://link.springer.com/article/10.1007/s10336-024-02144-5}{Wood and Kahl (2024)}
-and/or standard machine learning performance evaluation metrics (i.e., choose
-the lowest BirdNET confidence threshold that maximizes the precision and F1
-score, or the highest confidence threshold that maximizes the recall score).
+(1) logistic regression as in \href{https://link.springer.com/article/10.1007/s10336-024-02144-5}{Wood and Kahl (2024)}
+and/or (2) common machine learning performance evaluation metrics (i.e., choose
+the lowest BirdNET confidence threshold that maximizes the precision score or F1
+score, or the highest confidence threshold that maximizes the recall score)
+as in \href{https://irma.nps.gov/DataStore/Reference/Profile/2309071}{Balantic (2025)}..
 }
 \details{
 This function was developed by the National Park Service Natural Sounds and
 Night Skies Division to assist with choosing BirdNET confidence thresholds
-either based on logistic regression or based on machine learning performance
-evaluation metrics (F1, precision, recall). Note that there may be multiple
-BirdNET confidence thresholds that maximize the F1, precision, or recall. This
+either based on logistic regression as in \href{https://link.springer.com/article/10.1007/s10336-024-02144-5}{Wood and Kahl (2024)}
+or based on common machine learning performance evaluation metrics (F1, precision, recall) as in \href{https://irma.nps.gov/DataStore/Reference/Profile/2309071}{Balantic (2025)}.
+Note that there may be multiple
+BirdNET confidence thresholds that maximize the F1, precision, or recall score. This
 function returns the lowest possible BirdNET confidence threshold you can choose
-that will still maximize the precision and the F1 score. It also returns the
+that will still maximize the precision score or F1 score. It also returns the
 highest possible BirdNET confidence threshold you can use while still maximizing
 recall.
 }
