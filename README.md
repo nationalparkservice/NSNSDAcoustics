@@ -142,7 +142,7 @@ write.table(
 )
 ```
 
-Now, we're set up to run the function. `birdnet_analyzer()` takes a large number of arguments. First, `birdnet.version` specifies which release of BirdNET-Analyzer you are using (e.g., "v2.1.1", "v1.5.1"). In `birdnet.path`, 	specify the absolute path to the BirdNET-Analyzer.exe installation on your machine. e.g., "C:/your-path-here/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe". All of the remaining arguments will look very similar to the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html). For example, `i.audio` requires an absolute path to an input file or folder, and `o.results` requires an absolute path to an output file or folder. See `?birdnet_analyzer()` help documentation or BirdNET-Analyzer's documentation for more details. 
+Now, we're set up to run the function. `birdnet_analyzer()` takes a large number of arguments. First, `birdnet.version` specifies which release of BirdNET-Analyzer you are using (e.g., "v2.1.1", "v1.5.1"). In `birdnet.path`, 	specify the absolute path to the BirdNET-Analyzer.exe installation on your machine. e.g., "C:/your-path-here/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe". All of the remaining arguments will look very similar to the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html). For example, `i.audio` requires an absolute path to an input file or folder, and `o.results` requires an absolute path to an output file or folder. See `?birdnet_analyzer` help documentation or BirdNET-Analyzer's documentation for more details. 
 
 Below, we show pseudocode that you can modify to test the function. Note that many arguments are missing because many use defaults. Be sure to familiarize yourself with each argument. You may wish to test various combinations of parameters and observe how they affect results. **To use the functions in this package, if you are using v1 of BirdNET Analyzer, please specify rtype = "r". If you are using v2 of BirdNET Analyzer, please specify rtype = "csv" and additional.columns = c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model").** 
 
@@ -163,7 +163,7 @@ birdnet_analyzer(
  o.results = "absolute/path/example-results-directory",
  slist = "absolute/path/species_list.txt",
  rtype = "csv",
- additional.columns =  additional.columns = c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model")
+ additional.columns = c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model")
 )
 
 ```
@@ -246,7 +246,7 @@ Below, we'll walk through the documentation and example helpfiles for `birdnet_f
 
 ```
 
-To run this example, we first create an example "results" directory, and then we write some BirdNET results to this directory. This setup illustrates the file types and folder structure `birdnet_format()` expects to encounter.
+To run this example, we first create an example results directory, and then we write some BirdNET results to this directory. This setup illustrates the file types and folder structure `birdnet_format()` expects to encounter.
 ```r
 
 
