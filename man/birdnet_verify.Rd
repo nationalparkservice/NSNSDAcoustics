@@ -180,5 +180,5 @@ unlink(x = 'example-results-directory', recursive = TRUE)
 
 }
 \seealso{
-\code{\link{birdnet_analyzer}}, \code{\link{birdnet_format}}
+\code{\link{birdnet_analyzer}}, \code{\link{birdnet_format}}, \code{\link{birdnet_review_verify}}
 }

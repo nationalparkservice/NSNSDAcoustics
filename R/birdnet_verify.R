@@ -70,7 +70,7 @@
 #' deal with verification of MP3 files, consider using the BirdNET Analyzer GUI
 #' "Segments" and "Review" options.
 #'
-#' @seealso  \code{\link{birdnet_analyzer}}, \code{\link{birdnet_format}}
+#' @seealso  \code{\link{birdnet_analyzer}}, \code{\link{birdnet_format}}, \code{\link{birdnet_review_verify}}
 #' @import data.table monitoR tuneR
 #' @importFrom graphics par polygon axis
 #' @export
