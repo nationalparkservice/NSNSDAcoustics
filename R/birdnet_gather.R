@@ -129,7 +129,7 @@ birdnet_gather <- function(
   dat <- suppressWarnings(rbindlist(lapply(paths, function(x) fread(x))))
 
   if (length(dat) == 0) {
-    stop('Not finding data in this results.directory -- are you sure the path is correct?')
+    stop('Not finding data in this results.directory. Either the path is incorrect, or you have set "formatted = TRUE" but have no formatted data. See ?birdnet_gather for details.')
   }
 
   if (formatted == TRUE) {
