@@ -52,7 +52,7 @@
 #'  your data: if you did not sample during all hours, the plot will make it
 #'  appear as if you did.
 #' @param y.axis.limits Length 2 integer vector of hourly limits to show. c(0, 23) is default.
-#' @param plot.title User input plot title if desired
+#' @param plot.title User input plot title if desired.
 #' @param sun.lines Optional character vector of sun-based lines to plot, from \code{\link[suncalc]{getSunlightTimes}}.
 #' Options include: c('sunrise', 'sunriseEnd', 'goldenHourEnd', 'solarNoon',
 #' 'goldenHour', 'sunsetStart', 'sunset', 'dusk', 'nauticalDusk', 'night',

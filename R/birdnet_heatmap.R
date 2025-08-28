@@ -38,6 +38,7 @@
 #' species of interest in this plot. TRUE means it will be easier to make
 #' straightforward comparisons between species, FALSE means activity contrasts
 #' within a single species will be easier to see.
+#' @param plot.title User input plot title if desired.
 #' @return Heat map of BirdNET detections, where N is the number of detections
 #' for `common.name` above `conf.threshold` on any given day.
 #' @details
@@ -126,7 +127,8 @@ birdnet_heatmap <- function(
     julian.breaks,
     dates.sampled,
     tz.local,
-    comparable.color.breaks = FALSE
+    comparable.color.breaks = FALSE,
+    plot.title
 ) {
 
   if(missing(dates.sampled)) {
@@ -240,6 +242,8 @@ birdnet_heatmap <- function(
 
   dtn <- dtn[!is.na(year)]
 
+  if (missing(plot.title)) plot.title <- paste0(unique(dtn$locationID), ' - ', common.name)
+
   # Plot
   g <- ggplot(dtn,
               aes(julian.date, as.factor(year),
@@ -257,7 +261,7 @@ birdnet_heatmap <- function(
                        # limits = range(brks$julian.date)
                        limits = range(yday(dates.sampled), na.rm = TRUE)) +
     scale_y_discrete(expand = c(0, 0)) +
-    labs(title = paste0(unique(dtn$locationID), ' - ', common.name),
+    labs(title = plot.title,
          x = 'Date',
          y = 'Year') +
     theme(

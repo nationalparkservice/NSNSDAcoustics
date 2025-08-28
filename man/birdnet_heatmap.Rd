@@ -12,7 +12,8 @@ birdnet_heatmap(
   julian.breaks,
   dates.sampled,
   tz.local,
-  comparable.color.breaks = FALSE
+  comparable.color.breaks = FALSE,
+  plot.title
 )
 }
 \arguments{
@@ -56,6 +57,8 @@ color breaks based on all species in the input data set or based only on the
 species of interest in this plot. TRUE means it will be easier to make
 straightforward comparisons between species, FALSE means activity contrasts
 within a single species will be easier to see.}
+
+\item{plot.title}{User input plot title if desired.}
 }
 \value{
 Heat map of BirdNET detections, where N is the number of detections

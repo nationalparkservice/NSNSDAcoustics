@@ -69,7 +69,7 @@ species will be easier to see.}
 \item{minute.timestep}{Integer input of how to summarize the data by minute.
 Any divisor of 60 is allowed in options c(1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60).}
 
-\item{plot.title}{User input plot title if desired}
+\item{plot.title}{User input plot title if desired.}
 
 \item{hours.sampled}{Either an integer vector declaring which hours were sampled
 across the monitoring period (e.g., c(6:8, 18:20)), or a list declaring sun-based
