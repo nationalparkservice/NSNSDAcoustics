@@ -14,6 +14,7 @@ If you encounter a problem, please submit it to [Issues](https://github.com/nati
   * **[Reformat raw BirdNET results](#reformat-raw-birdnet-results)**
   * **[Gather BirdNET results](#gather-birdnet-results)**
   * **[Verify BirdNET results](#verify-birdnet-results)**
+  * **[Add GUI segment review verifications to formatted CSV](#add-gui-segment-review-verifications-to-formatted-CSV)**
   * **[Visualize BirdNET spectrograms](#visualize-birdnet-spectrograms)**
   * **[Create barcharts of BirdNET detections](#create-barcharts-of-birdnet-detections)**
   * **[Create heat maps of BirdNET detections by date](#create-heat-maps-of-birdnet-detections-by-date)**
@@ -512,6 +513,69 @@ unlink(x = 'example-results-directory', recursive = TRUE)
 
 ```
 
+### Add GUI segment review verifications to formatted CSV
+
+`birdnet_review_verify()` provides an alternative to the `birdnet_verify()` function. If you have used the v2 BirdNET Analyzer GUI to generate segments, and then used the GUI "Review" tab to verify detections, `birdnet_review_verify()` saves your GUI-reviewed labels to the 'verify' column of your [formatted CSVs](https://github.com/nationalparkservice/NSNSDAcoustics?tab=readme-ov-file#reformat-raw-birdnet-results). This simple function takes your `results.directory` and `segments.directory` as inputs. It then updates the 'verify' column in your CSVs with the labels "Positive" or "Negative" for all reviewed species in your segments folder. **Use with caution: if verifications already exist in the 'verify' column of your CSVs, note that they may be overwritten by this function, or may produce a mix of inconsistent labels.
+
+To demonstrate this function, set up example data in a results directory and a segments directory: 
+
+```r
+
+# Create a BirdNET results directory for this example
+# Write examples of formatted BirdNET outputs to example results directory
+dir.create('example-results-directory')
+data(exampleFormatted1)
+write.table(
+   x = exampleFormatted1,
+   file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
+   row.names = FALSE, quote = FALSE, sep = ',')
+data(exampleFormatted2)
+write.table(
+  x = exampleFormatted2,
+  file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
+  row.names = FALSE, quote = FALSE, sep = ',')
+
+# Create directories with reviewed segments for this example
+dir.create("example-segments-directory/Swainson's Thrush/Negative",
+           recursive = TRUE)
+dir.create("example-segments-directory/Swainson's Thrush/Positive",
+           recursive = TRUE)
+data(exampleSegments)
+fi.names <- paste0("example-segments-directory/Swainson's Thrush/",
+              c("Negative/0.224_67_Rivendell_20210623_113602_411.0s_414.0s.wav",
+                "Negative/0.343_35_Rivendell_20210623_113602_588.0s_591.0s.wav",
+                "Positive/0.666_7_Rivendell_20210623_113602_129.0s_132.0s.wav",
+                "Positive/0.996_6_Rivendell_20210623_114602_345.0s_348.0s.wav"))
+for (i in 1:length(exampleSegments)) {
+tuneR::writeWave(
+   object = exampleSegments[[i]],
+   filename = fi.names[i]
+  )
+}
+
+```
+
+Next, apply `birdnet_review_verify()` to save your GUI verifications in the formatted CSVs: 
+
+```r
+
+# Add reviewed segment verifications to "verify" column of formatted results
+birdnet_review_verify(
+  segments.directory = 'example-segments-directory',
+  results.directory = 'example-results-directory'
+)
+
+```
+
+Finally, if desired, clean up by deleting temporary files that we created for the example:
+
+```r
+
+# Delete all temporary example files when finished
+unlink(x = 'example-results-directory', recursive = TRUE)
+unlink(x = 'example-segments-directory', recursive = TRUE)
+
+```
 
 ### Visualize BirdNET spectrograms
 
