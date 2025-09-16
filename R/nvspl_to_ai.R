@@ -1,7 +1,7 @@
 # nvspl_to_ai ==================================================================
 #' @name nvspl_to_ai
-#' @title Convert NVSPLs data into acoustic indices
-#' @description Convert NVSPL table data into acoustic indices.
+#' @title (deprecated) Convert NVSPLs data into acoustic indices
+#' @description (deprecated) Convert NVSPL table data into acoustic indices.
 #' @param input.directory Top-level NVSPL directory from which to ingest data (often named "NVSPL").
 #' @param output.directory Where to place output files (often named "ANALYSIS").
 #' @param project File name for your project (e.g., 'GLBAPhenology2019').
@@ -31,10 +31,10 @@
 #' \item{\strong{Sec}: Second of minute.}
 #' \item{\strong{timestep}: In minutes, the time increment over which acoustic indices are calculated.}
 #' \item{\strong{SampleLength_sec}: Sample length (i.e., timestep) in seconds.}
-#' \item{\strong{ACIout}: ACI results for each time chunk on a given day - SPLs  (link to documentation of how this was computed, or describe here) }
+#' \item{\strong{ACIout}: ACI results for each time chunk on a given day - SPLs  }
 #' \item{\strong{ACIoutI}: ACI results for each time chunk on a given day - intensity (unlog)}
 #' \item{\strong{ACIoutN}: ACI results for each time chunk on a given day -  normalized }
-#' \item{\strong{BKdB_low}: These are all background noise of some kind. Unclear on the details based on the code }
+#' \item{\strong{BKdB_low}: tbd. }
 #' \item{\strong{BKdBA_low}: tbd. }
 #' \item{\strong{BKdB_bird}: tbd. }
 #' \item{\strong{BKdBA_bird}: tbd. }
@@ -46,7 +46,7 @@
 #' \item{\strong{BioPh}: tbd. }
 #' \item{\strong{AthPh}: tbd. }
 #' \item{\strong{SoundScapeI}: tbd. }
-#' \item{\strong{AA}: Acoustic activity, but unclear to me what each of these means based on the code. Regular AA is average time a noise is above background in each timestep. }
+#' \item{\strong{AA}: tbd. }
 #' \item{\strong{AAc}: tbd. }
 #' \item{\strong{AAdur}: tbd. }
 #' \item{\strong{AAanth}: tbd. }
@@ -61,10 +61,10 @@
 #' \item{\strong{Hm}: tbd. }
 #' \item{\strong{HvPres}: tbd. }
 #' \item{\strong{HvSPL}: tbd. }
-#' \item{\strong{unlist(dif_L10L90)}: tbd. What is this colname?}
-#' \item{\strong{Mamp}:  maybe this is acoustic richness instead, according to the code (though at some point I concluded not based on plots) }
+#' \item{\strong{unlist(dif_L10L90)}: tbd.}
+#' \item{\strong{Mamp}:  tbd. ) }
 #' \item{\strong{NumCL}: tbd. }
-#' \item{\strong{SP2}: this might be spectral persistence?? }
+#' \item{\strong{SP2}: tbd.  }
 #' \item{\strong{CL1dur}: tbd. }
 #' \item{\strong{CL1pk}: tbd. }
 #' \item{\strong{CL1Leq}: tbd. }
@@ -77,8 +77,8 @@
 #' \item{\strong{CL4dur}: tbd. }
 #' \item{\strong{CL4pk}: tbd. }
 #' \item{\strong{CL4Leq}: tbd. }
-#' \item{\strong{vers}: PAMGUIDE version used for NVSPLs that gets carried over into here? Or is this AI versioning, documentation of which I have yet to locate? }
-#' \item{\strong{AR}: Acoustic richness - i'm assuming that's what AR stands for? }
+#' \item{\strong{vers}: tbd. }
+#' \item{\strong{AR}: tbd. }
 #' }
 #'
 #' @seealso  \code{\link{wave_to_nvspl}}
