@@ -7,11 +7,11 @@
 #' See BirdNET Analyzer \href{https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html#birdnet-analyzer-analyze}{usage documentation}
 #' for more details. BirdNET Analyzer introduced breaking
 #' changes with an update to v2 in 2025. This function
-#'  attempts to retain capacity for both v1.5.1 and v2.1.1. Please
+#'  attempts to retain capacity for both v1.5.1 and v2.2.0. Please
 #'  \href{https://github.com/nationalparkservice/NSNSDAcoustics/issues}{submit an issue}
 #'  if you discover problems.
 #' @param birdnet.version Character name of BirdNET Analyzer release you are using.
-#' E.g., `"v2.1.1"`, `"v1.5.1"`. Support for earlier versions is not prioritized. If this doesn't
+#' E.g., `"v2.2.0"`, `"v1.5.1"`. Support for earlier versions is not prioritized. If this doesn't
 #' work, update to a new version of BirdNET Analyzer or \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#additional-tips-and-notes}{consider constructing the command statement
 #' by hand} instead of using this function. See releases at \href{https://github.com/birdnet-team/BirdNET-Analyzer/releases}{https://github.com/birdnet-team/BirdNET-Analyzer/releases}.
 #' \strong{CRITICAL NOTE}: The BirdNET "release" version specified in this argument
@@ -169,7 +169,7 @@
 #'
 #' # Run all audio data in a directory through BirdNET
 #' birdnet_analyzer(
-#'  birdnet.version = 'v2.1.1',
+#'  birdnet.version = 'v2.2.0',
 #'  birdnet.path = 'absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe',
 #'  i.audio = 'absolute/path/example-audio-directory',
 #'  o.results = 'absolute/path/example-results-directory',
@@ -218,7 +218,7 @@ birdnet_analyzer <- function(
     stop('You have entered a value for slist, but you have also entered values for lat and lon. Note that if you input values aside from -1 for lat and lon, these will apply an eBird-based filter and will override your species list. Please set lat and lon to -1 if you intend to use a species list in the slist argument. If you didn\'t mean to put something in the slist argument, set slist to NULL.')
   }
 
-  if (!grepl(pattern = 'v2.1.1', x = birdnet.version)) {
+  if (!grepl(pattern = 'v2.2.0', x = birdnet.version)) {
     message('You are using a BirdNET version prior to BirdNET Analyzer v2. If you have input values for args: additional.columns, combine.results, top.n, and merge.consecutive, note that these are not supported by your BirdNET version and will be ignored. If you are having issues running the function, update BirdNET Analyzer to v2.')
   }
 
@@ -250,7 +250,7 @@ birdnet_analyzer <- function(
     )
   }
 
-  if (grepl(pattern = 'v2.1.1', x = birdnet.version)) {
+  if (grepl(pattern = 'v2.2.0', x = birdnet.version)) {
 
     if (rtype == 'r') {
       stop("You input rtype = 'r' and a birdnet.version in v2.x. Note that rtype = 'r' is no longer an option in BirdNET Analyzer v2. For an equivalent output that will work with NSNSDAcoustics functions, use rtype = 'csv' and additional.columns = c('lat, 'lon', 'week', 'overlap', 'sensitivity', 'min_conf', 'species_list', 'model')")

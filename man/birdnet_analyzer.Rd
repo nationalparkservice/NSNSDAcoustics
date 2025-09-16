@@ -35,7 +35,7 @@ birdnet_analyzer(
 }
 \arguments{
 \item{birdnet.version}{Character name of BirdNET Analyzer release you are using.
-E.g., \code{"v2.1.1"}, \code{"v1.5.1"}. Support for earlier versions is not prioritized. If this doesn't
+E.g., \code{"v2.2.0"}, \code{"v1.5.1"}. Support for earlier versions is not prioritized. If this doesn't
 work, update to a new version of BirdNET Analyzer or \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#additional-tips-and-notes}{consider constructing the command statement
 by hand} instead of using this function. See releases at \href{https://github.com/birdnet-team/BirdNET-Analyzer/releases}{https://github.com/birdnet-team/BirdNET-Analyzer/releases}.
 \strong{CRITICAL NOTE}: The BirdNET "release" version specified in this argument
@@ -162,7 +162,7 @@ outlined in the \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob
 See BirdNET Analyzer \href{https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html#birdnet-analyzer-analyze}{usage documentation}
 for more details. BirdNET Analyzer introduced breaking
 changes with an update to v2 in 2025. This function
-attempts to retain capacity for both v1.5.1 and v2.1.1. Please
+attempts to retain capacity for both v1.5.1 and v2.2.0. Please
 \href{https://github.com/nationalparkservice/NSNSDAcoustics/issues}{submit an issue}
 if you discover problems.
 }
@@ -219,7 +219,7 @@ write.table(
 
 # Run all audio data in a directory through BirdNET
 birdnet_analyzer(
- birdnet.version = 'v2.1.1',
+ birdnet.version = 'v2.2.0',
  birdnet.path = 'absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe',
  i.audio = 'absolute/path/example-audio-directory',
  o.results = 'absolute/path/example-results-directory',
