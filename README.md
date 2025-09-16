@@ -2,7 +2,7 @@
 
 This repository provides a place for National Park Service [Natural Sounds and Night Skies Division (NSNSD)](https://www.nps.gov/orgs/1050/index.htm) staff to develop and modernize several bioacoustics workflows. 
 
-**This worfklow was developed for Windows 10 and 11, BirdNET-Analyzer releases V1.1.x through 2.1.1, and model version V2.4. It has not been tested on other systems. Breaking changes were introduced between BirdNET Analyzer v1 and v2, and the latest commits to this repository reflect a development phase in which we are attempting to maintain backward compatibility between BirdNET Analyzer v1.5.1 and v2.1.1.** 
+**This worfklow was developed for Windows 10 and 11, BirdNET-Analyzer releases V1.1.x through 2.2.0, and model version V2.4. It has not been tested on other systems. Breaking changes were introduced between BirdNET Analyzer v1 and v2, and the latest commits to this repository reflect a development phase in which we are attempting to maintain backward compatibility between BirdNET Analyzer v1.5.1 and v2.2.0.** 
 
 If you encounter a problem, please submit it to [Issues](https://github.com/nationalparkservice/NSNSDAcoustics/issues).
 
@@ -22,7 +22,6 @@ If you encounter a problem, please submit it to [Issues](https://github.com/nati
   * **[Generate options for BirdNET confidence thresholds](#generate-options-for-birdnet-confidence-thresholds)**
 
 - **[Converting wave audio files to NVSPL tables with wave_to_nvspl](#converting-wave-audio-files-to-nvspl-tables-with-wave_to_nvspl)**: Go here for a PAMGuide wrapper function to convert wave files to NVSPL formatted tables.
-- **[Converting NVSPL files to acoustic indices with nvspl_to_ai](#converting-nvspl-files-to-acoustic-indices-with-nvspl_to_ai)**: Go here to convert NVSPL.txt files into a CSV of acoustic indices.
 
 
 ## Installing NSNSDAcoustics
@@ -69,7 +68,7 @@ NSNSDAcoustics depends on the R package `data.table`, which enables fast queryin
 
 ### (1) Step 1. Download the fully packaged BirdNET Analyzer for Windows. 
 
-As of this writing, [version 1.5.1](https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.5.1) is the approved version for NPS. For a signed version of this software, NPS staff please reach out to Cathleen. We are currently testing [version 2.1.1](https://github.com/birdnet-team/BirdNET-Analyzer/releases/tag/v2.1.1) and the latest commits to this repository should be considered in development phase.
+As of this writing, [version 1.5.1](https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.5.1) is the approved version for NPS. For a signed version of this software, NPS staff please reach out to Cathleen. We are currently testing [version 2.2.0](https://github.com/birdnet-team/BirdNET-Analyzer/releases/tag/v2.2.0) and the latest commits to this repository should be considered in development phase.
 
 ### (2) Step 2. Familiarize yourself with the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html#birdnet_analyzer.cli-analyzer_parser-named-arguments).
 
@@ -143,7 +142,7 @@ write.table(
 )
 ```
 
-Now, we're set up to run the function. `birdnet_analyzer()` takes a large number of arguments. First, `birdnet.version` specifies which release of BirdNET-Analyzer you are using (e.g., "v2.1.1", "v1.5.1"). In `birdnet.path`, 	specify the absolute path to the BirdNET-Analyzer.exe installation on your machine. e.g., "C:/your-path-here/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe". All of the remaining arguments will look very similar to the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html). For example, `i.audio` requires an absolute path to an input file or folder, and `o.results` requires an absolute path to an output file or folder. See `?birdnet_analyzer` help documentation or BirdNET-Analyzer's documentation for more details. 
+Now, we're set up to run the function. `birdnet_analyzer()` takes a large number of arguments. First, `birdnet.version` specifies which release of BirdNET-Analyzer you are using (e.g., "v2.2.0", "v1.5.1"). In `birdnet.path`, 	specify the absolute path to the BirdNET-Analyzer.exe installation on your machine. e.g., "C:/your-path-here/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe". All of the remaining arguments will look very similar to the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html). For example, `i.audio` requires an absolute path to an input file or folder, and `o.results` requires an absolute path to an output file or folder. See `?birdnet_analyzer` help documentation or BirdNET-Analyzer's documentation for more details. 
 
 Below, we show pseudocode that you can modify to test the function. Note that many arguments are missing because many use defaults. Be sure to familiarize yourself with each argument. You may wish to test various combinations of parameters and observe how they affect results. **To use the functions in this package, if you are using v1 of BirdNET Analyzer, please specify rtype = "r". If you are using v2 of BirdNET Analyzer, please specify rtype = "csv" and additional.columns = c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model").** 
 
@@ -158,7 +157,7 @@ Below, we show pseudocode that you can modify to test the function. Note that ma
 
 # Run all audio data in a directory through BirdNET
 birdnet_analyzer(
- birdnet.version = "v2.1.1",
+ birdnet.version = "v2.2.0",
  birdnet.path = "absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe",
  i.audio = "absolute/path/example-audio-directory",
  o.results = "absolute/path/example-results-directory",
@@ -181,7 +180,7 @@ species.list.path <- 'D:/species_list.txt'
 
 for (i in 1:length(audio.folders)) {
  birdnet_analyzer(
-  birdnet.version = 'v2.1.1',
+  birdnet.version = 'v2.2.0',
   birdnet.path = my.birdnet.path,
   i.audio = audio.folders[i],    
   o.results = result.folders[i], 
@@ -1145,70 +1144,5 @@ Finally, we clean up by deleting the example input directory.
 
 # Delete all temporary example files when finished
 unlink(x = 'example-input-directory', recursive = TRUE)
-
-```
-
-
-## Converting NVSPL files to acoustic indices with nvspl_to_ai
-
-`nvspl_to_ai()` takes NVSPL table data created by `wave_to_nvspl()` and converts it into a broad range of acoustic index values, including acoustic activity, acoustic complexity index, acoustic diversity index, acoustic richness, spectral persistence, and roughness. 
-
-Start by pulling up the function helpfile. Everything covered below is located in the "Examples" section of this helpfile. 
-
-```r
-
-?nvspl_to_ai
-
-```
-
-First, we create a few example directories: an input directory containing the sample wave audio files that come with the package, and an output directory to collect the resulting CSV of acoustic index values. This is meant to illustrate the file types and folder structure `nvspl_to_ai()` expects to encounter.
-
-```r
-
-# Create an input and output directory for this example
-dir.create('example-input-directory')
-dir.create('example-output-directory')
-
-# Read in example NVSPL data
-data(exampleNVSPL)
-
-# Write example NVSPL data to example input directory
-for (i in 1:length(exampleNVSPL)) {
-  write.table(
-    x = exampleNVSPL[[i]],
-    file = paste0('example-input-directory/', names(exampleNVSPL)[i]),
-    sep = ',',
-    quote = FALSE
-  )
-}
-
-```
-
-Now we are positioned to run `nvspl_to_ai()`. `input.directory` indicates the top-level input directory path, `output.directory` specifies where csv results should be stored, and  `project` allows the user to input a project name. The project name will be used to create a "params" file that will save parameter inputs in a file for posterity. Additional arguments are described in the helpfile; note that there are several default values in this function customized for NSNSD default settings.
-
-```r
-
-# Run nvspl_to_ai to generate acoustic indices csv for example NVSPL files
-nvspl_to_ai(
-  input.directory = 'example-input-directory',
-  output.directory = 'example-output-directory',
-  project = 'example-project'
-)
-
-# View Results
-(ai.results <- read.csv(
-  list.files(path = 'example-output-directory',
-             pattern = '.csv', full.names = TRUE))
-)
-
-```
-
-Finally, we clean up by deleting all example files. 
-
-```r
-
-# Delete all temporary example files when finished
-unlink(x = 'example-input-directory', recursive = TRUE)
-unlink(x = 'example-output-directory', recursive = TRUE)
 
 ```
