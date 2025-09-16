@@ -116,9 +116,8 @@ birdnet_review_verify <- function(
     )
 
     sg.prep <- rbind(pos.files, neg.files)
-    # Extract the recordingID -- Use a non-greedy match and a lookahead to exclude the timestamp
-    # sg.prep[,recordingID := str_match(segment, "^[^_]+_[^_]+_((?:[^_]+_)*?[^_]+)(?=_[0-9]+\\.0s)")[,2]]
 
+    # Extract identifying information from the segment string name:
     # ^([0-9.]+) extracts confidence value
     # _[^_]+_ avoids looking at the number in the second segment of the string
     # ((?:[^_]+_)*?[^_]+) "lazy" match for recordingID (in case of varied underscores or non-conventional naming)
