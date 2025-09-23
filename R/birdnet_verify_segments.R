@@ -20,7 +20,7 @@
 #' @seealso  \code{\link{birdnet_analyzer}}
 #' @import data.table monitoR tuneR
 #' @importFrom graphics par polygon axis
-#' @export
+#' @noRd
 #' @examples
 #' \dontrun{
 #'
@@ -103,7 +103,8 @@ birdnet_verify_segments <- function(
   all.wav <- list.files(segments.directory, full.names = TRUE, recursive = TRUE)
 
   # Figure out which frequency bins to use
-  # hard to deal with mp3 in R without installing 3rd party software, so we have to do this the hard/slow way (see ?monitoR::readMP3)
+  # hard to deal with mp3 in R without installing 3rd party software,
+  # so we have to do this the hard/slow way (see ?monitoR::readMP3)
   wav.paths <- all.wav
   check.file <- wav.paths[1]
 
@@ -164,7 +165,6 @@ birdnet_verify_segments <- function(
     trec.times <- as.ITime(trec)
     t.step <- trec[2] - trec[1]
 
-    # Plot
     par(mfrow = c(1,1), mar = c(3,3,2,1), mgp = c(2,1,0))
     image(
       x = trec, y = frec, z = t(arec), col = spec.col,
@@ -232,7 +232,6 @@ birdnet_verify_segments <- function(
   finame <- paste0(results.directory, '/', basename(segments.directory), '-results.csv')
   write.csv(x = sg, file = finame, row.names = FALSE)
   message('Segment verifications saved as: ', finame)
-
 
   cat("Finished verifying.\n")
 

@@ -3,24 +3,26 @@
 
 #' @name birdnet_iNEXT
 #' @title UNDER DEVELOPMENT
-#' @description TBD
+#' @description UNDER DEVELOPMENT
 #' @param data Data.frame / data.table with....
 #' @param confidence.threshold Threshold below which BirdNET results should be excluded.
 #' @param n.detections Number of detections of a species within a day to conclude presence.
+#' @param q A number or vector specifying the diversity order(s) of Hill numbers.
 #' @return DESCRIBE...  additional columns:
 #' \itemize{
 #' \item{\strong{insert col name here}: tbd }
 #' \item{\strong{insert col name here}: tbd }
 #' \item{\strong{insert col name here}: tbd }
 #' }
-#'
 #' @details
 #'
-#' This function was developed by the National Park Service Natural Sounds and Night Skies Division to support species biodiversity characterization in bioacoustics projects. This function is under development.
+#' This function was developed by the National Park Service Natural Sounds and
+#' Night Skies Division to support species biodiversity characterization in
+#' bioacoustics projects. This function is under development.
 #'
 #' @import iNEXT
 #' @importFrom iNEXT iNEXT
-#' @export
+#' @noRd
 #' @examples
 #' \dontrun{
 #'
@@ -37,7 +39,8 @@
 #' result <- birdnet_iNEXT(
 #'   data = dat,
 #'   confidence.threshold = 0,
-#'   n.detections = 3
+#'   n.detections = 3,
+#'   q = 0
 #' )
 #'
 #' # We can use this result to plot species rarefaction curves
@@ -97,11 +100,11 @@
 #'  geom_line(data = interp, mapping =
 #'              aes(x = Days, y = Richness,
 #'                  color = locationID,
-#'                  linetype = "dashed"), size = 1) +
+#'                  linetype = "dashed"), linewidth = 1) +
 #'  geom_line(data = extrap, mapping =
 #'              aes(x = Days, y = Richness,
 #'                  color = locationID,
-#'                  linetype = "solid"), size = 1) +
+#'                  linetype = "solid"), linewidth = 1) +
 #'  theme_classic() +
 #'  scale_fill_manual(name = "locationID",
 #'                    values = c("#66c2a5", "#fc8d62")) +
@@ -111,12 +114,57 @@
 #'  guides(linetype = "none")
 #'
 #'
+#'
+#' # Or just use ggiNEXT() function
+#' ggiNEXT(x = result, type = 1, se = TRUE, facet.var = 'None',
+#'         color.var = 'Assemblage', grey = FALSE)
+#' ggiNEXT(x = result, type = 2, se = TRUE, facet.var = 'None',
+#'         color.var = 'Assemblage', grey = FALSE)
+#' ggiNEXT(x = result, type = 3, se = TRUE, facet.var = 'None',
+#'         color.var = 'Assemblage', grey = FALSE)
+#'
+#'
+#' # tweak the themes of ggiNEXT plots
+#' obj <- ggiNEXT(x = result, type = 1, se = TRUE, facet.var = 'None',
+#'         color.var = 'Assemblage', grey = FALSE)
+#'
+#' obj + theme_classic()
+#'
+#'
+#' result <- birdnet_iNEXT(
+#'   data = dat,
+#'   confidence.threshold = 0,
+#'   n.detections = 3,
+#'   q = c(0, 1, 2)
+#' )
+#'
+#'
+#'
+#' # Read in example BirdNET data
+#' data(exampleBarchartData)
+#'
+#' dat <- add_time_cols(
+#'   dt = exampleBarchartData,
+#'   recording.id.col = 'recordingID',
+#'   tz.recorder = 'America/Los_Angeles',
+#'   tz.local = 'America/Los_Angeles'
+#' )
+#'
+#' result <- birdnet_iNEXT(
+#'   data = dat,
+#'   confidence.threshold = 0,
+#'   n.detections = 3,
+#'   q = c(0, 1, 2)
+#' )
+#' ggiNEXT(result, type=1, facet.var = "Order.q"  )
+#'
 #' }
 
 birdnet_iNEXT <- function(
     data,
     confidence.threshold = 0,
-    n.detections = 1
+    n.detections = 1,
+    q = 0
 )
 {
 
@@ -127,9 +175,6 @@ birdnet_iNEXT <- function(
   pa.day <- thresh[,.N, by = c('Date', 'common_name')][ N >= n.detections ]
 
   # Summarize a frequency vector for iNEXT()
-  # First value is the total number of unique dates sampled
-  #   (IS THIS TRUE? OR IS IT JUST THE TOTAL NUMBER OF DATES WE DETECTED SOMETHING?
-  #   WHAT IF BIRDNET DETECTED NOTHING THAT DAY? Does this workflow account for the possibility of 0 detection data?
   # Remaining values are the number of times each individual species met detection criteria
   samples <- length(unique(data$Date))
   freq <- c(
@@ -155,8 +200,8 @@ birdnet_iNEXT <- function(
 
   # Run iNEXT with incidence-based frequency data
   result <- iNEXT(
-    freq,
-    q = 0,
+    x = freq,
+    q = q, # 0 for species richness
 
     # We use incidence frequency because this is the method that
     # allows us to use occurrence (presence) rather than abundance

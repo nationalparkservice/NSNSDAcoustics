@@ -18,6 +18,7 @@
 #'
 NULL
 
+
 #' @title exampleAudio2
 #' @description Sample recording (audio) data stored as a \code{Wave} file.
 #' @format An object of class \code{Wave} containing 6 slots.
@@ -35,7 +36,6 @@ NULL
 #' str(exampleAudio2, max.level = 1)
 #'
 NULL
-
 
 
 #' @title exampleNVSPL
@@ -138,7 +138,6 @@ NULL
 NULL
 
 
-
 #' @title exampleFormatted1
 #' @description Sample of formatted BirdNET output.
 #' @format An object of class \code{data.frame} containing 17 columns.
@@ -160,9 +159,11 @@ NULL
 #'
 #' # Write examples of formatted BirdNET outputs to example results directory
 #' # to mimic output format of birdnet_format
-#' write.table(x = exampleFormatted1,
-#'             file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
-#'             row.names = FALSE, quote = FALSE, sep = ',')
+#' write.table(
+#' x = exampleFormatted1,
+#' file = 'example-results-directory/Rivendell_20210623_113602.BirdNET_formatted_results.csv',
+#'             row.names = FALSE, quote = FALSE, sep = ','
+#')
 #'
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-results-directory', recursive = TRUE)
@@ -191,9 +192,11 @@ NULL
 #'
 #' # Write examples of formatted BirdNET outputs to example results directory
 #' # to mimic output format of birdnet_format
-#' write.table(x = exampleFormatted2,
-#'             file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
-#'             row.names = FALSE, quote = FALSE, sep = ',')
+#' write.table(
+#' x = exampleFormatted2,
+#' file = 'example-results-directory/Rivendell_20210623_114602.BirdNET_formatted_results.csv',
+#' row.names = FALSE, quote = FALSE, sep = ','
+#' )
 #'
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-results-directory', recursive = TRUE)
@@ -239,27 +242,6 @@ NULL
 NULL
 
 
-#' @title exampleAI
-#' @description Sample data.frame to demonstrate \code{\link{plot_audio_summary}}
-#' @format An object of class \code{data.frame} containing 60 columns.
-#' @details The exampleAI object is used to demonstrate \code{\link{plot_audio_summary}}
-#' @seealso \code{\link{plot_audio_summary}}, \code{\link{nvspl_to_ai}}
-#' @docType data
-#' @keywords datasets
-#' @name exampleAI
-#' @usage data(exampleAI)
-#' @examples
-#'
-#' # Load the dataset
-#' data(exampleAI)
-#'
-#' # View structure
-#' str(exampleAI, max.level = 1)
-#'
-NULL
-
-
-
 #' @title exampleHeatmapData
 #' @description Example data for \code{\link{birdnet_heatmap}} and \code{\link{birdnet_heatmap_time}}
 #' @format An object of class \code{data.table} and \code{data.frame} containing 14 columns.
@@ -278,6 +260,7 @@ NULL
 #'
 #'
 NULL
+
 
 #' @title exampleDatesSampled
 #' @description Example data for \code{\link{birdnet_heatmap}} and \code{\link{birdnet_heatmap_time}}
@@ -298,6 +281,7 @@ NULL
 #'
 NULL
 
+
 #' @title exampleSpeciesList
 #' @description Example data for \code{\link{birdnet_analyzer}}
 #' @format An object of class \code{data.table} and \code{data.frame} with 4 rows and 1 column.
@@ -315,6 +299,7 @@ NULL
 #'
 #'
 NULL
+
 
 #' @title exampleVerified
 #' @description Example data for \code{\link{birdnet_conf_threshold}}
@@ -338,3 +323,21 @@ NULL
 #'
 NULL
 
+
+#' @title exampleSegments
+#' @description Sample audio segments stored in a list as \code{Wave} files.
+#' @format An object of class \code{list} containing 4 \code{Wave} objects each with 6 slots.
+#' @details The exampleSegments object can be used to experiment with functions
+#' that use audio data, such as \code{\link{birdnet_review_verify}}.
+#' @docType data
+#' @keywords datasets
+#' @name exampleSegments
+#' @usage data(exampleSegments)
+#' @examples
+#' # Load the dataset
+#' data(exampleSegments)
+#'
+#' # View structure
+#' str(exampleSegments, max.level = 1)
+#'
+NULL

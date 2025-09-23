@@ -89,7 +89,7 @@
 #' @importFrom stats median quantile var
 #' @importFrom utils read.csv write.csv
 #' @importFrom vegan diversity
-#' @export
+#' @noRd
 #' @examples
 #' \dontrun{
 #'

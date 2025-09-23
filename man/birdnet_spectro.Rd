@@ -36,7 +36,7 @@ new plot windows. Default = TRUE.}
 \item{spec.col}{The colors used to plot verification spectrograms.
 Default = gray.3(). Spectrogram colors are adjustable, and users may create
 their own gradients for display. A few spectrogram color options are provided
-via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(),
+via the R package \code{\link{monitoR}}, including gray.1(), gray.2(), gray.3(), rainbow.1(),
 and topo.1(), all of which are based on existing R colors.}
 
 \item{box}{Logical for whether to draw a box around each detection. Default = TRUE.}
@@ -96,8 +96,8 @@ birdnet_spectro(
   new.window = TRUE,
   spec.col = gray.3(),
   box = TRUE,
-  box.lwd = 1,
-  box.col = 'gray'
+  box.lwd = 2,
+  box.col = 'black'
 )
 
 # Plot only detections of Swainson's Thrush that contain calls
@@ -128,8 +128,8 @@ for (i in 1:length(sp)) {
     new.window = TRUE,
     spec.col = gray.3(),
     box = TRUE,
-    box.lwd = 0.5,
-    box.col = 'gray',
+    box.lwd = 1.5,
+    box.col = 'black',
     title.size = 1.5
  )
 }

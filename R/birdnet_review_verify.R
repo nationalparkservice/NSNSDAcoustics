@@ -25,7 +25,7 @@
 #'
 #' @seealso  \code{\link{birdnet_format}}, \code{\link{birdnet_verify}}
 #' @import data.table
-#' @importFrom stringr str_extract
+#' @importFrom stringr str_extract str_match
 #' @export
 #' @examples
 #' \dontrun{
@@ -80,9 +80,6 @@ birdnet_review_verify <- function(
     results.directory
 )
 {
-
-  # Maybe just make this clear in the docs instead?
-  # message('**WARNING**: if you have any verifications already in your "verify" columns, they may be overwritten by this function. If you are not ready to proceed, please press Esc to quit the function.')
 
   res <- birdnet_gather(results.directory = results.directory, formatted = TRUE)
 
@@ -148,11 +145,6 @@ birdnet_review_verify <- function(
   # For each recordingID, gather results, create composite key for tracking
   for (j in 1:length(recids)) {
     update <- sg.tbl[recordingID == recids[j]]
-
-    # if (recids[j] == 'LEWICLAT_20220614_055402.wav') {
-    #   browser()
-    # }
-
     res <- results[recordingID == recids[j]]
     res[,composite.key := paste(recordingID, start, end, common_name, sep = '-')]
 

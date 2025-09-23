@@ -35,7 +35,7 @@ birdnet_analyzer(
 }
 \arguments{
 \item{birdnet.version}{Character name of BirdNET Analyzer release you are using.
-E.g., \code{"v2.2.0"}, \code{"v1.5.1"}. Support for earlier versions is not prioritized. If this doesn't
+E.g., \code{"v2.2.0"}, \code{"v1.5.1"}. Support for earlier versions is not prioritized. If the function doesn't
 work, update to a new version of BirdNET Analyzer or \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#additional-tips-and-notes}{consider constructing the command statement
 by hand} instead of using this function. See releases at \href{https://github.com/birdnet-team/BirdNET-Analyzer/releases}{https://github.com/birdnet-team/BirdNET-Analyzer/releases}.
 \strong{CRITICAL NOTE}: The BirdNET "release" version specified in this argument
@@ -98,7 +98,7 @@ functionality for BirdNET Analyzer v2 in NSNSDAcoustics by using \code{rtype = "
 and \code{additional.columns = c("lat","lon","week", "overlap","sensitivity","min_conf","species_list","model")}}
 
 \item{additional.columns}{\strong{v2 ONLY}. Additional columns to include in the output, only
-available if using \code{rtype = "csv"}. Values in \code{c("lat","lon","week", "overlap","sensitivity","min_conf","species_list","model")}. The default and recommended behavior is to add all columns. Put NULL if no additional columns are desired.}
+available if using \code{rtype = "csv"}. Values in \code{c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model")}. The default and recommended behavior is to add all columns. Put NULL if no additional columns are desired.}
 
 \item{combine.results}{\strong{v2 ONLY}. In addition to individual files, also outputs a combined file for all the
 selected result types. Default = FALSE.}
@@ -168,7 +168,7 @@ if you discover problems.
 }
 \details{
 This function was developed by the National Park Service Natural Sounds and
-Night Skies Division to act as a wrapper to process audio data using BirdNET.
+Night Skies Division to process audio data using BirdNET.
 
 To use this function, follow the steps outlined in the
 \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#running-birdnet-from-rstudio}{NSNSDAcoustics ReadME}.
@@ -222,13 +222,13 @@ birdnet_analyzer(
  birdnet.version = 'v2.2.0',
  birdnet.path = 'absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe',
  i.audio = 'absolute/path/example-audio-directory',
- o.results = 'absolute/path/example-results-directory',
- slist = 'absolute/path/species_list.txt',
+ o.results = 'absolute/path/example-results-directory'
 )
 
 # Delete all temporary example files when finished
 unlink(x = 'example-audio-directory', recursive = TRUE)
 unlink(x = 'example-results-directory', recursive = TRUE)
+unlink(x = 'species_list.txt')
 
 }
 }

@@ -16,7 +16,7 @@
 #' @param spec.col The colors used to plot verification spectrograms.
 #' Default = gray.3(). Spectrogram colors are adjustable, and users may create
 #' their own gradients for display. A few spectrogram color options are provided
-#' via the R package monitoR, including gray.1(), gray.2(), gray.3(), rainbow.1(),
+#' via the R package \code{\link{monitoR}}, including gray.1(), gray.2(), gray.3(), rainbow.1(),
 #' and topo.1(), all of which are based on existing R colors.
 #' @param box Logical for whether to draw a box around each detection. Default = TRUE.
 #' @param box.lwd Integer value for box line thickness. Default = 1.
@@ -70,8 +70,8 @@
 #'   new.window = TRUE,
 #'   spec.col = gray.3(),
 #'   box = TRUE,
-#'   box.lwd = 1,
-#'   box.col = 'gray'
+#'   box.lwd = 2,
+#'   box.col = 'black'
 #' )
 #'
 #' # Plot only detections of Swainson's Thrush that contain calls
@@ -102,8 +102,8 @@
 #'     new.window = TRUE,
 #'     spec.col = gray.3(),
 #'     box = TRUE,
-#'     box.lwd = 0.5,
-#'     box.col = 'gray',
+#'     box.lwd = 1.5,
+#'     box.col = 'black',
 #'     title.size = 1.5
 #'  )
 #' }
@@ -165,7 +165,7 @@ birdnet_spectro <- function(
   which.frq.bins <- which(check.sp$freq >= frq.lim[1] &
                             check.sp$freq <= frq.lim[2])
   nrows <- length(which.frq.bins)  # n freq bins
-  ncols <-  length(check.sp$time) # n time bins
+  ncols <- length(check.sp$time) # n time bins
 
   # Save spectrogram amplitude data for each detection
   mats <- array(data = 0, dim = c(nrows, ncols, nrow(data)))
@@ -179,7 +179,7 @@ birdnet_spectro <- function(
                     units = 'seconds')
     det.spec <- monitoR:::spectro(wave = det)
     mats[,,n] <- det.spec$amp[which.frq.bins, ]
-  } # end for n
+  }
 
   if (new.window) dev.new()
 
@@ -191,11 +191,8 @@ birdnet_spectro <- function(
     dim1 <- dim2 <- sqrdim
   }
 
-  # set pars
-  # par(mar = c(0,0,0.5,0), mfrow = c(dim1, dim2)) # with a margin where title could go... not working
   par(mar = rep(0, 4), mfrow = c(dim1, dim2)) # no margin
 
-  # Plot detections
   cat('\nPlotting...\n')
   for (pl in 1:dim(mats)[3]) {
     image(x = 1:ncols, y = 1:nrows, t(mats[,,pl]),

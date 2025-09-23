@@ -348,14 +348,13 @@ birdnet_heatmap_time <- function(
   sampled.times <- data.table(tbin = tseq)
   sampled.times[,date := as.Date(tbin, tz = tz.local)]
 
-  if (class(hours.sampled) == 'integer') {
+  if(inherits(hours.sampled, 'integer')) {
     # Subset according to hours falling within user-specified sampling range
     sampled.times[,hour := hour(tbin)]
     sampled.times <- sampled.times[hour %in% hours.sampled]
   }
 
-  if (class(hours.sampled) == 'list') {
-
+  if(inherits(hours.sampled, 'list')) {
     # Compute sun-based times for these sampled tbins
     sun.times <- as.data.table(sampled.times[,getSunlightTimes(
       date = date,
@@ -406,7 +405,7 @@ birdnet_heatmap_time <- function(
   sp.subset <- sp.subset[!is.na(y.unit)]
 
   # Summarize detection activity by date and timebin for desired species
-  # SHOULD THIS BE SUMMARIZED BY JULIAN INSTEAD OF DATE?
+  # (consider summarizing this by julian instead of date?)
   sp.tbin.day <- sp.subset[,.N, by = c('common_name', 'date', 'timebin')]
 
   # Add in zeroes for timebins that were sampled but had no detections
@@ -432,7 +431,6 @@ birdnet_heatmap_time <- function(
   sp.tbin.day <- sp.tbin.day[order(common_name, timebin)]
 
   # Add a time col for easier graphing -- data.table::as.ITime()
-  # CHECK - HOW DOES THIS HOLD UP FOR HOURS, OR DAYS options?
   sp.tbin.day[ , plot.time := as.ITime(timebin)]
 
   if (!missing(sun.lines)) {
@@ -467,7 +465,7 @@ birdnet_heatmap_time <- function(
     # MUST sort this table -- critical to get scale_linetype_manual working downstream
     setkey(sun.dt, julian, variable)
 
-    # Check on any weirdness in sunlines due to lat/long (e.g., northern latitudes in summer may not get full astro night)
+    # Check on inconsistencies in sunlines due to lat/long (e.g., northern latitudes in summer may not get full astro night)
     check.sun <- sun.dt[is.na(minute)]
     if (nrow(check.sun) > 0 ) {
       problem.dates <- sort(check.sun$date)

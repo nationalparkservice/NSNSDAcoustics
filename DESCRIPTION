@@ -18,15 +18,16 @@ Authors@R:
 Description: This package facilitates streamlined bioacoustics analysis developed
     for and by the National Park Service (NPS) Natural Sounds and Night Skies
     Division (NSNSD). Workflows include processing, analyzing, and verifying data
-    produced by BirdNET, converting wave files to NVSPL tables, and converting
-    NVSPL tables into acoustic indices.
-License: CC0-1.0 license
+    produced by BirdNET and converting wave files to NVSPL tables.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+LazyDataCompression: xz
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Depends: R (>= 3.5.0), data.table, monitoR, tuneR
-Imports: caret, ineq, iNEXT, ggplot2, lubridate, moments, NbClust, plotly, stringr, suncalc, vegan, viridis
+Imports: caret, ineq, ggplot2, lubridate, moments, NbClust, plotly, stringr, suncalc, vegan, viridis
+BugReports: https://github.com/nationalparkservice/NSNSDAcoustics/issues
 Collate:
     'PAMGuide.R'
     'PAMGuide_Meta.R'

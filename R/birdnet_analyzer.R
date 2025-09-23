@@ -11,7 +11,7 @@
 #'  \href{https://github.com/nationalparkservice/NSNSDAcoustics/issues}{submit an issue}
 #'  if you discover problems.
 #' @param birdnet.version Character name of BirdNET Analyzer release you are using.
-#' E.g., `"v2.2.0"`, `"v1.5.1"`. Support for earlier versions is not prioritized. If this doesn't
+#' E.g., `"v2.2.0"`, `"v1.5.1"`. Support for earlier versions is not prioritized. If the function doesn't
 #' work, update to a new version of BirdNET Analyzer or \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#additional-tips-and-notes}{consider constructing the command statement
 #' by hand} instead of using this function. See releases at \href{https://github.com/birdnet-team/BirdNET-Analyzer/releases}{https://github.com/birdnet-team/BirdNET-Analyzer/releases}.
 #' \strong{CRITICAL NOTE}: The BirdNET "release" version specified in this argument
@@ -58,7 +58,7 @@
 #' functionality for BirdNET Analyzer v2 in NSNSDAcoustics by using `rtype = "csv"`
 #' and `additional.columns = c("lat","lon","week", "overlap","sensitivity","min_conf","species_list","model")`
 #' @param additional.columns \strong{v2 ONLY}. Additional columns to include in the output, only
-#' available if using `rtype = "csv"`. Values in `c("lat","lon","week", "overlap","sensitivity","min_conf","species_list","model")`. The default and recommended behavior is to add all columns. Put NULL if no additional columns are desired.
+#' available if using `rtype = "csv"`. Values in `c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model")`. The default and recommended behavior is to add all columns. Put NULL if no additional columns are desired.
 #' @param combine.results \strong{v2 ONLY}. In addition to individual files, also outputs a combined file for all the
 #' selected result types. Default = FALSE.
 #' @param classifier Absolute path to custom trained classifier.
@@ -112,7 +112,7 @@
 #' @details
 #'
 #' This function was developed by the National Park Service Natural Sounds and
-#' Night Skies Division to act as a wrapper to process audio data using BirdNET.
+#' Night Skies Division to process audio data using BirdNET.
 #'
 #' To use this function, follow the steps outlined in the
 #'  \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#running-birdnet-from-rstudio}{NSNSDAcoustics ReadME}.
@@ -124,7 +124,6 @@
 #' @seealso  \code{\link{birdnet_format}}, \code{\link{birdnet_verify}}
 #' @import tuneR
 #' @importFrom lubridate week
-#' @importFrom reticulate py_run_string source_python
 #' @importFrom tools file_ext
 #' @export
 #' @examples
@@ -172,13 +171,13 @@
 #'  birdnet.version = 'v2.2.0',
 #'  birdnet.path = 'absolute/path/AppData/Local/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe',
 #'  i.audio = 'absolute/path/example-audio-directory',
-#'  o.results = 'absolute/path/example-results-directory',
-#'  slist = 'absolute/path/species_list.txt',
+#'  o.results = 'absolute/path/example-results-directory'
 #' )
 #'
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-audio-directory', recursive = TRUE)
 #' unlink(x = 'example-results-directory', recursive = TRUE)
+#' unlink(x = 'species_list.txt')
 #'
 #' }
 
@@ -213,7 +212,7 @@ birdnet_analyzer <- function(
     merge.consecutive = 1
 ) {
 
-  # If lat and long are provided, birdnet will ignore whatever is in the species_list.txt arg. Is this desired?
+  # If lat and long are provided, birdnet will ignore whatever is in the species_list.txt arg.
   if (!is.null(slist) & any(lat != -1, lon != -1)) {
     stop('You have entered a value for slist, but you have also entered values for lat and lon. Note that if you input values aside from -1 for lat and lon, these will apply an eBird-based filter and will override your species list. Please set lat and lon to -1 if you intend to use a species list in the slist argument. If you didn\'t mean to put something in the slist argument, set slist to NULL.')
   }
@@ -333,8 +332,7 @@ birdnet_analyzer <- function(
   # Send command to BirdNET.exe
   run.cmd <- system(cmd)
 
-  # Return useful messaging if command failure -
-  # Although this should not happen with the way I've recoded it:
+  # Return useful messaging if command failure
   if (run.cmd == 2) {
     stop('BirdNET Analyzer command unsuccessful. If this function isn\'t working, it may be because you are using an older or non-compatible version of BirdNET-Analyzer. Try downloading the latest BirdNET version OR try using the alternative code provided in the NSNSDAcoustics ReadMe instructions available at https://github.com/nationalparkservice/nsnsdacoustics. Alternatively, submit an issue here: https://github.com/nationalparkservice/NSNSDAcoustics/issues')
   }

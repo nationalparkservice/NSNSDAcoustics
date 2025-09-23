@@ -91,7 +91,7 @@ birdnet_barchart <- function(
 )
 {
 
-  # For some reason, data.table is having "side-effects" on the data object
+  # For some reason, data.table is having "side effects" on the data object
   # So saving a backup object here that will be operated on
   dt <- copy(data)
 
@@ -231,7 +231,6 @@ birdnet_barchart <- function(
                          labels = brks$date.lab,
                          limits = range(brks$x.scale)) +
       scale_y_continuous(expand = c(0, 0), limits = y.limits) +
-      # scale_color_manual(guide = 'none') + # eliminate additional legend
       ggtitle(paste0('Count by Date - ', unique(dt$locationID))) +
       theme_classic() +
       theme(

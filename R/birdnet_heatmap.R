@@ -235,16 +235,12 @@ birdnet_heatmap <- function(
   dtn <- dtn[order(date)]
   dtn[,year :=  year(date)]
   dtn[,julian.date := yday(date)]
-
-  # Set colors
   heat.cols <- c('gray75', viridis::magma(n = 5, begin = 0.2))
   u.lim <- max(color.breaks)
-
   dtn <- dtn[!is.na(year)]
 
   if (missing(plot.title)) plot.title <- paste0(unique(dtn$locationID), ' - ', common.name)
 
-  # Plot
   g <- ggplot(dtn,
               aes(julian.date, as.factor(year),
                   fill = N)) +
@@ -258,7 +254,6 @@ birdnet_heatmap <- function(
     scale_x_continuous(expand = c(0, 0),
                        breaks = brks$julian.date,
                        labels = brks$date.lab,
-                       # limits = range(brks$julian.date)
                        limits = range(yday(dates.sampled), na.rm = TRUE)) +
     scale_y_discrete(expand = c(0, 0)) +
     labs(title = plot.title,
@@ -277,6 +272,5 @@ birdnet_heatmap <- function(
       legend.key = element_blank(),
       axis.title.x = element_text(size = 12),
       axis.text.x = element_text(angle = 45, hjust = 1, size = 12))
-
   return(g)
 }

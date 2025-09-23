@@ -80,6 +80,8 @@
 #' @importFrom caret confusionMatrix
 #' @importFrom viridis magma viridis
 #' @importFrom ggplot2 ggplot
+#' @importFrom utils capture.output head tail
+#' @importFrom stats end glm start
 #' @export
 #' @examples
 #' \dontrun{
@@ -276,7 +278,6 @@ birdnet_conf_threshold <- function(
                                   linetype = `Pr(True) [BirdNET Confidence]:` ),
                    linewidth = 1.25) +
         scale_color_manual(values = rev(viridis::viridis(nrow(pr)))) +
-
         xlab('Logit(BirdNET Confidence)') +
         ylab('Pr(True Positive)') +
         ggtitle(paste0('Logistic Regression Score Thresholds for ', this.sp)) +
@@ -284,7 +285,6 @@ birdnet_conf_threshold <- function(
         theme(panel.grid = element_blank(),
               legend.position = 'inside',
               legend.position.inside = c(0.87217, 0.16),
-
               legend.title = element_text(size = 7),
               legend.background = element_rect(
                 fill = 'white', #gray88

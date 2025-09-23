@@ -48,7 +48,7 @@ data.table / data.frame.
 \details{
 This function was developed by the National Park Service Natural Sounds and
 Night Skies Division to gather results produced by BirdNET. It uses the
-data.table function \code{\link{fread}} for much faster reading of many csv or txt files.
+data.table function \code{\link{fread}} for expedient reading of many csv or txt files.
 }
 \examples{
 \dontrun{

@@ -72,7 +72,7 @@
 #'
 #' @seealso  \code{\link{birdnet_analyzer}}, \code{\link{birdnet_format}}, \code{\link{birdnet_review_verify}}
 #' @import data.table monitoR tuneR
-#' @importFrom graphics par polygon axis
+#' @importFrom graphics par polygon axis box
 #' @export
 #' @examples
 #' \dontrun{

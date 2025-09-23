@@ -116,31 +116,21 @@
 #' }
 #'
 
-# More ideas:
-#  Instead of test.file, could do a "diagnostics" argument instead, to plot a time continuous, whether time stamp is right etc. (Good idea but a lot more effort
-# since it's essentially eliminating the pamguide function and then would have to
-# knit those two functions together to get the same effect. Not a priority for
-# CB yet)
-# A way to get rid of the pamguide function?
-#  Better variable names and/or commenting. Highly desirable but CB not knowledgeable
-#  enough to do this expediently and know what variable names / math should be, etc. Not a top priority.
-# Params file (like a run log)- use future params file as an input? Good idea
-# need to overhaul NVSPL file in general?
-
-wave_to_nvspl <- function(input.directory,
-                          results.directory,
-                          data.directory = TRUE,
-                          test.file = FALSE,
-                          project,
-                          instrum = "SM4",
-                          filext = "_%Y%m%d_%H%M%S.wav",
-                          filpat = ".+\\d{8}_\\d{6}.wav",
-                          mhset = -35,
-                          Gset = 16,
-                          vADCset = 1,
-                          enviset = "Air",
-                          rescWat = 0,
-                          timezone
+wave_to_nvspl <- function(
+    input.directory,
+    results.directory,
+    data.directory = TRUE,
+    test.file = FALSE,
+    project,
+    instrum = "SM4",
+    filext = "_%Y%m%d_%H%M%S.wav",
+    filpat = ".+\\d{8}_\\d{6}.wav",
+    mhset = -35,
+    Gset = 16,
+    vADCset = 1,
+    enviset = "Air",
+    rescWat = 0,
+    timezone
 )
 {
 
@@ -264,7 +254,7 @@ wave_to_nvspl <- function(input.directory,
       if(!missing(results.directory)) {
         # if (grepl("\\/$", results.directory) == FALSE) {
         #   results.directory <- paste0(results.directory, '/')
-          NVSPLdir <- results.directory
+        NVSPLdir <- results.directory
       } else {
         NVSPLdir = paste(WAVDirs[ff], "NVSPL",sep="\\")
       }
@@ -287,7 +277,7 @@ wave_to_nvspl <- function(input.directory,
 
         ## (2) RUN PAMGUIDE-------------------------------------------------------------
 
-       # Preempt breakage on corrupt files (typically, files that are too short)
+        # Preempt breakage on corrupt files (typically, files that are too short)
         catch.error <- tryCatch(
           Meta(atype = 'TOL',
                timestring = filename,
@@ -464,3 +454,10 @@ wave_to_nvspl <- function(input.directory,
   } # end if test.file == FALSE
 }  # end Wave_To_NVSPL function
 
+# Future dev ideas:
+#  Instead of test.file, could do a "diagnostics" argument instead, to plot a time continuous, whether time stamp is right etc. (Good idea but a lot more effort
+# since it's essentially eliminating the pamguide function and then would have to
+# knit those two functions together to get the same effect. Not currently a priority.
+# A way to get rid of the pamguide function?
+#  Better variable names and/or commenting (address lack of documentation)
+# Params file (like a run log)- use future params file as an input?
