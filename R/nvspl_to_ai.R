@@ -83,12 +83,6 @@
 #'
 #' @seealso  \code{\link{wave_to_nvspl}}
 #' @importFrom grDevices colorRampPalette
-#' @importFrom ineq Gini
-#' @importFrom moments kurtosis skewness
-#' @importFrom NbClust NbClust
-#' @importFrom stats median quantile var
-#' @importFrom utils read.csv write.csv
-#' @importFrom vegan diversity
 #' @noRd
 #' @examples
 #' \dontrun{
@@ -267,7 +261,7 @@ nvspl_to_ai <- function (input.directory, # top-level NVSPL file directory
       # But I can't tell if this should be applied both the the start.at.begininng routine
       # or to BOTH routines ... OR NONE AT ALL, and maybe this is deprecated since it
       # didn't make it into the version on GLBA Synology???
-      # Seemslike it would be relevant either way
+      # Seems like it would be relevant either way
       # if (start.at.beginning == TRUE) {
       #REMOVE DUPLICATE TIMES
       #noticed that sometimes if a day is slit over multiple audio files, you can get repeated rows... need to remove dublicate rows before segmenting by timestep
@@ -594,7 +588,7 @@ nvspl_to_ai <- function (input.directory, # top-level NVSPL file directory
                 Score[f] = length( dayMatrixlim[,f][dayMatrixlim[,f] > BK_Towsey[f]+3] )/ length (dayMatrixlim[,f])
               }
               ADI_step = diversity(Score, index = "shannon")
-              Eveness_step = Gini(Score)
+              Eveness_step = ineq::Gini(Score)
               #........................................................................................
 
               #........................................................................................
@@ -611,10 +605,10 @@ nvspl_to_ai <- function (input.directory, # top-level NVSPL file directory
               pk = as.numeric ( gsub("H","",colnames(dayMatrixlim[which.max(pk2)]) ) )
 
               # kurtosis- is the shape of peak frequencies normally distributed (kurtosis) ?
-              pkd = kurtosis( as.vector(pk2nor) )
+              pkd = moments::kurtosis( as.vector(pk2nor) )
 
               # skewness- What is the skewness is this distribution? (symmetrical = 0, right skew = +)
-              pks = skewness(as.vector(pk2nor))
+              pks = moments::skewness(as.vector(pk2nor))
 
               # entropy of Spectral Maxima
               pk2[pk2 == 0] <- 1e-07
@@ -654,7 +648,7 @@ nvspl_to_ai <- function (input.directory, # top-level NVSPL file directory
 
               x = scale(dayMatrixlim)  # To standarize the variables
 
-              res = NbClust(x, distance = "euclidean", min.nc=2, max.nc=10, method = "kmeans", index = "silhouette")
+              res = NbClust::NbClust(x, distance = "euclidean", min.nc=2, max.nc=10, method = "kmeans", index = "silhouette")
               # use all algothrums to find optimal cluster... takes way to long!
               #res = NbClust(x, distance = "euclidean", min.nc=2, max.nc=(dim(x)[1])/60, method = "ward.D", index = "all")
               # use "gap" method (Tibshirani et al. 2001) Smallest n_{c} such that criticalValue >= 0
@@ -1050,8 +1044,8 @@ nvspl_to_ai <- function (input.directory, # top-level NVSPL file directory
             {
               Score[f] = length( dayMatrixlim[,f][dayMatrixlim[,f] > BK_Towsey[f]+3] )/ length (dayMatrixlim[,f])
             }
-            ADI_step = diversity(Score, index = "shannon")
-            Eveness_step = Gini(Score)
+            ADI_step = vegan::diversity(Score, index = "shannon")
+            Eveness_step = ineq::Gini(Score)
             #........................................................................................
 
             #........................................................................................
@@ -1068,10 +1062,10 @@ nvspl_to_ai <- function (input.directory, # top-level NVSPL file directory
             pk = as.numeric ( gsub("H","",colnames(dayMatrixlim[which.max(pk2)]) ) )
 
             # kurtosis- is the shape of peak frequencies normally distributed (kurtosis) ?
-            pkd = kurtosis( as.vector(pk2nor) )
+            pkd = moments::kurtosis( as.vector(pk2nor) )
 
             # skewness- What is the skewness is this distribution? (symmetrical = 0, right skew = +)
-            pks = skewness(as.vector(pk2nor))
+            pks = moments::skewness(as.vector(pk2nor))
 
             # entropy of Spectral Maxima
             pk2[pk2 == 0] <- 1e-07
@@ -1111,7 +1105,7 @@ nvspl_to_ai <- function (input.directory, # top-level NVSPL file directory
             x = scale(dayMatrixlim)  # To standarize the variables
             #get an error when NAN are present in x- not sure why it creates NAN- can I just skip these time steps?
 
-            res = NbClust(x, distance = "euclidean", min.nc=2, max.nc=10, method = "kmeans", index = "silhouette")
+            res = NbClust::NbClust(x, distance = "euclidean", min.nc=2, max.nc=10, method = "kmeans", index = "silhouette")
             # use all algothrums to find optimal cluster... takes way to long!
             #res = NbClust(x, distance = "euclidean", min.nc=2, max.nc=(dim(x)[1])/60, method = "ward.D", index = "all")
             # use "gap" method (Tibshirani et al. 2001) Smallest n_{c} such that criticalValue >= 0

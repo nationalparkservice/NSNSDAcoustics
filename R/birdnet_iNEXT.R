@@ -20,8 +20,6 @@
 #' Night Skies Division to support species biodiversity characterization in
 #' bioacoustics projects. This function is under development.
 #'
-#' @import iNEXT
-#' @importFrom iNEXT iNEXT
 #' @noRd
 #' @examples
 #' \dontrun{
@@ -168,6 +166,16 @@ birdnet_iNEXT <- function(
 )
 {
 
+  reqd <- c('iNEXT')
+  for (i in 1:length(reqd)) {
+    if (!requireNamespace(reqd[i], quietly = TRUE)) {
+      stop(
+        paste0("Package ", reqd[i]," must be installed to use this function."),
+        call. = FALSE
+      )
+    }
+  }
+
   data[ , Date := as.Date(dateTimeLocal)]
   thresh <- data[confidence >= confidence.threshold]
 
@@ -199,7 +207,7 @@ birdnet_iNEXT <- function(
   # which I believe is exponential Shannon entropy, and inverse Simpson index
 
   # Run iNEXT with incidence-based frequency data
-  result <- iNEXT(
+  result <- iNEXT::iNEXT(
     x = freq,
     q = q, # 0 for species richness
 
