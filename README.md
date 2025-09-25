@@ -2,7 +2,7 @@
 
 This repository provides a place for National Park Service [Natural Sounds and Night Skies Division (NSNSD)](https://www.nps.gov/orgs/1050/index.htm) staff to develop and modernize several bioacoustics workflows. 
 
-**This worfklow was developed for Windows 10 and 11, BirdNET-Analyzer releases V1.1.x through 2.2.0, and model version V2.4. It has not been tested on other systems. Breaking changes were introduced between BirdNET Analyzer v1 and v2, and the latest commits to this repository reflect a development phase in which we are attempting to maintain backward compatibility between BirdNET Analyzer v1.5.1 and v2.2.0.** 
+**This worfklow was developed for Windows 10 and 11, BirdNET-Analyzer releases V1.1.x through 2.2.0, and model version V2.4. It has not been tested on other systems. Breaking changes were introduced between BirdNET Analyzer v1 and v2, and the [latest release](https://github.com/nationalparkservice/NSNSDAcoustics/releases/tag/v1.1.0) reflects efforts to maintain backward compatibility between BirdNET Analyzer v1.5.1 and v2.2.0.** 
 
 If you encounter a problem, please submit it to [Issues](https://github.com/nationalparkservice/NSNSDAcoustics/issues).
 
@@ -10,7 +10,7 @@ If you encounter a problem, please submit it to [Issues](https://github.com/nati
 
 - **[Installing NSNSDAcoustics](#installing-nsnsdacoustics)**
 - **[Running BirdNET from RStudio](#running-birdnet-from-rstudio)**: Go here if you want to use your Windows machine to process files through RStudio [BirdNET-Analyzer]([https://birdnet.cornell.edu/](https://github.com/kahst/BirdNET-Analyzer)). Requires some setup. 
-- **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET outputs in hand from `rtype = 'r'` (v1) or `rtype = 'csv'` (v2), and want to use R to wrangle, visualize, and verify the results.
+- **[Assessing BirdNET results](#assessing-birdnet-results)**: Go here if you already have raw BirdNET outputs in hand from `rtype = 'r'` (BirdNET Analyzer v1) or `rtype = 'csv'` (BirdNET Analyzer v2), and want to use R to wrangle, visualize, and verify the results.
   * **[Reformat raw BirdNET results](#reformat-raw-birdnet-results)**
   * **[Gather BirdNET results](#gather-birdnet-results)**
   * **[Verify BirdNET results](#verify-birdnet-results)**
@@ -32,7 +32,7 @@ Next, you can install NSNSDAcoustics using one of two options:
 
 ### (1) Option 1: Use `install_github()`:
 
-You may first need to install the latest version of devtools (and possibly Rtools). Then you can install the latest version of NSNSDAcoustics:
+Ensure that you have the latest version of devtools (and possibly Rtools). Then you can install the latest version of NSNSDAcoustics:
 
 ```r
 
@@ -44,7 +44,7 @@ devtools::install_github('nationalparkservice/NSNSDAcoustics')
 
 ### (2) Option 2: Download and install manually
 
-Download the latest zip or tar.gz file from the [Releases Page](https://github.com/nationalparkservice/NSNSDAcoustics/releases). Note that major releases are also captured on NPS DataStore at this link: [https://irma.nps.gov/DataStore/Reference/Profile/2311171](https://irma.nps.gov/DataStore/Reference/Profile/2311171)
+Download the latest zip or tar.gz file from the [Releases Page](https://github.com/nationalparkservice/NSNSDAcoustics/releases). The latest release is [v1.1.0](https://github.com/nationalparkservice/NSNSDAcoustics/releases/tag/v1.1.0). Releases are also captured on NPS DataStore at this link: [https://irma.nps.gov/DataStore/Reference/Profile/2315865](https://irma.nps.gov/DataStore/Reference/Profile/2315865)
 
 After downloading, open R Studio, click on the Install button on the Packages tab, select Install From Package Archive File, and navigate to the downloaded file.
 
@@ -68,7 +68,7 @@ NSNSDAcoustics depends on the R package `data.table`, which enables fast queryin
 
 ### (1) Step 1. Download the fully packaged BirdNET Analyzer for Windows. 
 
-As of this writing, [version 1.5.1](https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.5.1) is the approved version for NPS. For a signed version of this software, NPS staff please reach out to Cathleen. We are currently testing [version 2.2.0](https://github.com/birdnet-team/BirdNET-Analyzer/releases/tag/v2.2.0) and the latest commits to this repository should be considered in development phase.
+As of this writing, [BirdNET Analyzer v1.5.1](https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.5.1) and [BirdNET Analyzer v2.2.0](https://github.com/birdnet-team/BirdNET-Analyzer/releases/tag/v2.2.0) are both approved versions for NPS. Updating to v2.x is advisable moving forward. 
 
 ### (2) Step 2. Familiarize yourself with the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html#birdnet_analyzer.cli-analyzer_parser-named-arguments).
 
@@ -192,7 +192,7 @@ for (i in 1:length(audio.folders)) {
 
 ### Additional Tips and Notes: 
 
-* You can specify any option in `rtype`, but to use other functions in this package, please set `rtype = 'r'` if you are using BirdNET Analyzer v1, and set `rtype = 'csv'` and `additional.columns = c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model")` if you are using BirdNET Analyzer v2.
+* You can specify any option in `rtype`, but to use other functions in this package, if you are using BirdNET Analyzer v1, please set `rtype = 'r'`. If you are using BirdNET Analyzer v2, please set `rtype = 'csv'` and `additional.columns = c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model")`.
 * The `threads` argument specifies how many files BirdNET will work on at once, and it depends on the number of logical processors your machine has. On a Windows machine, to figure out how many cores your processor has, press **CTRL + SHIFT + ESC** to open Task Manager. Select the **Performance** tab to see how many cores and logical processors your PC has. A rule of thumb is to never set "threads" to more than the number of logical processors minus 1. For example, your machine might have 8 logical processors, in which case you would set "threads" to no higher than 7. 
 
 If you're having trouble running `birdnet_analyzer()`, note that under the hood, it is simply constructing a statement for the command line and wrapping a `system()` call around the statement to send it to BirdNET-Analyzer.exe. You can construct your own similar commands and loop through them like so: 
@@ -270,7 +270,7 @@ write.table(
 
 ```
 
-Now, we're set up to run the function. `birdnet_format()` takes two arguments. First, the `results.directory` should point to the folder where you have stored your raw BirdNET outputs. Second, the `timezone` argument allows you to specify the timezone setting used in the audio recorder (i.e., the timezone reflected in the wave filename). **It's important to pay attention to this!** Recall that the functions described here expect wave files that follow a SITEID_YYYYMMDD_HHMMSS naming convention. In the package sample audio data, we have a wave named Rivendell_20210623_113602.wav. This means the site ID is Rivendell, and the recording was taken on June 23rd, 2021 at 11:36:02. The `timezone` argument allows us to clarify what 11:36:02 actually means. Was the recording taken in local time at your site, or was it taken in UTC? This point might seem trivial if you're just getting started with collecting data at a few sites for a single season, but if you're collecting data across many sites, over many years, with varying audio recorder equipment and varying recording settings through time, different field technicians, and potentially across timezones (as we often do at NPS NSNSD), you will want to keep meticulous track of your timezones so that your analyses will be accurate across time and space. If recordings were taken in local time at your study site, specify an [Olson-names-formatted character timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for the location (e.g., "America/Los_Angeles"). If recordings were taken in UTC, you can put either 'GMT' or 'UTC'; both are acceptable in R for downstream date-time formatting. 
+Now, we're set up to run the function. `birdnet_format()` takes two arguments. First, the `results.directory` should point to the folder where you have stored your raw BirdNET outputs. Second, the `timezone` argument allows you to specify the timezone setting used in the audio recorder (i.e., the timezone reflected in the wave filename). Was the recording taken in local time at your site, or was it taken in UTC? If you are collecting data across many sites, over many years, with varying audio recorder equipment and varying recording settings through time, different field technicians, and potentially across timezones, you will want to keep meticulous track of your timezones so that analyses will be accurate across time and space. If recordings were taken in local time at your study site, specify an [Olson-names-formatted character timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for the location (e.g., "America/Los_Angeles"). If recordings were taken in UTC, you can put either 'GMT' or 'UTC'; both are acceptable in R for downstream date-time formatting. 
 
 Below, we point to our example results directory and specify 'GMT' (i.e., 'UTC') as the timezone, since the recordings were not taken in local time at this recorder.
 
@@ -514,7 +514,7 @@ unlink(x = 'example-results-directory', recursive = TRUE)
 
 ### Add GUI segment review verifications to formatted CSV
 
-`birdnet_review_verify()` provides an alternative to the `birdnet_verify()` function. If you have used the v2 BirdNET Analyzer GUI to generate segments, and then used the GUI "Review" tab to verify detections, `birdnet_review_verify()` saves your GUI-reviewed labels to the 'verify' column of your [formatted CSVs](https://github.com/nationalparkservice/NSNSDAcoustics?tab=readme-ov-file#reformat-raw-birdnet-results). This simple function takes your `results.directory` and `segments.directory` as inputs. It then updates the 'verify' column in your CSVs with the labels "Positive" or "Negative" for all reviewed species in your segments folder. **Use with caution: if verifications already exist in the 'verify' column of your CSVs, note that they may be overwritten by this function, or may produce a mix of inconsistent labels.
+`birdnet_review_verify()` provides an alternative to the `birdnet_verify()` function. If you have used the v2 BirdNET Analyzer GUI to generate segments, and then used the GUI "Review" tab to verify detections, `birdnet_review_verify()` saves your GUI-reviewed labels to the 'verify' column of your [formatted CSVs](https://github.com/nationalparkservice/NSNSDAcoustics?tab=readme-ov-file#reformat-raw-birdnet-results). This simple function takes your `results.directory` and `segments.directory` as inputs. It then updates the 'verify' column in your CSVs with the labels "Positive" or "Negative" for all reviewed species in your segments folder. **Use with caution:** if verifications already exist in the 'verify' column of your CSVs, note that they may be overwritten by this function, or may produce a mix of inconsistent labels.
 
 To demonstrate this function, set up example data in a results directory and a segments directory: 
 
