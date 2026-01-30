@@ -124,19 +124,20 @@
 #' }
 #'
 
-nvspl_to_ai <- function (input.directory, # top-level NVSPL file directory
-                         output.directory, # where to put output files
-                         project,
-                         instrum = "SM4", # c('SM4', 'SM2' ?) # indicate audio recorder used
-                         start.at.beginning = TRUE,
-                         fminimum = 'H1600', # lower limit of freq band of interest (NOTE: HXXXX represents the center frequency of the octave band, eg. H1600 = 1413-1778 Hz)
-                         fmaximum = 'H8000', # upper limit
-                         fbinMax = 8, #sets the frequency bins to looks across for cluster analysis
-                         BKfminimum = "H31p5", # lower limit of frequency bands for background noise (NOTE: if NVSPL calculated with PAMGuide, no data below H25)
-                         BKfmaximum = "H1250", # upper limit
-                         timestep = 10, # in minutes (NOTE: to get daily values, summarizing the timestep values is preferred over running the code for an entire day)
-                         startday = 1, # optional start day if many files or error
-                         plt = FALSE
+nvspl_to_ai <- function (
+    input.directory, # top-level NVSPL file directory
+    output.directory, # where to put output files
+    project,
+    instrum = "SM4", # c('SM4', 'SM2' ?) # indicate audio recorder used
+    start.at.beginning = TRUE,
+    fminimum = 'H1600', # lower limit of freq band of interest (NOTE: HXXXX represents the center frequency of the octave band, eg. H1600 = 1413-1778 Hz)
+    fmaximum = 'H8000', # upper limit
+    fbinMax = 8, #sets the frequency bins to looks across for cluster analysis
+    BKfminimum = "H31p5", # lower limit of frequency bands for background noise (NOTE: if NVSPL calculated with PAMGuide, no data below H25)
+    BKfmaximum = "H1250", # upper limit
+    timestep = 10, # in minutes (NOTE: to get daily values, summarizing the timestep values is preferred over running the code for an entire day)
+    startday = 1, # optional start day if many files or error
+    plt = FALSE
 )
 {
 
