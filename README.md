@@ -2,7 +2,7 @@
 
 This repository provides a place for National Park Service [Natural Sounds and Night Skies Division (NSNSD)](https://www.nps.gov/orgs/1050/index.htm) staff to develop and modernize several bioacoustics workflows. 
 
-**This worfklow was developed for Windows 10 and 11, BirdNET-Analyzer releases V1.1.x through 2.2.0, and model version V2.4. It has not been tested on other systems. Breaking changes were introduced between BirdNET Analyzer v1 and v2, and the [latest release](https://github.com/nationalparkservice/NSNSDAcoustics/releases/tag/v1.1.0) reflects efforts to maintain backward compatibility between BirdNET Analyzer v1.5.1 and v2.2.0.** 
+**This worfklow was developed for Windows 10 and 11, BirdNET-Analyzer releases V1.1.x through 2.4.0, and model version V2.4. It has not been tested on other systems. Breaking changes were introduced between BirdNET Analyzer v1 and v2, and the [latest release](https://github.com/nationalparkservice/NSNSDAcoustics/releases/tag/v1.1.0) reflects efforts to maintain backward compatibility between BirdNET Analyzer v1.5.1 and v2+.** 
 
 If you encounter a problem, please submit it to [Issues](https://github.com/nationalparkservice/NSNSDAcoustics/issues).
 
@@ -68,7 +68,7 @@ NSNSDAcoustics depends on the R package `data.table`, which enables fast queryin
 
 ### (1) Step 1. Download the fully packaged BirdNET Analyzer for Windows. 
 
-As of this writing, [BirdNET Analyzer v1.5.1](https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.5.1) and [BirdNET Analyzer v2.2.0](https://github.com/birdnet-team/BirdNET-Analyzer/releases/tag/v2.2.0) are both approved versions for NPS. Updating to v2.x is advisable moving forward. 
+As of this writing, [BirdNET Analyzer v1.5.1](https://github.com/kahst/BirdNET-Analyzer/releases/tag/v1.5.1), [BirdNET Analyzer v2.2.0](https://github.com/birdnet-team/BirdNET-Analyzer/releases/tag/v2.2.0), [BirdNET Analyzer v2.4.0](https://github.com/birdnet-team/BirdNET-Analyzer/releases/tag/v2.4.0) are approved versions for NPS. Updating to v2.x is advisable moving forward. 
 
 ### (2) Step 2. Familiarize yourself with the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html#birdnet_analyzer.cli-analyzer_parser-named-arguments).
 
@@ -142,7 +142,7 @@ write.table(
 )
 ```
 
-Now, we're set up to run the function. `birdnet_analyzer()` takes a large number of arguments. First, `birdnet.version` specifies which release of BirdNET-Analyzer you are using (e.g., "v2.2.0", "v1.5.1"). In `birdnet.path`, 	specify the absolute path to the BirdNET-Analyzer.exe installation on your machine. e.g., "C:/your-path-here/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe". All of the remaining arguments will look very similar to the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html). For example, `i.audio` requires an absolute path to an input file or folder, and `o.results` requires an absolute path to an output file or folder. See `?birdnet_analyzer` help documentation or BirdNET-Analyzer's documentation for more details. 
+Now, we're set up to run the function. `birdnet_analyzer()` takes a large number of arguments. First, `birdnet.version` specifies which release of BirdNET-Analyzer you are using (e.g., "v2.4.0", "v2.2.0", "v1.5.1"). In `birdnet.path`, 	specify the absolute path to the BirdNET-Analyzer.exe installation on your machine. e.g., "C:/your-path-here/Programs/BirdNET-Analyzer/BirdNET-Analyzer.exe". All of the remaining arguments will look very similar to the [command line arguments listed in BirdNET-Analyzer's documentation](https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html). For example, `i.audio` requires an absolute path to an input file or folder, and `o.results` requires an absolute path to an output file or folder. See `?birdnet_analyzer` help documentation or BirdNET-Analyzer's documentation for more details. 
 
 Below, we show pseudocode that you can modify to test the function. Note that many arguments are missing because many use defaults. Be sure to familiarize yourself with each argument. You may wish to test various combinations of parameters and observe how they affect results. **To use the functions in this package, if you are using v1 of BirdNET Analyzer, please specify rtype = "r". If you are using v2 of BirdNET Analyzer, please specify rtype = "csv" and additional.columns = c("lat", "lon", "week", "overlap", "sensitivity", "min_conf", "species_list", "model").** 
 
