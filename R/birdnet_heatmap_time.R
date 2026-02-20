@@ -83,12 +83,11 @@
 #' aware that results may not be as intended if inputting unformatted data.
 #'
 #' @seealso  \code{\link{birdnet_heatmap}}
-#' @import data.table ggplot2 lubridate monitoR suncalc tuneR viridis
-#' @importFrom lubridate month day yday round_date
+#' @import data.table ggplot2 monitoR suncalc tuneR viridis
+#' @importFrom lubridate wday second isoweek yday hour year month week minute mday quarter day round_date with_tz floor_date leap_year tz
 #' @importFrom suncalc getSunlightTimes
 #' @export
 #' @examples
-#' \dontrun{
 #'
 #' # Read in example data
 #' data(exampleHeatmapData)
@@ -157,8 +156,6 @@
 #'
 #' }
 #'
-#' }
-#'
 
 birdnet_heatmap_time <- function(
     data,
@@ -194,7 +191,7 @@ birdnet_heatmap_time <- function(
   }
 
   if(missing(tz.local)) {
-    tz.local <- tz(data$dateTimeLocal)
+    tz.local <- lubridate::tz(data$dateTimeLocal)
     message('\nYou didn\'t put anything in the `tz.local` argument; using `tz.local = ', tz.local, '` based on your data. If this is wrong, quit function and input your desired value.')
   }
 
@@ -257,12 +254,24 @@ birdnet_heatmap_time <- function(
       timestep = 14
     )
   } else {
+
+    # Figure out if data input are occurring exclusively during a leap year
+    #  modify x-axis if so
+    yes.leap <- all(lubridate::leap_year(dates.sampled))
+
     # Create a dummy data.table of dates
-    rng <- range(as.Date(julian.breaks, origin = '2023-01-01'))
+    if (yes.leap) {
+      # 2020 is a leap year, safe to use for range
+      rng <- range(as.Date(julian.breaks, origin = '2020-01-01'))
+    } else {
+      # 2023 is not a leap year, safe to use for range
+      rng <- range(as.Date(julian.breaks, origin = '2023-01-01'))
+    }
+
     dummy.brks <- data.table(date = seq.Date(from = rng[1],
                                              to = rng[2],
                                              by = 1))
-    dummy.brks[,julian.date := yday(date)]
+    dummy.brks[,julian.date := lubridate::yday(date)]
     dummy.brks[,month := lubridate::month(date, label = TRUE)][
       ,day := lubridate::day(date)]
     dummy.brks[,date.lab := paste0(day, '-', month)]
@@ -277,13 +286,13 @@ birdnet_heatmap_time <- function(
   data[,date := as.Date(detectionTimeLocal, tz = tz.local)]
 
   # Generate timestep-unit resolution bins for detections and for recs with no detections:
-  data[, timebin := round_date(x = detectionTimeLocal, unit = paste(minute.timestep, 'minute'))]
+  data[, timebin := lubridate::round_date(x = detectionTimeLocal, unit = paste(minute.timestep, 'minute'))]
 
   # For recs with no detections
-  data[is.na(timebin), timebin := round_date(x = dateTimeLocal, unit = paste(minute.timestep, 'minute'))]
+  data[is.na(timebin), timebin := lubridate::round_date(x = dateTimeLocal, unit = paste(minute.timestep, 'minute'))]
 
   # Add julian date and minute-based y.unit
-  data[,julian := yday(date)]
+  data[,julian := lubridate::yday(date)]
   data[, y.unit := (hour(timebin)*60 + minute(timebin))]
 
   # Need some robust info about which date-times were sampled so that we have "zero data"
@@ -350,13 +359,13 @@ birdnet_heatmap_time <- function(
 
   if(inherits(hours.sampled, 'integer')) {
     # Subset according to hours falling within user-specified sampling range
-    sampled.times[,hour := hour(tbin)]
+    sampled.times[,hour := lubridate::hour(tbin)]
     sampled.times <- sampled.times[hour %in% hours.sampled]
   }
 
   if(inherits(hours.sampled, 'list')) {
     # Compute sun-based times for these sampled tbins
-    sun.times <- as.data.table(sampled.times[,getSunlightTimes(
+    sun.times <- as.data.table(sampled.times[,suncalc::getSunlightTimes(
       date = date,
       lat = latitude,
       lon = longitude,
@@ -444,23 +453,23 @@ birdnet_heatmap_time <- function(
       tz = tz.local)
     ]
     sun <- as.data.table(sun)
-    sp.tbin.day[,hour := hour(timebin)]
-    sp.tbin.day[,partialMinute := minute(timebin)]
+    sp.tbin.day[,hour := lubridate::hour(timebin)]
+    sp.tbin.day[,partialMinute := lubridate::minute(timebin)]
     sp.tbin.day[,minute := hour*60 + partialMinute]
   }
 
   heat.cols <- c('gray84', viridis::magma(n = 5, begin = 0.2)) # begin 0.1 to start black instead of purple
 
   # Generate minute-based y.unit and y breaks
-  sp.tbin.day[, y.unit := (hour(timebin)*60 + minute(timebin))]
+  sp.tbin.day[, y.unit := (lubridate::hour(timebin)*60 + lubridate::minute(timebin))]
   y.brks <- seq(from = 0, to = (1440 - 60), by = 60) #0:23*60 for miin
 
   if (!missing(sun.lines)) {
     sun.plot <- data.table(variable = sun.lines, sun.lty = sun.linetypes)
     sun <- melt(sun, id.vars = c('date', 'lat', 'lon'), measure.vars = sun.lines)
     sun.dt <- merge(sun, sun.plot, by = 'variable')
-    sun.dt[,minute :=  hour(value)*60 + minute(value)]
-    sun.dt[,julian := yday(date)]
+    sun.dt[,minute := lubridate::hour(value)*60 + lubridate::minute(value)]
+    sun.dt[,julian := lubridate::yday(date)]
 
     # MUST sort this table -- critical to get scale_linetype_manual working downstream
     setkey(sun.dt, julian, variable)

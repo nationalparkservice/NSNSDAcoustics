@@ -59,11 +59,10 @@
 #' aware that results may not be as intended if inputting unformatted data.
 #'
 #' @seealso  \code{\link{birdnet_barchart}} \code{\link{birdnet_heatmap_time}}
-#' @import data.table ggplot2 lubridate monitoR tuneR viridis
-#' @importFrom lubridate month day yday
+#' @import data.table ggplot2 monitoR tuneR viridis
+#' @importFrom lubridate wday second isoweek yday hour year month week minute mday quarter day round_date with_tz floor_date leap_year tz
 #' @export
 #' @examples
-#' \dontrun{
 #'
 #' # Read in example data
 #' data(exampleHeatmapData)
@@ -116,8 +115,6 @@
 #'
 #' }
 #'
-#' }
-#'
 
 birdnet_heatmap <- function(
     data,
@@ -136,16 +133,16 @@ birdnet_heatmap <- function(
   }
 
   if(missing(tz.local)) {
-    tz.local <- tz(data$dateTimeLocal)
+    tz.local <- lubridate::tz(data$dateTimeLocal)
     message('\nYou didn\'t put anything in the `tz.local` argument; using `tz.local = ', tz.local, '` based on your data. If this is wrong, quit function and input your desired value.')
   }
 
   data <- as.data.table(data)
 
   # Make sure dat has year, date, and julian.date
-  data[,year := year(dateTimeLocal)]
+  data[,year := lubridate::year(dateTimeLocal)]
   data[,date := as.Date(dateTimeLocal, tz = tz.local)]
-  data[,julian.date := yday(dateTimeLocal)]
+  data[,julian.date := lubridate::yday(dateTimeLocal)]
 
   # Ensure date data type
   dates.sampled <- as.Date(dates.sampled)
@@ -171,12 +168,24 @@ birdnet_heatmap <- function(
       timestep = 14
     )
   } else {
+
+    # Figure out if data input are occurring exclusively during a leap year
+    #  modify x-axis if so
+    yes.leap <- all(lubridate::leap_year(dates.sampled))
+
     # Create a dummy data.table of dates
-    rng <- range(as.Date(julian.breaks, origin = '2023-01-01'))
+    if (yes.leap) {
+      # 2020 is a leap year, safe to use for range
+      rng <- range(as.Date(julian.breaks, origin = '2020-01-01'))
+    } else {
+      # 2023 is not a leap year, safe to use for range
+      rng <- range(as.Date(julian.breaks, origin = '2023-01-01'))
+    }
+
     dummy.brks <- data.table(date = seq.Date(from = rng[1],
                                              to = rng[2],
                                              by = 1))
-    dummy.brks[,julian.date := yday(date)]
+    dummy.brks[,julian.date := lubridate::yday(date)]
     dummy.brks[,month := lubridate::month(date, label = TRUE)][
       ,day := lubridate::day(date)]
     dummy.brks[,date.lab := paste0(day, '-', month)]
@@ -233,8 +242,8 @@ birdnet_heatmap <- function(
     dtn <- rbind(dtn, dets.0)
   }
   dtn <- dtn[order(date)]
-  dtn[,year :=  year(date)]
-  dtn[,julian.date := yday(date)]
+  dtn[,year := lubridate::year(date)]
+  dtn[,julian.date := lubridate::yday(date)]
   heat.cols <- c('gray75', viridis::magma(n = 5, begin = 0.2))
   u.lim <- max(color.breaks)
   dtn <- dtn[!is.na(year)]
