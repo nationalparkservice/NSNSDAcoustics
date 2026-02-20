@@ -7,11 +7,11 @@
 #' See BirdNET Analyzer \href{https://birdnet-team.github.io/BirdNET-Analyzer/usage/cli.html#birdnet-analyzer-analyze}{usage documentation}
 #' for more details. BirdNET Analyzer introduced breaking
 #' changes with an update to v2 in 2025. This function
-#'  attempts to retain capacity for both v1.5.1 and v2.2.0. Please
+#'  attempts to retain capacity for both v1.5.1 and v2.2.0+. Please
 #'  \href{https://github.com/nationalparkservice/NSNSDAcoustics/issues}{submit an issue}
 #'  if you discover problems.
 #' @param birdnet.version Character name of BirdNET Analyzer release you are using.
-#' E.g., `"v2.2.0"`, `"v1.5.1"`. Support for earlier versions is not prioritized. If the function doesn't
+#' E.g., `"v2.4.0"`, `"v2.2.0"`, `"v1.5.1"`. Support for earlier versions is not prioritized. If the function doesn't
 #' work, update to a new version of BirdNET Analyzer or \href{https://github.com/nationalparkservice/NSNSDAcoustics/blob/main/README.md#additional-tips-and-notes}{consider constructing the command statement
 #' by hand} instead of using this function. See releases at \href{https://github.com/birdnet-team/BirdNET-Analyzer/releases}{https://github.com/birdnet-team/BirdNET-Analyzer/releases}.
 #' \strong{CRITICAL NOTE}: The BirdNET "release" version specified in this argument
@@ -47,9 +47,6 @@
 #' @param min.conf Minimum confidence threshold. Values from 0.00001 to 0.99.
 #' Default = 0.1.
 #' @param locale Locale for translated species common names. Values in `c("af", "en_UK", "de", "it", ...)`. Default = "en".
-#' @param rtype Output format. Values in c('table', 'audacity', 'r', 'kaleidoscope', 'csv').
-#'  Defaults to 'r', and strongly recommend using rtype 'r' if you want to use other
-#'  functions in NSNSDAcoustics. V2.x: rtype r is no longer an option
 #' @param batchsize Number of samples to process at the same time. Default = 1.
 #' @param rtype Specifies output format. `Default = "csv"`. For v1, values in `c("table", "audacity", "r", "kaleidoscope", "csv")`.
 #' For v2, values in `c("table", "audacity", "kaleidoscope", "csv")` -- note that
@@ -72,6 +69,7 @@
 #'  disable merging. BirdNET Analyzer uses the mean of the top 3 scores from all
 #'  consecutive detections for merging. If you want to merge all consecutive detections,
 #'  try choosing a high numeric value.
+#' @param use.perch \strong{v2.4.0 ONLY}. Logical flag for whether to use the Perch model instead of BirdNET.
 #' @return Saves a file of results for each audio file in `o.results`.
 #' Depending on your BirdNET release version, if using `rtype = "r"` (v1)
 #' or `rtype = "csv"` (v2), files are csv with suffix `"BirdNET.results.csv"`
@@ -122,9 +120,6 @@
 #'  if you discover problems.
 #'
 #' @seealso  \code{\link{birdnet_format}}, \code{\link{birdnet_verify}}
-#' @import tuneR
-#' @importFrom lubridate week
-#' @importFrom tools file_ext
 #' @export
 #' @examples
 #' \dontrun{
@@ -209,7 +204,8 @@ birdnet_analyzer <- function(
     classifier = NULL,
     skip.existing.results = FALSE,
     top.n = NULL,
-    merge.consecutive = 1
+    merge.consecutive = 1,
+    use.perch = FALSE
 ) {
 
   # If lat and long are provided, birdnet will ignore whatever is in the species_list.txt arg.
@@ -217,7 +213,7 @@ birdnet_analyzer <- function(
     stop('You have entered a value for slist, but you have also entered values for lat and lon. Note that if you input values aside from -1 for lat and lon, these will apply an eBird-based filter and will override your species list. Please set lat and lon to -1 if you intend to use a species list in the slist argument. If you didn\'t mean to put something in the slist argument, set slist to NULL.')
   }
 
-  if (!grepl(pattern = 'v2.2.0', x = birdnet.version)) {
+  if (!grepl(pattern = 'v2.2.0|v2.4.0', x = birdnet.version)) {
     message('You are using a BirdNET version prior to BirdNET Analyzer v2. If you have input values for args: additional.columns, combine.results, top.n, and merge.consecutive, note that these are not supported by your BirdNET version and will be ignored. If you are having issues running the function, update BirdNET Analyzer to v2.')
   }
 
@@ -249,7 +245,7 @@ birdnet_analyzer <- function(
     )
   }
 
-  if (grepl(pattern = 'v2.2.0', x = birdnet.version)) {
+  if (grepl(pattern = 'v2.2.0|v2.4.0', x = birdnet.version)) {
 
     if (rtype == 'r') {
       stop("You input rtype = 'r' and a birdnet.version in v2.x. Note that rtype = 'r' is no longer an option in BirdNET Analyzer v2. For an equivalent output that will work with NSNSDAcoustics functions, use rtype = 'csv' and additional.columns = c('lat, 'lon', 'week', 'overlap', 'sensitivity', 'min_conf', 'species_list', 'model')")
@@ -257,7 +253,7 @@ birdnet_analyzer <- function(
 
     if (sensitivity != 1) {
       # Provide message and warning for maximum visibility
-      sens.msg.warn <- paste0('\nYou have input sensitivity = ', sensitivity, '. Note that BirdNET Analyzer introduced a breaking change with sensitivity in version 2! If you previously used non-1 values for sensitivity in version 1 of BirdNET Analyzer, note that you will not produce the same results in version 2. See more discussion on this topic here: https://github.com/birdnet-team/BirdNET-Analyzer/issues/758')
+      sens.msg.warn <- paste0('\nWARNING: You have input sensitivity = ', sensitivity, '. Note that BirdNET Analyzer introduced a breaking change with sensitivity in version 2! If you previously used non-1 values for sensitivity in version 1 of BirdNET Analyzer, note that you will not produce the same results in version 2. See more discussion on this topic here: https://github.com/birdnet-team/BirdNET-Analyzer/issues/758')
       message(sens.msg.warn)
       warning(sens.msg.warn)
     }
@@ -318,7 +314,7 @@ birdnet_analyzer <- function(
   # Paste in command to skip existing results, if indicated
   if (skip.existing.results == TRUE) {
     cmd <- paste0(cmd, ' --skip_existing_results')
-    message('You set skip.existing.results to TRUE, so no files with existing results in this folder will be analyzed.')
+    message('\nMESSAGE: You set skip.existing.results to TRUE, so no files with existing results in this folder will be analyzed.\n')
   }
 
   # If not using a custom classifier, remove classifier arg from cmd
@@ -328,6 +324,19 @@ birdnet_analyzer <- function(
   if(is.null(classifier)) {
     cmd <- gsub(pattern = ' --classifier ""', replacement = '', x = cmd)
   }
+
+  if(use.perch == TRUE & birdnet.version != 'v2.4.0') {
+    stop('You set use.perch = TRUE, but you did not input birdnet.version = "v2.4.0". Note that "v2.4.0" is the only version that supports use.perch = TRUE')
+  }
+
+  if (grepl(pattern = 'v2.4.0', x = birdnet.version)) {
+    # Paste in command to skip existing results, if indicated
+    if (use.perch == TRUE) {
+      cmd <- paste0(cmd, ' --use_perch')
+      message('You set use.perch to TRUE; running Perch model instead of BirdNET v2.4.')
+    }
+  }
+
 
   # Send command to BirdNET.exe
   run.cmd <- system(cmd)
