@@ -94,7 +94,6 @@ highest possible BirdNET confidence threshold you can use while still maximizing
 recall.
 }
 \examples{
-\dontrun{
 
 # Your input data.table/data.frame might have a variety of formats,
 # but at minimum, needs columns 'common_name', 'confidence', and a 'verify'
@@ -135,7 +134,6 @@ birdnet_conf_threshold(
 # Delete all temporary example files when finished
 unlink(x = 'example-conf-threshold-plots', recursive = TRUE)
 
-}
 }
 \seealso{
 \code{\link{birdnet_verify}}, \code{\link{birdnet_format}}

@@ -25,9 +25,24 @@ LazyData: true
 LazyDataCompression: xz
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
-Depends: R (>= 3.5.0), data.table, monitoR, tuneR
-Imports: caret, ggplot2, lubridate, plotly, stringr, suncalc, viridis
-Suggests: ineq, iNEXT, moments, NbClust, vegan
+Depends: R (>= 3.5.0)
+Imports: 
+    caret, 
+    data.table, 
+    ggplot2, 
+    lubridate, 
+    monitoR, 
+    plotly, 
+    stringr, 
+    suncalc, 
+    tuneR, 
+    viridis
+Suggests: 
+    ineq, 
+    iNEXT, 
+    moments, 
+    NbClust, 
+    vegan
 BugReports: https://github.com/nationalparkservice/NSNSDAcoustics/issues
 Collate:
     'PAMGuide.R'

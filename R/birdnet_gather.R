@@ -46,7 +46,6 @@
 #' @import data.table
 #' @importFrom tools file_ext
 #' @examples
-#' \dontrun{
 #'
 #' # Create a BirdNET results directory for this example
 #' dir.create('example-results-directory')
@@ -96,7 +95,6 @@
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-results-directory', recursive = TRUE)
 #'
-#' }
 #'
 
 birdnet_gather <- function(

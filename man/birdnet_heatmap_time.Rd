@@ -123,7 +123,6 @@ to various changes in BirdNET-Analyzer output columns over the years, be
 aware that results may not be as intended if inputting unformatted data.
 }
 \examples{
-\dontrun{
 
 # Read in example data
 data(exampleHeatmapData)
@@ -189,8 +188,6 @@ for (i in 1:length(sp)) {
   )
 
   print(g)
-
-}
 
 }
 

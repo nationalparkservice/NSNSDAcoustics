@@ -67,7 +67,6 @@ to various changes in BirdNET Analyzer output columns over the years, be
 aware that results may not be as intended if inputting unformatted data.
 }
 \examples{
-\dontrun{
 
 # Read in example data
 data(exampleHeatmapData)
@@ -94,7 +93,6 @@ birdnet_barchart(
    focal.colors = c('#00BE67', '#C77CFF')
 )
 
-}
 
 }
 \seealso{

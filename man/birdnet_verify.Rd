@@ -99,8 +99,8 @@ deal with verification of MP3 files, consider using the BirdNET Analyzer GUI
 "Segments" and "Review" options.
 }
 \examples{
-\dontrun{
 
+\dontrun{
 # Create an audio directory for this example
 dir.create('example-audio-directory')
 

@@ -9,7 +9,7 @@
 #' @param project File name for your project (e.g., 'GLBAPhenology2019').
 #' @param instrum Audio recorder used. Default = 'SM4'.
 #' @param filext File extension pattern. Default = '_%Y%m%d_%H%M%S.wav'. If using split files, '_0_%Y%m%d_%H%M%S_000.wav'.
-#' @param filpat File pattern. Default = '.+\\d{8}_\\d{6}.wav'.
+#' @param filpat File pattern. Default = '.+\\d\{8\}_\\d\{6\}.wav'.
 #' @param mhset Microphone sensitivity (dBV/Pa). Default = -35.
 #' @param Gset Gain setting. Default = 16.
 #' @param vADCset Zero-peak. Default = 1.
@@ -59,7 +59,6 @@
 #' \item{\href{https://sourceforge.net/projects/pamguide/}{Download original PAMGuide code}}
 #' }
 #'
-#' @seealso  \code{\link{nvspl_to_ai}}
 #' @import tuneR
 #' @importFrom utils read.csv write.table
 #' @importFrom graphics hist
@@ -67,7 +66,6 @@
 #' @include Meta.R PAMGuide.R PAMGuide_Meta.R
 #' @examples
 #' \dontrun{
-#'
 #' # Create an input directory for this example
 #' dir.create('example-input-directory')
 #'
@@ -113,7 +111,7 @@
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-input-directory', recursive = TRUE)
 #'
-#' }
+#'}
 #'
 
 wave_to_nvspl <- function(

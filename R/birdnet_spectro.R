@@ -36,7 +36,6 @@
 #' @import monitoR tuneR
 #' @export
 #' @examples
-#' \dontrun{
 #'
 #' # Create an audio directory for this example
 #' dir.create('example-audio-directory')
@@ -68,7 +67,7 @@
 #'   title = "Swainson's Thrush Songs",
 #'   frq.lim = c(0.5, 12),
 #'   new.window = TRUE,
-#'   spec.col = gray.3(),
+#'   spec.col = monitoR:::gray.3(),
 #'   box = TRUE,
 #'   box.lwd = 2,
 #'   box.col = 'black'
@@ -100,7 +99,7 @@
 #'     title = paste0(sp[i], ' Detections >= 0.25'),
 #'     frq.lim = c(0.5, 12),
 #'     new.window = TRUE,
-#'     spec.col = gray.3(),
+#'     spec.col = monitoR:::gray.3(),
 #'     box = TRUE,
 #'     box.lwd = 1.5,
 #'     box.col = 'black',
@@ -111,7 +110,6 @@
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-audio-directory', recursive = TRUE)
 #'
-#' }
 #'
 
 birdnet_spectro <- function(

@@ -50,7 +50,6 @@ This function was developed by the National Park Service Natural Sounds and
 Night Skies Division to support bioacoustics projects.
 }
 \examples{
-\dontrun{
 
 # Ensure your data has an appropriate recordingID column and time columns
 dat <- exampleHeatmapData
@@ -61,6 +60,4 @@ dat <- add_time_cols(
  tz.local = 'America/Los_angeles'
 )
 
-
-}
 }

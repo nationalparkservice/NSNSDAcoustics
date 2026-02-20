@@ -84,7 +84,6 @@
 #' @importFrom stats end glm start
 #' @export
 #' @examples
-#' \dontrun{
 #'
 #' # Your input data.table/data.frame might have a variety of formats,
 #' # but at minimum, needs columns 'common_name', 'confidence', and a 'verify'
@@ -125,7 +124,6 @@
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-conf-threshold-plots', recursive = TRUE)
 #'
-#' }
 
 birdnet_conf_threshold <- function(
     data,

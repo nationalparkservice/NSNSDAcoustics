@@ -51,7 +51,6 @@ Night Skies Division to gather results produced by BirdNET. It uses the
 data.table function \code{\link{fread}} for expedient reading of many csv or txt files.
 }
 \examples{
-\dontrun{
 
 # Create a BirdNET results directory for this example
 dir.create('example-results-directory')
@@ -101,7 +100,6 @@ raw.results <- birdnet_gather(
 # Delete all temporary example files when finished
 unlink(x = 'example-results-directory', recursive = TRUE)
 
-}
 
 }
 \seealso{

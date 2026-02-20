@@ -34,7 +34,6 @@ Unexpected behavior may result if attempting to combine BirdNET Analyzer V2 GUI
 segment outputs with BirdNET Analyzer V1 GUI segment outputs.
 }
 \examples{
-\dontrun{
 
 # Create a BirdNET results directory for this example
 # Write examples of formatted BirdNET outputs to example results directory
@@ -77,8 +76,6 @@ birdnet_review_verify(
 # Delete all temporary example files when finished
 unlink(x = 'example-results-directory', recursive = TRUE)
 unlink(x = 'example-segments-directory', recursive = TRUE)
-
-}
 
 }
 \seealso{

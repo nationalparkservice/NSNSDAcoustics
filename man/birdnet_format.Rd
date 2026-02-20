@@ -63,7 +63,6 @@ Night Skies Division to process audio data using BirdNET. It was developed
 for use on Windows. CSV encodings may vary based on platform and result in errors.
 }
 \examples{
-\dontrun{
 
 # Create a BirdNET results directory for this example
 dir.create('example-results-directory')
@@ -92,7 +91,6 @@ birdnet_format(
 # Delete all temporary example files when finished
 unlink(x = 'example-results-directory', recursive = TRUE)
 
-}
 
 }
 \seealso{

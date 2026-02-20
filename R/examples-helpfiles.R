@@ -42,7 +42,8 @@ NULL
 #' @description Sample NVSPL data stored as data.frames within a list object.
 #' @format An object of class \code{list} containing 9 data.frames.
 #' @details The exampleNVSPL object can be used to experiment with functions
-#' that use NVSPL data. See the example code given in \code{\link{nvspl_to_ai}}.
+#' that use NVSPL data. See the example code given in NSNSDAcoustics:::nvspl_to_ai()
+#' (this function is undocumented but still available as an internal function).
 #' @docType data
 #' @keywords datasets
 #' @name exampleNVSPL

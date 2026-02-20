@@ -47,10 +47,9 @@
 #' Night Skies Division to support bioacoustics projects.
 #'
 #' @import data.table
-#' @importFrom lubridate floor_date with_tz
+#' @importFrom lubridate wday second isoweek yday hour year month week minute mday quarter day round_date with_tz floor_date tz
 #' @export
 #' @examples
-#' \dontrun{
 #'
 #' # Ensure your data has an appropriate recordingID column and time columns
 #' dat <- exampleHeatmapData
@@ -61,8 +60,6 @@
 #'  tz.local = 'America/Los_angeles'
 #' )
 #'
-#'
-#' }
 
 add_time_cols <- function(
     dt,
@@ -94,7 +91,7 @@ add_time_cols <- function(
 
   # Add date and year
   dt[,date := as.Date(dateTimeLocal, tz = tz.local)]
-  dt[,year := year(date)]
+  dt[,year := lubridate::year(date)]
 
   # Add a detectionTimelocal, date, and year if the object contains a BirdNET start column
   if ('start' %in% colnames(dt)) {
@@ -154,12 +151,11 @@ add_time_cols <- function(
 #' }
 #'
 #' @import data.table
-#' @importFrom lubridate day month yday year
+#' @importFrom lubridate wday second isoweek yday hour year month week minute mday quarter day round_date with_tz floor_date
 #' @importFrom stringr str_extract
 #' @export
 #' @examples
-#' \dontrun{
-#'
+#'\dontrun{
 #' # Read in example data
 #' data(exampleHeatmapData)
 #'
@@ -194,8 +190,8 @@ add_time_cols <- function(
 #'  theme(axis.text.x = element_text(hjust = 1, angle = 45),
 #'        legend.title = element_blank()
 #'  )
+#'}
 #'
-#' }
 
 
 # see date formats:
@@ -211,18 +207,18 @@ readable_julian_breaks <- function(
 )
 {
   data <- data.table(data)
-  data[,julian.date := yday(get(posix.column))]
+  data[,julian.date := lubridate::yday(get(posix.column))]
   format.opts <- c('%d', '%m', '%b', '%B', '%y', '%Y')
 
   if (any(!(format %in% format.opts))) {
     stop('In format arugment, please input any combination of the following options: "c(\'%d\', \'%m\', \'%b\', \'%B\', \'%y\', \'%Y\')". See ?readable_julian_breaks for examples.' )
   }
 
-  data[,`%d` := day(get(posix.column))][
-    ,`%m` := month(get(posix.column), label = FALSE)][
-      ,`%b` := month(get(posix.column), label = TRUE, abbr = TRUE)][
-        ,`%B` := month(get(posix.column), label = TRUE, abbr = FALSE)][
-          ,`%Y` := year(get(posix.column))][
+  data[,`%d` := lubridate::day(get(posix.column))][
+    ,`%m` := lubridate::month(get(posix.column), label = FALSE)][
+      ,`%b` := lubridate::month(get(posix.column), label = TRUE, abbr = TRUE)][
+        ,`%B` := lubridate::month(get(posix.column), label = TRUE, abbr = FALSE)][
+          ,`%Y` := lubridate::year(get(posix.column))][
             ,`%y` := stringr::str_extract(`%Y`, '(?<=^..).*$')]
   data[, date.lab := do.call(paste, c(.SD, sep = sep)), .SDcols = format]
 
@@ -350,7 +346,7 @@ birdnet_audio_embed <- function(
   # (unless users can easily install the third party software for dealing with mp3s in R --> mp3splt
   if (grepl(pattern = '.mp3|.MP3', x = one.res$recordingID)) {
 
-    wav <- readMP3(filename = full.pth)
+    wav <- monitoR::readMP3(filename = full.pth)
     wav <- monitoR::cutWave(wav, from = one.res$start, to = one.res$end)
   }
 

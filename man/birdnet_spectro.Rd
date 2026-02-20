@@ -62,7 +62,6 @@ to various changes in BirdNET-Analyzer output columns over the years, be
 aware that results may not be as intended if inputting unformatted data.
 }
 \examples{
-\dontrun{
 
 # Create an audio directory for this example
 dir.create('example-audio-directory')
@@ -94,7 +93,7 @@ birdnet_spectro(
   title = "Swainson's Thrush Songs",
   frq.lim = c(0.5, 12),
   new.window = TRUE,
-  spec.col = gray.3(),
+  spec.col = monitoR:::gray.3(),
   box = TRUE,
   box.lwd = 2,
   box.col = 'black'
@@ -126,7 +125,7 @@ for (i in 1:length(sp)) {
     title = paste0(sp[i], ' Detections >= 0.25'),
     frq.lim = c(0.5, 12),
     new.window = TRUE,
-    spec.col = gray.3(),
+    spec.col = monitoR:::gray.3(),
     box = TRUE,
     box.lwd = 1.5,
     box.col = 'black',
@@ -137,7 +136,6 @@ for (i in 1:length(sp)) {
 # Delete all temporary example files when finished
 unlink(x = 'example-audio-directory', recursive = TRUE)
 
-}
 
 }
 \seealso{

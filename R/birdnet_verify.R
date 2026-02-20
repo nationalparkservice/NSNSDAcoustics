@@ -73,10 +73,11 @@
 #' @seealso  \code{\link{birdnet_analyzer}}, \code{\link{birdnet_format}}, \code{\link{birdnet_review_verify}}
 #' @import data.table monitoR tuneR
 #' @importFrom graphics par polygon axis box
+#' @importFrom monitoR readMP3
 #' @export
 #' @examples
-#' \dontrun{
 #'
+#' \dontrun{
 #'# Create an audio directory for this example
 #' dir.create('example-audio-directory')
 #'
@@ -152,7 +153,7 @@
 #' unlink(x = 'example-audio-directory', recursive = TRUE)
 #' unlink(x = 'example-results-directory', recursive = TRUE)
 #'
-#' }
+#'}
 #'
 
 birdnet_verify <- function(
@@ -260,14 +261,15 @@ birdnet_verify <- function(
   }
 
   # Figure out which frequency bins to use
-  # Unfortunately it is hard to deal with mp3 in R without installing 3rd party software, so we have to do this the hard/slow way (see ?monitoR::readMP3)
+  # Unfortunately it is hard to deal with mp3 in R without installing 3rd party
+  # software, so we have to do this the hard/slow way (see ?monitoR::readMP3)
   check.file <- wav.paths[1]
 
 
   if (file_ext(check.file) == 'mp3') {
 
     message('It looks like there may be mp3 files in this audio folder, so we\'re checking on a few parameters. Thank you for your patience. NOTE: R and Windows, together, are not the best at handling mp3 files. If you need to use mp3 files instead of wave, then for a much speedier BirdNET validation workflow, we suggest running BirdNET directly from the command line and then using segments.py for validation as described here: https://github.com/kahst/BirdNET-Analyzer/')
-    r <- readMP3(check.file)  ## MP3 file in working directory
+    r <- monitoR::readMP3(check.file)  ## MP3 file in working directory
     temp.file <- paste0(audio.directory, 'temp-',
                         gsub('.mp3', '.wav', basename(check.file),
                              ignore.case = TRUE))
@@ -303,7 +305,7 @@ birdnet_verify <- function(
     if (is.mp3) {
       # Unfortunately need to convert to wave
       message('This is an mp3. Converting to wave...')
-      r <- readMP3(wav.paths[w])  ## MP3 file in working directory
+      r <- monitoR::readMP3(wav.paths[w])  ## MP3 file in working directory
       temp.file <- paste0(audio.directory, 'temp-',
                           gsub('.mp3', '.wav', basename(wav.paths[w]),
                                ignore.case = TRUE))

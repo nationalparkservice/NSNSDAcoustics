@@ -46,12 +46,11 @@
 #'
 #'
 #' @seealso  \code{\link{birdnet_heatmap}}, \code{\link{birdnet_heatmap_time}}, \code{\link{birdnet_spectro}}
-#' @import data.table ggplot2 lubridate monitoR tuneR
+#' @import data.table ggplot2 monitoR tuneR
 #' @importFrom plotly ggplotly style
-#' @importFrom lubridate month day yday
+#' @importFrom lubridate wday second isoweek yday hour year month week minute mday quarter day round_date with_tz floor_date tz
 #' @export
 #' @examples
-#' \dontrun{
 #'
 #' # Read in example data
 #' data(exampleHeatmapData)
@@ -78,7 +77,6 @@
 #'    focal.colors = c('#00BE67', '#C77CFF')
 #' )
 #'
-#' }
 #'
 
 birdnet_barchart <- function(
@@ -123,10 +121,10 @@ birdnet_barchart <- function(
   }
 
   # Add time columns
-  tz.local <- tz(dt$dateTimeLocal)
-  dt[,year := year(dateTimeLocal)]
+  tz.local <- lubridate::tz(dt$dateTimeLocal)
+  dt[,year := lubridate::year(dateTimeLocal)]
   dt[,date := as.Date(dateTimeLocal, tz = tz.local)]
-  dt[,julian.date := yday(date)]
+  dt[,julian.date := lubridate::yday(date)]
 
   # Remove NA data from dt (occurs if recording has no detections)
   # Do now rather than later, to avoid issues with "Other" if using focals
@@ -160,7 +158,7 @@ birdnet_barchart <- function(
   }
 
   # Prep human-readable date labels for julian date
-  stacksp[,julian.date := yday(date)]
+  stacksp[,julian.date := lubridate::yday(date)]
   stacksp[,month := lubridate::month(date, label = TRUE)][
     ,day := lubridate::day(date)]
   stacksp[,date.lab := paste0(day, '-', month)]

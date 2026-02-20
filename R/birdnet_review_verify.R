@@ -28,7 +28,6 @@
 #' @importFrom stringr str_extract str_match
 #' @export
 #' @examples
-#' \dontrun{
 #'
 #' # Create a BirdNET results directory for this example
 #' # Write examples of formatted BirdNET outputs to example results directory
@@ -71,8 +70,6 @@
 #' # Delete all temporary example files when finished
 #' unlink(x = 'example-results-directory', recursive = TRUE)
 #' unlink(x = 'example-segments-directory', recursive = TRUE)
-#'
-#' }
 #'
 
 birdnet_review_verify <- function(

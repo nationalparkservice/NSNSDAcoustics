@@ -66,7 +66,6 @@ The format argument accepts any of the following options:
 }
 \examples{
 \dontrun{
-
 # Read in example data
 data(exampleHeatmapData)
 
@@ -101,6 +100,6 @@ ggplot(plot.dat, aes(julian.date, V1, color = factor(year))) +
  theme(axis.text.x = element_text(hjust = 1, angle = 45),
        legend.title = element_blank()
  )
-
 }
+
 }

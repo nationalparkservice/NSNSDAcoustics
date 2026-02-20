@@ -36,7 +36,7 @@ wave_to_nvspl(
 
 \item{filext}{File extension pattern. Default = '\emph{\%Y\%m\%d}\%H\%M\%S.wav'. If using split files, '\emph{0}\%Y\%m\%d_\%H\%M\%S_000.wav'.}
 
-\item{filpat}{File pattern. Default = '.+\\d{8}_\\d{6}.wav'.}
+\item{filpat}{File pattern. Default = '.+\\d\{8\}_\\d\{6\}.wav'.}
 
 \item{mhset}{Microphone sensitivity (dBV/Pa). Default = -35.}
 
@@ -97,7 +97,6 @@ PAMGuide was published as supplementary material to the following Open Access jo
 }
 \examples{
 \dontrun{
-
 # Create an input directory for this example
 dir.create('example-input-directory')
 
@@ -145,7 +144,4 @@ unlink(x = 'example-input-directory', recursive = TRUE)
 
 }
 
-}
-\seealso{
-\code{\link{nvspl_to_ai}}
 }
