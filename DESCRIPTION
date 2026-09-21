@@ -19,7 +19,7 @@ Description: This package facilitates streamlined bioacoustics analysis develope
     for and by the National Park Service (NPS) Natural Sounds and Night Skies
     Division (NSNSD). Workflows include processing, analyzing, and verifying data
     produced by BirdNET and converting wave files to NVSPL tables.
-License: MIT + file LICENSE
+License: CC0 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz
