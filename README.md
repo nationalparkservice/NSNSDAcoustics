@@ -2,7 +2,7 @@
 
 This repository provides a place for National Park Service [Natural Sounds and Night Skies Division (NSNSD)](https://www.nps.gov/orgs/1050/index.htm) staff to develop and modernize several bioacoustics workflows. 
 
-**This worfklow was developed for Windows 10 and 11, BirdNET-Analyzer releases V1.1.x through 2.4.0, and model version V2.4. It has not been tested on other systems. Breaking changes were introduced between BirdNET Analyzer v1 and v2, and the [latest release](https://github.com/nationalparkservice/NSNSDAcoustics/releases/tag/v1.1.0) reflects efforts to maintain backward compatibility between BirdNET Analyzer v1.5.1 and v2+.** 
+**This worfklow was developed for Windows 10 and 11, BirdNET-Analyzer releases V1.1.x through 2.4.0, and model version V2.4. It has not been tested on other systems. Breaking changes were introduced between BirdNET Analyzer v1 and v2, and the [latest release](https://github.com/nationalparkservice/NSNSDAcoustics/releases/tag/v1.1.0) reflects efforts to maintain backward compatibility between BirdNET Analyzer v1.5.1 and v2+.**
 
 If you encounter a problem, please submit it to [Issues](https://github.com/nationalparkservice/NSNSDAcoustics/issues).
 
